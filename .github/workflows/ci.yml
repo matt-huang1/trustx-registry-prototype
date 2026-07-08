@@ -20,5 +20,7 @@ jobs:
         run: pip install -e ".[dev]"
       - name: Lint (black --check)
         run: black --check .
+      - name: Registry is compiled and valid (fails if stale or invalid)
+        run: python scripts/build_registry.py --check
       - name: Test (offline, no API calls)
         run: python -m pytest -q

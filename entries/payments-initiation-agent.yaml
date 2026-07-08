@@ -1,0 +1,41 @@
+agent:
+  slug: payments-initiation-agent
+  description: >-
+    A payments initiation agent that can initiate payments and transfer funds
+    through bank payment-rail APIs (ACH and wire) on behalf of the finance team,
+    with only limited human oversight of individual transactions.
+dimensions:
+  autonomy:
+    score: 4
+    rationale: Executes transactions with only limited human oversight of individual payments.
+    evidence:
+      - "with only limited human oversight of individual transactions"
+  delegated_authority:
+    score: 5
+    rationale: >-
+      Moves real money over ACH/wire on the organisation's behalf with limited oversight — 5 on the merits; the deterministic money-movement rule independently guarantees a floor of ≥4.
+    evidence:
+      - "can initiate payments and transfer funds through bank payment-rail APIs (ACH and wire)"
+      - "on behalf of the finance team"
+  tool_access:
+    score: 4
+    rationale: Wields powerful bank payment-rail tools capable of moving funds externally.
+    evidence:
+      - "bank payment-rail APIs (ACH and wire)"
+  data_exposure:
+    score: 3
+    rationale: Accesses finance/payment and counterparty account data to execute transfers.
+    evidence:
+      - "transfer funds through bank payment-rail APIs"
+      - "on behalf of the finance team"
+risk_tier: high
+challenge:
+  flagged: true
+  notes:
+    - "Curated, human-authored reference entry; scores reasoned by hand. No automated challenger pass was run."
+    - "Deterministic rule: description contains money-movement language (initiate payments / transfer funds / ACH), so delegated_authority is pinned to >= 4."
+  iterations: 1
+provenance:
+  submitted_by: curated-reference
+  approved_by: "@matt-huang1"
+  timestamp: "2026-07-09T00:00:00+00:00"

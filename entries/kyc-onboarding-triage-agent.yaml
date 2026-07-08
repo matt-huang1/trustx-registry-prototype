@@ -1,0 +1,41 @@
+agent:
+  slug: kyc-onboarding-triage-agent
+  description: >-
+    A KYC onboarding triage agent that reads sensitive customer personal data
+    (PII) — identity documents, addresses, and dates of birth — to draft an
+    onboarding risk recommendation for a human compliance officer. It cannot
+    approve onboarding, open accounts, or act autonomously; a human officer makes
+    every decision.
+dimensions:
+  autonomy:
+    score: 2
+    rationale: Drafts a recommendation, which leans toward an outcome rather than staying neutral like a summary; the human officer still makes every decision.
+    evidence:
+      - "draft an onboarding risk recommendation for a human compliance officer"
+      - "a human officer makes every decision"
+  delegated_authority:
+    score: 1
+    rationale: Cannot approve onboarding, open accounts, or take any action itself.
+    evidence:
+      - "It cannot approve onboarding, open accounts, or act autonomously"
+  tool_access:
+    score: 2
+    rationale: Read access to KYC/identity data sources; no ability to invoke action tools.
+    evidence:
+      - "reads sensitive customer personal data (PII) — identity documents, addresses, and dates of birth"
+  data_exposure:
+    score: 3
+    rationale: Handles sensitive customer PII, though scoped per-applicant and read-only.
+    evidence:
+      - "reads sensitive customer personal data (PII)"
+      - "identity documents, addresses, and dates of birth"
+risk_tier: medium
+challenge:
+  flagged: false
+  notes:
+    - "Curated, human-authored reference entry; scores reasoned by hand. No automated challenger pass was run."
+  iterations: 1
+provenance:
+  submitted_by: curated-reference
+  approved_by: "@matt-huang1"
+  timestamp: "2026-07-09T00:00:00+00:00"

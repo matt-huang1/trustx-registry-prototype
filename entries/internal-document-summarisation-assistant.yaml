@@ -1,0 +1,40 @@
+agent:
+  slug: internal-document-summarisation-assistant
+  description: >-
+    An internal document summarisation assistant with read-only access to the
+    company's internal document store. It produces draft summaries of internal
+    documents that are always reviewed by a human before use. It cannot take any
+    action, call external tools, or modify any record.
+dimensions:
+  autonomy:
+    score: 1
+    rationale: Produces drafts only; a human reviews every output before use.
+    evidence:
+      - "draft summaries ... always reviewed by a human before use"
+      - "It cannot take any action"
+  delegated_authority:
+    score: 1
+    rationale: Holds no authority to act, transact, or change anything.
+    evidence:
+      - "It cannot take any action, call external tools, or modify any record"
+  tool_access:
+    score: 2
+    rationale: Single read-only integration with the internal document store; no action tools.
+    evidence:
+      - "read-only access to the company's internal document store"
+  data_exposure:
+    score: 2
+    rationale: Reads internal business documents; no customer PII or external data.
+    evidence:
+      - "read-only access to the company's internal document store"
+      - "draft summaries of internal documents"
+risk_tier: low
+challenge:
+  flagged: false
+  notes:
+    - "Curated, human-authored reference entry; scores reasoned by hand. No automated challenger pass was run."
+  iterations: 1
+provenance:
+  submitted_by: curated-reference
+  approved_by: "@matt-huang1"
+  timestamp: "2026-07-09T00:00:00+00:00"

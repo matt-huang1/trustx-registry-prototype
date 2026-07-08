@@ -8,3 +8,4 @@ here. If you are unsure whether a decision needs an ADR, err toward writing one.
 |-----|-------|--------|
 | [0001](adr/0001-risk-proportionate-maker-checker.md) | Risk-proportionate maker/checker with deterministic override | Accepted |
 | [0002](adr/0002-model-agnostic-llm-access.md) | Model-agnostic LLM access via an OpenAI-compatible interface | Accepted |
+| [0003](adr/0003-curated-reference-entries.md) | Curated reference entries: hand-authored, archetypal, defensible | Accepted |
