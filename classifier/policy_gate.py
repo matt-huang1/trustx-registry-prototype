@@ -40,24 +40,30 @@ _TIER_POLICY_SENTENCE = {
 }
 
 
-def _driving_evidence(entry: Mapping) -> tuple[list[str], list[str], int]:
-    """Return (driving dimension names, their evidence quotes, the peak score).
+def _driving_evidence(entry: Mapping) -> tuple[list[str], list[str]]:
+    """Return (driving dimension names, their evidence quotes).
 
-    The tier rollup (classifier.schema.roll_up_risk_tier) is a max over dimensions, so
-    the dimension(s) at the peak score are exactly the ones that drove the tier. Citing
-    their evidence is citing WHY the gate acted — deduped, order-preserved.
+    The entry's ``tier_derivation`` records which dimensions actually drove the
+    tier under its tier-weighting profile (classifier.schema.derive_risk_tier),
+    so citing their evidence is citing WHY the gate acted — deduped,
+    order-preserved. Entries without a derivation fall back to the dimensions at
+    the peak score.
     """
     dims = entry.get("dimensions") or {}
     if not dims:
-        return [], [], 0
-    peak = max(int(d["score"]) for d in dims.values())
-    driving = [name for name, d in dims.items() if int(d["score"]) == peak]
+        return [], []
+    driving = list((entry.get("tier_derivation") or {}).get("driving_dimensions") or [])
+    if not driving:
+        peak = max(int(d["score"]) for d in dims.values())
+        driving = [name for name, d in dims.items() if int(d["score"]) == peak]
     evidence: list[str] = []
     for name in driving:
+        if name not in dims:
+            continue
         for quote in dims[name].get("evidence", []):
             if quote not in evidence:
                 evidence.append(quote)
-    return driving, evidence, peak
+    return driving, evidence
 
 
 def decide(entry: Mapping, policy: Mapping) -> dict:
@@ -76,7 +82,7 @@ def decide(entry: Mapping, policy: Mapping) -> dict:
     tier_actions = policy["tier_actions"]
     action = tier_actions[tier]
 
-    _driving, evidence_refs, _peak = _driving_evidence(entry)
+    _driving, evidence_refs = _driving_evidence(entry)
 
     policy_sentence = _TIER_POLICY_SENTENCE.get(
         action, f"Policy maps this tier to '{action}'."
@@ -88,8 +94,8 @@ def decide(entry: Mapping, policy: Mapping) -> dict:
     reason = f"{policy_sentence} {adjective} because: {because}."
 
     # Capability overrides: applied ON TOP OF the tier rule. Money movement pins
-    # delegated_authority to its floor (classifier.rules) AND, per policy, demands a
-    # second human — regardless of what the tier action alone would allow.
+    # Action Authority to 3, "Execute transactions" (classifier.rules) AND, per policy,
+    # demands a second human — regardless of what the tier action alone would allow.
     overrides: list[dict] = []
     description = (entry.get("agent") or {}).get("description", "")
     override_action = (policy.get("capability_overrides") or {}).get("money_movement")
@@ -99,15 +105,15 @@ def decide(entry: Mapping, policy: Mapping) -> dict:
                 "capability": "money_movement",
                 "action": override_action,
                 "reason": (
-                    "Money-movement capability detected: delegated_authority is pinned to "
-                    "its floor by the deterministic money-movement rule, and policy requires "
-                    "dual human approval before any funds move."
+                    "Money-movement capability detected: Action Authority is pinned to 3 "
+                    '("Execute transactions") by the deterministic money-movement rule, '
+                    "and policy requires dual human approval before any funds move."
                 ),
             }
         )
         reason += (
-            " Money-movement rule fired: delegated_authority pinned to its floor; "
-            "policy additionally requires dual human approval."
+            " Money-movement rule fired: Action Authority pinned to 3 "
+            '("Execute transactions"); policy additionally requires dual human approval.'
         )
 
     return {

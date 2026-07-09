@@ -1,0 +1,98 @@
+agent:
+  slug: invoice-triage-agent
+  description: >-
+    Classifies and routes incoming invoices across internal systems and prepares actions for
+    human approval. Maintains a full audit trail.
+  title: Invoice Triage Agent
+  registry_id: RAI-OPEN-0003
+system_type: tool_using_agent
+autonomy_level: 2
+dimensions:
+  autonomy:
+    score: 2
+    rationale: Human-on-the-loop
+    evidence:
+    - Adopted from the published ARC reference assessment (RAI-OPEN-0003 v1.1, 2026-05-24).
+  decision_scope:
+    score: 2
+    rationale: Domain-level
+    evidence:
+    - Adopted from the published ARC reference assessment (RAI-OPEN-0003 v1.1, 2026-05-24).
+  temporal_coupling:
+    score: 2
+    rationale: Chained workflows
+    evidence:
+    - Adopted from the published ARC reference assessment (RAI-OPEN-0003 v1.1, 2026-05-24).
+  action_authority:
+    score: 2
+    rationale: Create or modify
+    evidence:
+    - Adopted from the published ARC reference assessment (RAI-OPEN-0003 v1.1, 2026-05-24).
+  system_reach:
+    score: 2
+    rationale: Multiple internal
+    evidence:
+    - Adopted from the published ARC reference assessment (RAI-OPEN-0003 v1.1, 2026-05-24).
+  blast_radius:
+    score: 2
+    rationale: Team / department
+    evidence:
+    - Adopted from the published ARC reference assessment (RAI-OPEN-0003 v1.1, 2026-05-24).
+  persistence:
+    score: 2
+    rationale: Session-based
+    evidence:
+    - Adopted from the published ARC reference assessment (RAI-OPEN-0003 v1.1, 2026-05-24).
+  reversibility:
+    score: 2
+    rationale: Partially reversible
+    evidence:
+    - Adopted from the published ARC reference assessment (RAI-OPEN-0003 v1.1, 2026-05-24).
+  control_authority:
+    score: 1
+    rationale: Standalone
+    evidence:
+    - Adopted from the published ARC reference assessment (RAI-OPEN-0003 v1.1, 2026-05-24).
+  data_sensitivity:
+    score: 2
+    rationale: Internal / confidential
+    evidence:
+    - Adopted from the published ARC reference assessment (RAI-OPEN-0003 v1.1, 2026-05-24).
+  aggregation_risk:
+    score: 2
+    rationale: Limited
+    evidence:
+    - Adopted from the published ARC reference assessment (RAI-OPEN-0003 v1.1, 2026-05-24).
+  data_egress_paths:
+    score: 2
+    rationale: Multiple controlled
+    evidence:
+    - Adopted from the published ARC reference assessment (RAI-OPEN-0003 v1.1, 2026-05-24).
+risk_tier: medium
+tier_derivation:
+  profile: tool_using_agent
+  tier_dimensions:
+  - autonomy
+  - action_authority
+  - blast_radius
+  - persistence
+  - reversibility
+  driving_dimensions:
+  - autonomy
+  - action_authority
+  - blast_radius
+  - persistence
+  - reversibility
+  autonomy_level_driven: false
+challenge:
+  flagged: false
+  notes:
+  - >-
+    Adopted seed entry from the RAI ARC reference registry; the published per-dimension tiers
+    are kept verbatim and the published overall tier (Tier 2) reproduces under the tool_using_agent
+    tier-weighting profile. No automated challenger pass was run.
+  iterations: 1
+provenance:
+  submitted_by: RAI-ARC-reference
+  approved_by: '@matt-huang1'
+  timestamp: '2026-07-09T00:00:00+00:00'

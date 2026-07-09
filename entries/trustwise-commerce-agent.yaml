@@ -1,0 +1,105 @@
+agent:
+  slug: trustwise-commerce-agent
+  description: >-
+    Detects buying and payment intent, recommends allowed financial actions, and prepares
+    transactions for human approval. Acts as a trust boundary between consumer AI assistants
+    and payment systems.
+  title: TrustWise Commerce Agent
+  registry_id: RAI-OPEN-0001
+system_type: transaction_commerce_agent
+autonomy_level: 2
+dimensions:
+  autonomy:
+    score: 2
+    rationale: Human-on-the-loop
+    evidence:
+    - Adopted from the published ARC reference assessment (RAI-OPEN-0001 v1.2, 2026-06-02).
+  decision_scope:
+    score: 2
+    rationale: Domain-level
+    evidence:
+    - Adopted from the published ARC reference assessment (RAI-OPEN-0001 v1.2, 2026-06-02).
+  temporal_coupling:
+    score: 2
+    rationale: Chained workflows
+    evidence:
+    - Adopted from the published ARC reference assessment (RAI-OPEN-0001 v1.2, 2026-06-02).
+  action_authority:
+    score: 3
+    rationale: Execute transactions
+    evidence:
+    - Adopted from the published ARC reference assessment (RAI-OPEN-0001 v1.2, 2026-06-02).
+  system_reach:
+    score: 3
+    rationale: Cross-domain / third-party
+    evidence:
+    - Adopted from the published ARC reference assessment (RAI-OPEN-0001 v1.2, 2026-06-02).
+  blast_radius:
+    score: 2
+    rationale: Team / department
+    evidence:
+    - Adopted from the published ARC reference assessment (RAI-OPEN-0001 v1.2, 2026-06-02).
+  persistence:
+    score: 2
+    rationale: Session-based
+    evidence:
+    - Adopted from the published ARC reference assessment (RAI-OPEN-0001 v1.2, 2026-06-02).
+  reversibility:
+    score: 3
+    rationale: Irreversible
+    evidence:
+    - Adopted from the published ARC reference assessment (RAI-OPEN-0001 v1.2, 2026-06-02).
+  control_authority:
+    score: 2
+    rationale: Supervises agents
+    evidence:
+    - Adopted from the published ARC reference assessment (RAI-OPEN-0001 v1.2, 2026-06-02).
+  data_sensitivity:
+    score: 3
+    rationale: Regulated / crown-jewel
+    evidence:
+    - Adopted from the published ARC reference assessment (RAI-OPEN-0001 v1.2, 2026-06-02).
+  aggregation_risk:
+    score: 2
+    rationale: Limited
+    evidence:
+    - Adopted from the published ARC reference assessment (RAI-OPEN-0001 v1.2, 2026-06-02).
+  data_egress_paths:
+    score: 2
+    rationale: Multiple controlled
+    evidence:
+    - Adopted from the published ARC reference assessment (RAI-OPEN-0001 v1.2, 2026-06-02).
+risk_tier: high
+tier_derivation:
+  profile: transaction_commerce_agent
+  tier_dimensions:
+  - autonomy
+  - decision_scope
+  - temporal_coupling
+  - action_authority
+  - system_reach
+  - blast_radius
+  - persistence
+  - reversibility
+  - control_authority
+  - data_sensitivity
+  - aggregation_risk
+  - data_egress_paths
+  driving_dimensions:
+  - action_authority
+  - system_reach
+  - reversibility
+  - data_sensitivity
+  autonomy_level_driven: false
+challenge:
+  flagged: false
+  notes:
+  - >-
+    Adopted seed entry from the RAI ARC reference registry; the published per-dimension tiers
+    are kept verbatim and the published overall tier (Tier 3) reproduces under the transaction_commerce_agent
+    tier-weighting profile. No automated challenger pass was run.
+  iterations: 1
+provenance:
+  submitted_by: RAI-ARC-reference
+  approved_by: '@matt-huang1'
+  timestamp: '2026-07-09T00:00:00+00:00'

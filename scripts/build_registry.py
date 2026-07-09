@@ -21,6 +21,10 @@ Artifacts, all emitted from the same validated data:
     ``window.__GATE_DECISIONS__`` / ``window.__SCENARIO__`` for the Policy Gate web section.
     Decisions are computed here (offline, deterministic — no LLM); the browser only looks
     them up. See docs/adr/0006-*.md.
+  * ``web/data/meta.json`` / ``meta.js`` — the ARC model metadata (verbatim dimension
+    names/groups/tier labels, system types, autonomy levels) plus the per-dimension
+    standards mappings, compiled from schema/dimensions.json and
+    schema/standards_matrix.json onto ``window.__ARC_META__``.
 
 OFFLINE by default. The default command and ``--check`` make NO network calls and need
 no API key: they compile the registry and re-derive examples.js from the committed
@@ -46,7 +50,12 @@ import yaml
 
 # Import from the installed package so this works regardless of cwd.
 from classifier.policy_gate import decide as gate_decide
-from classifier.schema import load_schema, roll_up_risk_tier
+from classifier.schema import (
+    derive_risk_tier,
+    load_dimension_meta,
+    load_schema,
+    load_standards_matrix,
+)
 
 ROOT = Path(__file__).resolve().parent.parent
 ENTRIES_DIR = ROOT / "entries"
@@ -58,6 +67,8 @@ OUTPUT_EXAMPLES_JSON = ROOT / "web" / "data" / "examples.json"
 OUTPUT_EXAMPLES_JS = ROOT / "web" / "data" / "examples.js"
 OUTPUT_POLICY_JSON = ROOT / "web" / "data" / "policy.json"
 OUTPUT_POLICY_JS = ROOT / "web" / "data" / "policy.js"
+OUTPUT_META_JSON = ROOT / "web" / "data" / "meta.json"
+OUTPUT_META_JS = ROOT / "web" / "data" / "meta.js"
 
 # The scripted "cinematic" demo path: an invoice-payment workflow whose steps reference
 # real registry slugs across the tiers, so safe steps pass and the money-movement step
@@ -88,9 +99,12 @@ def _fail(message: str) -> "NoReturn":  # type: ignore[valid-type]
 
 
 def validate_entry(data: dict, label: str) -> None:
-    """Schema-validate an entry and assert its stored tier matches the rollup.
+    """Schema-validate an entry and assert its stored tier AND derivation match the rollup.
 
-    Shared by registry entries and cached examples so both hold to one source of truth.
+    Shared by registry entries and cached examples so both hold to one source of truth:
+    the tier is recomputed over the entry's tier-weighting profile (from its
+    system_type), and the stored tier_derivation must equal what the rollup derives —
+    a hand-edited tier or driver list can never drift from the scores.
     """
     schema = load_schema()
     if not isinstance(data, dict):
@@ -100,12 +114,20 @@ def validate_entry(data: dict, label: str) -> None:
     except jsonschema.ValidationError as exc:
         location = "/".join(str(p) for p in exc.absolute_path) or "<root>"
         _fail(f"{label}: schema validation failed at '{location}': {exc.message}")
-    computed = roll_up_risk_tier(data["dimensions"])
-    if data["risk_tier"] != computed:
+    derivation = derive_risk_tier(
+        data["dimensions"], data.get("system_type"), data.get("autonomy_level")
+    )
+    if data["risk_tier"] != derivation.tier:
         _fail(
             f"{label}: risk_tier '{data['risk_tier']}' does not match the value "
-            f"computed by classifier.schema.roll_up_risk_tier ('{computed}'). "
+            f"computed by classifier.schema.derive_risk_tier ('{derivation.tier}'). "
             f"Fix the tier (or the scores) so there is one source of truth."
+        )
+    if data["tier_derivation"] != derivation.as_dict():
+        _fail(
+            f"{label}: tier_derivation does not match what "
+            f"classifier.schema.derive_risk_tier computes ({derivation.as_dict()}). "
+            f"Regenerate the entry so the recorded driver stays truthful."
         )
 
 
@@ -166,6 +188,41 @@ def render_examples_json(examples: list[dict]) -> str:
 def render_examples_js(examples: list[dict]) -> str:
     """examples.js content: the identical array assigned to ``window.__EXAMPLES__``."""
     return f"window.__EXAMPLES__ = {_canonical_json(examples)};\n"
+
+
+# --------------------------------------------------------------------------- #
+# ARC model metadata (dimension names/groups/tier labels + standards matrix)
+# --------------------------------------------------------------------------- #
+def build_meta_payload() -> dict:
+    """The display metadata bundle, compiled from the committed schema/ data files.
+
+    One source of truth: schema/dimensions.json (verbatim ARC names, groups, tier
+    labels, system types, autonomy levels) and schema/standards_matrix.json (the
+    per-dimension NIST/ISO/EU AI Act/OWASP/MITRE/SR 11-7 mappings). The web view
+    renders this; it never restates any of it inline.
+    """
+    dims = load_dimension_meta()
+    standards = load_standards_matrix()
+    return {
+        "groups": dims["groups"],
+        "dimensions": dims["dimensions"],
+        "risk_tier_defs": dims["risk_tier_defs"],
+        "autonomy_level_defs": dims["autonomy_level_defs"],
+        "system_types": dims["system_types"],
+        "frameworks": standards["frameworks"],
+        "standards_matrix": standards["standards_matrix"],
+    }
+
+
+def render_meta_json(meta: dict) -> str:
+    """Canonical meta.json content."""
+    return json.dumps(meta, indent=2, ensure_ascii=False, sort_keys=True) + "\n"
+
+
+def render_meta_js(meta: dict) -> str:
+    """meta.js content: the same bundle assigned to ``window.__ARC_META__``."""
+    body = json.dumps(meta, indent=2, ensure_ascii=False, sort_keys=True)
+    return f"window.__ARC_META__ = {body};\n"
 
 
 # --------------------------------------------------------------------------- #
@@ -315,6 +372,11 @@ def main(argv: list[str] | None = None) -> int:
     policy_json_text = render_policy_json(policy_payload)
     policy_js_text = render_policy_js(policy_payload)
 
+    # ARC model metadata: dimension names/groups/tier labels + standards mappings.
+    meta_payload = build_meta_payload()
+    meta_json_text = render_meta_json(meta_payload)
+    meta_js_text = render_meta_js(meta_payload)
+
     if rebuild:
         # The ONLY path that touches the network. Rewrite examples.json from live results.
         examples = rebuild_examples_live()
@@ -336,6 +398,8 @@ def main(argv: list[str] | None = None) -> int:
         _check_stale(OUTPUT_JS, js_text)
         _check_stale(OUTPUT_POLICY_JSON, policy_json_text)
         _check_stale(OUTPUT_POLICY_JS, policy_js_text)
+        _check_stale(OUTPUT_META_JSON, meta_json_text)
+        _check_stale(OUTPUT_META_JS, meta_js_text)
         if examples is None:
             _fail(
                 f"{OUTPUT_EXAMPLES_JSON.relative_to(ROOT)} is missing; generate it with "
@@ -346,7 +410,8 @@ def main(argv: list[str] | None = None) -> int:
         print(
             f"OK: {OUTPUT_JSON.relative_to(ROOT)}, {OUTPUT_JS.relative_to(ROOT)}, "
             f"{OUTPUT_EXAMPLES_JSON.relative_to(ROOT)}, {OUTPUT_EXAMPLES_JS.relative_to(ROOT)}, "
-            f"{OUTPUT_POLICY_JSON.relative_to(ROOT)} and {OUTPUT_POLICY_JS.relative_to(ROOT)} "
+            f"{OUTPUT_POLICY_JSON.relative_to(ROOT)}, {OUTPUT_POLICY_JS.relative_to(ROOT)}, "
+            f"{OUTPUT_META_JSON.relative_to(ROOT)} and {OUTPUT_META_JS.relative_to(ROOT)} "
             f"are up to date."
         )
         return 0
@@ -356,7 +421,12 @@ def main(argv: list[str] | None = None) -> int:
     OUTPUT_JS.write_text(js_text, encoding="utf-8")
     OUTPUT_POLICY_JSON.write_text(policy_json_text, encoding="utf-8")
     OUTPUT_POLICY_JS.write_text(policy_js_text, encoding="utf-8")
+    OUTPUT_META_JSON.write_text(meta_json_text, encoding="utf-8")
+    OUTPUT_META_JS.write_text(meta_js_text, encoding="utf-8")
     written = f"{OUTPUT_JSON.relative_to(ROOT)} and {OUTPUT_JS.relative_to(ROOT)} ({len(entries)} entries)"
+    written += (
+        f"; {OUTPUT_META_JSON.relative_to(ROOT)} and {OUTPUT_META_JS.relative_to(ROOT)}"
+    )
     written += (
         f"; {OUTPUT_POLICY_JSON.relative_to(ROOT)} and {OUTPUT_POLICY_JS.relative_to(ROOT)} "
         f"({len(policy_payload['gate_decisions'])} gate decisions)"

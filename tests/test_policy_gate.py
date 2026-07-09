@@ -61,6 +61,15 @@ def test_high_tier_escalates_to_human():
     assert d["policy_rule"] == "high → escalate_to_human"
 
 
+def test_adopted_commerce_entry_still_escalates():
+    """The gate reads the new tiers unchanged: the adopted transaction/commerce seed
+    entry (Tier 3) maps straight to escalate_to_human."""
+    entries = {e["agent"]["slug"]: e for e in build_registry.load_entries()}
+    d = decide(entries["trustwise-commerce-agent"], _policy())
+    assert d["action"] == "escalate_to_human"
+    assert d["tier"] == "high"
+
+
 def test_payments_entry_escalates_and_triggers_money_movement_override():
     """The money-movement high entry both escalates AND trips the capability override."""
     entries = {e["agent"]["slug"]: e for e in build_registry.load_entries()}

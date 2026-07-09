@@ -4,9 +4,13 @@ A prototype **open-source registry that classifies AI agents by risk** with
 defensible, evidence-backed entries rather than self-asserted labels. A model
 *proposes* a score, deterministic checks *decide* wherever a fact can be pinned
 down, and an accountable human *ratifies* the rest — with the depth of human
-scrutiny scaled to the risk tier. The schema here is a placeholder until RAI's
-real 12-dimension model lands. Working name only — this is **not** an official
-RAI artifact.
+scrutiny scaled to the risk tier. Entries are scored against the **ARC
+12-dimension model** (four groups, each dimension tiered 1–3): all 12
+dimensions are always scored, and *which* of them drive the rolled-up tier is
+an explicit per-system-type weighting profile
+([`policy/tier_weighting_profiles.yaml`](policy/tier_weighting_profiles.yaml),
+[ADR-0012](docs/adr/0012-arc-12-dimension-schema-and-tier-weighting-profiles.md)).
+Working name only — this is **not** an official RAI artifact.
 
 ## Quickstart
 
@@ -29,7 +33,8 @@ export LLM_MODEL="gpt-4o-mini"
 
 | Path | Purpose |
 |------|---------|
-| `schema/`     | JSON Schema for a registry entry (placeholder dimensions) |
+| `schema/`     | JSON Schema for a registry entry + verbatim ARC dimension metadata and standards matrix |
+| `policy/`     | Org delegation policy for the runtime gate + per-type tier-weighting profiles |
 | `classifier/` | LangGraph maker/checker classification loop + CLI |
 | `entries/`    | Ratified registry entries, one YAML file per agent |
 | `examples/`   | Plain-text agent descriptions for the demo's cached classifier examples |

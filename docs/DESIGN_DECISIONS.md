@@ -17,3 +17,13 @@ here. If you are unsure whether a decision needs an ADR, err toward writing one.
 | [0009](adr/0009-consistent-active-state-and-record-treatment.md) | Consistent restrained active-state and unified record treatment across tabs | Accepted |
 | [0010](adr/0010-classify-input-as-hero.md) | Classify master column reweighted: free-text input as hero, cached examples as secondary | Accepted |
 | [0011](adr/0011-classify-vertical-flow.md) | Classify uses vertical flow (centered input, full-width result below), not master-detail | Accepted |
+| [0012](adr/0012-arc-12-dimension-schema-and-tier-weighting-profiles.md) | Adopt ARC 12-dimension schema + worst-case-wins; tier-weighting as explicit per-type profiles (scoring vs weighting separated) | Accepted |
+| [0013](adr/0013-money-movement-floor-action-authority.md) | Money-movement floor re-mapped to Action Authority = 3 ("Execute transactions") | Accepted |
+
+## Notes
+
+- Extension of ADR-0009 (unified marker family): each dimension's score in the shared
+  record renderer now carries the tier-toned square marker (same metrics as the `.tier`
+  and `.pg-outcome` marks) plus a bolder verbatim tier label, so the tier reads at least
+  as prominently as the dimension name everywhere a dimension renders. Rebalance only —
+  no new treatment family, so no separate ADR.

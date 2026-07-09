@@ -14,24 +14,47 @@ window.__GATE_DECISIONS__ = {
   "internal-document-summarisation-assistant": {
     "action": "allow",
     "evidence_refs": [
-      "read-only access to the company's internal document store",
-      "draft summaries of internal documents"
+      "draft summaries ... always reviewed by a human before use",
+      "It cannot take any action",
+      "It cannot take any action, call external tools, or modify any record",
+      "produces draft summaries of internal documents"
     ],
     "overrides": [],
     "policy_rule": "low → allow",
-    "reason": "Policy permits low-risk delegations to proceed automatically. Low-risk because: read-only access to the company's internal document store; draft summaries of internal documents.",
+    "reason": "Policy permits low-risk delegations to proceed automatically. Low-risk because: draft summaries ... always reviewed by a human before use; It cannot take any action; It cannot take any action, call external tools, or modify any record; produces draft summaries of internal documents.",
     "slug": "internal-document-summarisation-assistant",
     "tier": "low"
+  },
+  "internal-knowledge-assistant": {
+    "action": "allow",
+    "evidence_refs": [
+      "Adopted from the published ARC reference assessment (RAI-OPEN-0002 v1.0, 2026-05-18)."
+    ],
+    "overrides": [],
+    "policy_rule": "low → allow",
+    "reason": "Policy permits low-risk delegations to proceed automatically. Low-risk because: Adopted from the published ARC reference assessment (RAI-OPEN-0002 v1.0, 2026-05-18)..",
+    "slug": "internal-knowledge-assistant",
+    "tier": "low"
+  },
+  "invoice-triage-agent": {
+    "action": "allow_with_logging",
+    "evidence_refs": [
+      "Adopted from the published ARC reference assessment (RAI-OPEN-0003 v1.1, 2026-05-24)."
+    ],
+    "overrides": [],
+    "policy_rule": "medium → allow_with_logging",
+    "reason": "Policy permits medium-risk delegations but logs them for audit. Medium-risk because: Adopted from the published ARC reference assessment (RAI-OPEN-0003 v1.1, 2026-05-24)..",
+    "slug": "invoice-triage-agent",
+    "tier": "medium"
   },
   "kyc-onboarding-triage-agent": {
     "action": "allow_with_logging",
     "evidence_refs": [
-      "reads sensitive customer personal data (PII)",
-      "identity documents, addresses, and dates of birth"
+      "draft an onboarding risk recommendation for a human compliance officer"
     ],
     "overrides": [],
     "policy_rule": "medium → allow_with_logging",
-    "reason": "Policy permits medium-risk delegations but logs them for audit. Medium-risk because: reads sensitive customer personal data (PII); identity documents, addresses, and dates of birth.",
+    "reason": "Policy permits medium-risk delegations but logs them for audit. Medium-risk because: draft an onboarding risk recommendation for a human compliance officer.",
     "slug": "kyc-onboarding-triage-agent",
     "tier": "medium"
   },
@@ -39,18 +62,31 @@ window.__GATE_DECISIONS__ = {
     "action": "escalate_to_human",
     "evidence_refs": [
       "can initiate payments and transfer funds through bank payment-rail APIs (ACH and wire)",
-      "on behalf of the finance team"
+      "deterministic-rule: money-movement capability detected in description",
+      "through bank payment-rail APIs (ACH and wire)",
+      "bank payment-rail APIs (ACH and wire)"
     ],
     "overrides": [
       {
         "action": "require_dual_approval",
         "capability": "money_movement",
-        "reason": "Money-movement capability detected: delegated_authority is pinned to its floor by the deterministic money-movement rule, and policy requires dual human approval before any funds move."
+        "reason": "Money-movement capability detected: Action Authority is pinned to 3 (\"Execute transactions\") by the deterministic money-movement rule, and policy requires dual human approval before any funds move."
       }
     ],
     "policy_rule": "high → escalate_to_human",
-    "reason": "Policy requires human approval for high-risk delegations. High-risk because: can initiate payments and transfer funds through bank payment-rail APIs (ACH and wire); on behalf of the finance team. Money-movement rule fired: delegated_authority pinned to its floor; policy additionally requires dual human approval.",
+    "reason": "Policy requires human approval for high-risk delegations. High-risk because: can initiate payments and transfer funds through bank payment-rail APIs (ACH and wire); deterministic-rule: money-movement capability detected in description; through bank payment-rail APIs (ACH and wire); bank payment-rail APIs (ACH and wire). Money-movement rule fired: Action Authority pinned to 3 (\"Execute transactions\"); policy additionally requires dual human approval.",
     "slug": "payments-initiation-agent",
+    "tier": "high"
+  },
+  "trustwise-commerce-agent": {
+    "action": "escalate_to_human",
+    "evidence_refs": [
+      "Adopted from the published ARC reference assessment (RAI-OPEN-0001 v1.2, 2026-06-02)."
+    ],
+    "overrides": [],
+    "policy_rule": "high → escalate_to_human",
+    "reason": "Policy requires human approval for high-risk delegations. High-risk because: Adopted from the published ARC reference assessment (RAI-OPEN-0001 v1.2, 2026-06-02)..",
+    "slug": "trustwise-commerce-agent",
     "tier": "high"
   }
 };

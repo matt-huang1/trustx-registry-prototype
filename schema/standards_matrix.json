@@ -1,0 +1,231 @@
+{
+  "source": "Extracted from RAI ARC/AEGIS assets (registry.html + AEGIS v1.1 classification tools). Verbatim strings; do not paraphrase.",
+  "frameworks": [
+    [
+      "nist_ai_rmf",
+      "NIST AI RMF"
+    ],
+    [
+      "iso_42001",
+      "ISO/IEC 42001"
+    ],
+    [
+      "eu_ai_act",
+      "EU AI Act"
+    ],
+    [
+      "owasp_llm",
+      "OWASP LLM Top 10"
+    ],
+    [
+      "mitre_atlas",
+      "MITRE ATLAS"
+    ],
+    [
+      "sr_11_7",
+      "SR 11-7"
+    ]
+  ],
+  "standards_matrix": {
+    "autonomy": {
+      "nist_ai_rmf": [
+        "Govern",
+        "Manage"
+      ],
+      "iso_42001": [
+        "Oversight controls"
+      ],
+      "eu_ai_act": [
+        "Art. 14 human oversight"
+      ],
+      "owasp_llm": [
+        "Excessive agency"
+      ],
+      "sr_11_7": [
+        "Use governance"
+      ]
+    },
+    "decision_scope": {
+      "nist_ai_rmf": [
+        "Map",
+        "Measure"
+      ],
+      "iso_42001": [
+        "Impact assessment"
+      ],
+      "eu_ai_act": [
+        "Scope determination"
+      ],
+      "sr_11_7": [
+        "Model use scope"
+      ]
+    },
+    "temporal_coupling": {
+      "nist_ai_rmf": [
+        "Manage"
+      ],
+      "iso_42001": [
+        "Lifecycle controls"
+      ],
+      "owasp_llm": [
+        "Excessive agency"
+      ],
+      "mitre_atlas": [
+        "Chained TTPs"
+      ],
+      "sr_11_7": [
+        "Ongoing monitoring"
+      ]
+    },
+    "action_authority": {
+      "nist_ai_rmf": [
+        "Manage"
+      ],
+      "iso_42001": [
+        "Operational controls"
+      ],
+      "eu_ai_act": [
+        "High-risk obligations"
+      ],
+      "owasp_llm": [
+        "Insecure output",
+        "Excessive agency"
+      ],
+      "mitre_atlas": [
+        "Execution TTPs"
+      ]
+    },
+    "system_reach": {
+      "nist_ai_rmf": [
+        "Map"
+      ],
+      "iso_42001": [
+        "Supplier & interface controls"
+      ],
+      "owasp_llm": [
+        "Supply chain"
+      ],
+      "mitre_atlas": [
+        "Initial access",
+        "Lateral movement"
+      ]
+    },
+    "blast_radius": {
+      "nist_ai_rmf": [
+        "Map",
+        "Measure"
+      ],
+      "iso_42001": [
+        "Impact assessment"
+      ],
+      "eu_ai_act": [
+        "Annex III classification"
+      ],
+      "mitre_atlas": [
+        "Impact TTPs"
+      ],
+      "sr_11_7": [
+        "Materiality"
+      ]
+    },
+    "persistence": {
+      "nist_ai_rmf": [
+        "Manage"
+      ],
+      "iso_42001": [
+        "Data & lifecycle controls"
+      ],
+      "owasp_llm": [
+        "Sensitive info disclosure"
+      ],
+      "mitre_atlas": [
+        "Persistence TTPs"
+      ]
+    },
+    "reversibility": {
+      "nist_ai_rmf": [
+        "Manage"
+      ],
+      "iso_42001": [
+        "Operational controls"
+      ],
+      "eu_ai_act": [
+        "Art. 12 record-keeping"
+      ],
+      "sr_11_7": [
+        "Validation"
+      ]
+    },
+    "control_authority": {
+      "nist_ai_rmf": [
+        "Govern",
+        "Manage"
+      ],
+      "iso_42001": [
+        "Governance controls"
+      ],
+      "owasp_llm": [
+        "Excessive agency"
+      ],
+      "mitre_atlas": [
+        "Orchestration TTPs"
+      ],
+      "sr_11_7": [
+        "Governance"
+      ]
+    },
+    "data_sensitivity": {
+      "nist_ai_rmf": [
+        "Map",
+        "Measure"
+      ],
+      "iso_42001": [
+        "Data controls"
+      ],
+      "eu_ai_act": [
+        "Art. 10 data governance"
+      ],
+      "owasp_llm": [
+        "Sensitive info disclosure"
+      ],
+      "mitre_atlas": [
+        "Exfiltration TTPs"
+      ],
+      "sr_11_7": [
+        "Data quality"
+      ]
+    },
+    "aggregation_risk": {
+      "nist_ai_rmf": [
+        "Measure"
+      ],
+      "iso_42001": [
+        "Privacy controls"
+      ],
+      "eu_ai_act": [
+        "Data governance"
+      ],
+      "owasp_llm": [
+        "Sensitive info disclosure"
+      ],
+      "mitre_atlas": [
+        "Inference TTPs"
+      ]
+    },
+    "data_egress_paths": {
+      "nist_ai_rmf": [
+        "Manage"
+      ],
+      "iso_42001": [
+        "Interface controls"
+      ],
+      "owasp_llm": [
+        "Insecure output",
+        "Data leakage"
+      ],
+      "mitre_atlas": [
+        "Exfiltration TTPs"
+      ]
+    }
+  }
+}

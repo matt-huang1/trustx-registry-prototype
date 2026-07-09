@@ -87,6 +87,65 @@ async function waitFor(cond, ms = 1000) {
     doc.querySelector("#record .rec-title") !== null,
     "registry tab: detail record rendered"
   );
+
+  // ---- ARC 12-dimension record anatomy (the real model, not the placeholder) ----
+  check(
+    doc.querySelectorAll("#record .dimension").length === 12,
+    "record: all 12 ARC dimensions rendered"
+  );
+  check(
+    doc.querySelectorAll("#record .dim-group").length === 4,
+    "record: dimensions grouped under the four ARC groups"
+  );
+  const groupNames = Array.from(doc.querySelectorAll("#record .dim-group")).map(
+    (h) => h.textContent
+  );
+  check(
+    groupNames[0] === "Autonomy & Decision Power" &&
+      groupNames[3] === "Data Authority & Confidentiality",
+    "record: group headings carry the verbatim ARC group names"
+  );
+  check(
+    doc.querySelector("#record .derivation") !== null &&
+      /Weighting profile/.test(doc.querySelector("#record .derivation").textContent),
+    "record: tier derivation names the weighting profile"
+  );
+  check(
+    doc.querySelectorAll("#record .standards").length === 12 &&
+      /NIST AI RMF/.test(doc.querySelector("#record .standards").textContent),
+    "record: every dimension shows its standards mappings"
+  );
+  // Standards render as discrete framework+refs units inside a wrapping flex
+  // group, so long mapping rows flow onto new lines instead of overflowing.
+  check(
+    Array.from(doc.querySelectorAll("#record .standards")).every(
+      (p) => p.querySelectorAll(".std-item").length >= 1
+    ),
+    "record: standards mappings are discrete wrapping units"
+  );
+  // The tier is the key fact of each dimension block: every score carries the
+  // tier-toned marker and its score--N class (shared with classify + gate).
+  check(
+    doc.querySelectorAll("#record .dimension .score .mark").length === 12 &&
+      Array.from(doc.querySelectorAll("#record .dimension .score")).every((s) =>
+        /score--[123]/.test(s.className)
+      ),
+    "record: every dimension score carries the tier marker + score class"
+  );
+  check(
+    doc.querySelectorAll("#record .rec-chip").length >= 2,
+    "record: system type and autonomy level chips rendered"
+  );
+  check(
+    doc.querySelectorAll("#record .score .pip").length === 12 * 3 &&
+      doc.querySelector("#record .score .figure").textContent.includes("/ 3"),
+    "record: scores render on the 1-3 ARC scale"
+  );
+  // Adopted seed entries appear alongside the archetypes (6 committed entries).
+  check(
+    doc.querySelectorAll("#entryList button.entry").length === 6,
+    "registry tab: archetypes plus adopted seed entries listed"
+  );
   check(
     doc.querySelectorAll("#clsExamples button").length >= 3,
     "classify tab: cached example buttons rendered (even while hidden)"

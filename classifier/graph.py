@@ -25,24 +25,46 @@ from langgraph.graph import END, START, StateGraph
 
 from .provider import LLMProvider
 from .rules import apply_deterministic_rules
-from .schema import DIMENSIONS, roll_up_risk_tier
+from .schema import (
+    DIMENSIONS,
+    SYSTEM_TYPES,
+    load_dimension_meta,
+    roll_up_risk_tier,
+)
 
 MAX_PROPOSER_ITERATIONS = 2
 
-# Short guidance shown to the model for each placeholder dimension.
-_DIMENSION_GUIDANCE = {
-    "autonomy": "How independently the agent acts without human confirmation per step.",
-    "delegated_authority": "The real-world authority/permissions delegated to the agent "
-    "(spend money, sign, change records).",
-    "tool_access": "Breadth and power of tools/APIs the agent can invoke.",
-    "data_exposure": "Sensitivity and volume of data the agent can read or exfiltrate.",
-}
+
+def _dimensions_doc() -> str:
+    """One line per ARC dimension, using the verbatim names, groups, and tier labels."""
+    meta = load_dimension_meta()
+    group_names = dict(meta["groups"])
+    lines = []
+    for dim in meta["dimensions"]:
+        tiers = dim["tiers"]
+        lines.append(
+            f"- {dim['id']} — {dim['name']} ({group_names[dim['group']]}): "
+            f"1 = {tiers['1']}; 2 = {tiers['2']}; 3 = {tiers['3']}."
+        )
+    return "\n".join(lines)
+
+
+def _system_types_doc() -> str:
+    meta = load_dimension_meta()
+    return "\n".join(f"- {k}: {v}" for k, v in meta["system_types"].items())
+
+
+def _autonomy_levels_doc() -> str:
+    meta = load_dimension_meta()
+    return "\n".join(f"- {k}: {v}" for k, v in meta["autonomy_level_defs"].items())
 
 
 class ClassifierState(TypedDict, total=False):
     description: str
     proposal: dict  # {dimension: {score, rationale, evidence}}
     llm_draft: dict  # first raw LLM draft, kept for the audit trail
+    system_type: str | None  # ARC system type proposed by the model (or None)
+    autonomy_level: int | None  # ARC autonomy level 1-3 proposed by the model
     deterministic_notes: list[str]
     challenge_flagged: bool
     challenge_notes: list[str]
@@ -75,20 +97,27 @@ def propose(
     description: str,
     provider: LLMProvider,
     challenge_notes: list[str] | None = None,
-) -> tuple[dict, dict, list[str]]:
+) -> tuple[dict, dict, list[str], str | None, int | None]:
     """Draft a proposal with the LLM, then apply deterministic overrides.
 
-    Returns ``(proposal, llm_draft, deterministic_notes)`` where ``llm_draft`` is the
-    model's raw scores before any deterministic rule fired.
+    Returns ``(proposal, llm_draft, deterministic_notes, system_type,
+    autonomy_level)`` where ``llm_draft`` is the model's raw scores before any
+    deterministic rule fired. ALL 12 ARC dimensions are always scored; which of
+    them drive the tier is the rollup's concern (classifier/schema.py), never
+    the model's.
     """
-    dims_doc = "\n".join(f"- {d}: {_DIMENSION_GUIDANCE[d]}" for d in DIMENSIONS)
     system = (
-        "You classify AI agents by risk. For EACH dimension, output an integer score "
-        "1 (lowest risk) to 5 (highest), a one-line rationale, and an evidence array "
-        "quoting or pointing to the part of the description that justifies it. Only use "
-        "what the description supports; do not invent capabilities. Respond with STRICT "
-        'JSON: {"<dimension>": {"score": int, "rationale": str, '
-        '"evidence": [str]}} and nothing else.'
+        "You classify AI agents against the ARC 12-dimension risk model. For EACH of "
+        "the 12 dimensions, output an integer tier score 1 (Tier 1 Low), 2 (Tier 2 "
+        "Medium), or 3 (Tier 3 High) using the per-dimension tier definitions given, a "
+        "one-line rationale, and an evidence array quoting or pointing to the part of "
+        "the description that justifies it. Score ALL 12 dimensions — never skip one. "
+        "Also classify the system_type (one of the listed ids, or null if none fits) "
+        "and the autonomy_level (1, 2, or 3 per the definitions given). Only use what "
+        "the description supports; do not invent capabilities. Respond with STRICT "
+        'JSON: {"dimensions": {"<dimension_id>": {"score": int, "rationale": str, '
+        '"evidence": [str]}}, "system_type": str | null, "autonomy_level": int} '
+        "and nothing else."
     )
     feedback = ""
     if challenge_notes:
@@ -96,23 +125,41 @@ def propose(
             "\n\nA reviewer challenged your previous draft. Address these and re-score:\n"
             + "\n".join(f"- {n}" for n in challenge_notes)
         )
-    user = f"Dimensions:\n{dims_doc}\n\nAgent description:\n{description}{feedback}"
+    user = (
+        f"Dimensions (id — name (group): tier definitions):\n{_dimensions_doc()}\n\n"
+        f"System types:\n{_system_types_doc()}\n\n"
+        f"Autonomy levels:\n{_autonomy_levels_doc()}\n\n"
+        f"Agent description:\n{description}{feedback}"
+    )
 
     raw = provider.complete(system, user)
     llm_draft = _extract_json(raw)
 
-    # Normalise: ensure every dimension is present with a sane shape.
+    # Tolerate both the nested shape requested above and a flat {dim: {...}} map.
+    dims_payload = llm_draft.get("dimensions") or {
+        k: v for k, v in llm_draft.items() if k in DIMENSIONS
+    }
+
+    # Normalise: ensure every dimension is present with a sane shape, scores in 1..3.
     normalised: dict = {}
     for dim in DIMENSIONS:
-        payload = llm_draft.get(dim, {}) or {}
+        payload = dims_payload.get(dim, {}) or {}
         normalised[dim] = {
-            "score": int(payload.get("score", 1)),
+            "score": max(1, min(3, int(payload.get("score", 1)))),
             "rationale": str(payload.get("rationale", "")),
             "evidence": list(payload.get("evidence", []) or []),
         }
 
+    system_type = llm_draft.get("system_type")
+    system_type = str(system_type) if system_type in SYSTEM_TYPES else None
+    autonomy_level_raw = llm_draft.get("autonomy_level")
+    try:
+        autonomy_level: int | None = max(1, min(3, int(autonomy_level_raw)))
+    except (TypeError, ValueError):
+        autonomy_level = None
+
     result = apply_deterministic_rules(description, normalised)
-    return result.proposal, normalised, result.notes
+    return result.proposal, normalised, result.notes, system_type, autonomy_level
 
 
 def challenge(
@@ -120,13 +167,15 @@ def challenge(
 ) -> tuple[bool, list[str]]:
     """Red-team a proposal; return ``(flagged, notes)``."""
     system = (
-        "You are a skeptical reviewer. Given an agent description and a proposed risk "
-        "scoring, flag ANY dimension whose score is not supported by the description "
-        "(too high or too low). Respond with STRICT JSON: "
+        "You are a skeptical reviewer. Given an agent description and a proposed "
+        "scoring against the ARC 12-dimension risk model (each dimension tiered 1/2/3 "
+        "per the definitions given), flag ANY dimension whose score is not supported "
+        "by the description (too high or too low). Respond with STRICT JSON: "
         '{"flagged": bool, "notes": [str]} and nothing else. If everything is well '
         "supported, return flagged=false with an empty notes array."
     )
     user = (
+        f"Dimensions (id — name (group): tier definitions):\n{_dimensions_doc()}\n\n"
         f"Agent description:\n{description}\n\nProposed scoring:\n"
         f"{json.dumps(proposal, indent=2)}"
     )
@@ -150,9 +199,11 @@ def cli_human_gate(state: ClassifierState) -> dict:
     print("\n" + "=" * 70)
     print("PROPOSED RISK SCORING")
     print("=" * 70)
+    print(f"\n  system_type: {state.get('system_type') or '(none)'}")
+    print(f"  autonomy_level: {state.get('autonomy_level') or '(none)'}")
     for dim in DIMENSIONS:
         d = state["proposal"][dim]
-        print(f"\n  {dim}: {d['score']}/5")
+        print(f"\n  {dim}: {d['score']}/3")
         print(f"    rationale: {d['rationale']}")
         for ev in d["evidence"]:
             print(f"    evidence:  {ev}")
@@ -182,7 +233,7 @@ def cli_human_gate(state: ClassifierState) -> dict:
                 cur = proposal[dim]["score"]
                 raw = input(f"  {dim} score [{cur}]: ").strip()
                 if raw:
-                    proposal[dim]["score"] = max(1, min(5, int(raw)))
+                    proposal[dim]["score"] = max(1, min(3, int(raw)))
                     proposal[dim]["evidence"].append(
                         "human-edit: score adjusted by operator"
                     )
@@ -191,7 +242,9 @@ def cli_human_gate(state: ClassifierState) -> dict:
                 "decision": "edit",
                 "approved_by": who,
                 "proposal": proposal,
-                "risk_tier": roll_up_risk_tier(proposal),
+                "risk_tier": roll_up_risk_tier(
+                    proposal, state.get("system_type"), state.get("autonomy_level")
+                ),
             }
         if choice in {"r", "reject"}:
             who = input("Rejector name/id: ").strip() or "unknown"
@@ -209,13 +262,15 @@ def build_graph(
     """Compile the maker/checker graph with an injected provider and human gate."""
 
     def proposer_node(state: ClassifierState) -> dict:
-        proposal, llm_draft, det_notes = propose(
+        proposal, llm_draft, det_notes, system_type, autonomy_level = propose(
             state["description"], provider, state.get("challenge_notes")
         )
         update: dict = {
             "proposal": proposal,
             "deterministic_notes": det_notes,
-            "risk_tier": roll_up_risk_tier(proposal),
+            "system_type": system_type,
+            "autonomy_level": autonomy_level,
+            "risk_tier": roll_up_risk_tier(proposal, system_type, autonomy_level),
             "iterations": state.get("iterations", 0) + 1,
         }
         if "llm_draft" not in state:  # keep the very first raw draft for provenance

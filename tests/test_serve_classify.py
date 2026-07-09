@@ -13,7 +13,8 @@ import json
 from pathlib import Path
 
 from classifier.provider import LLMProvider
-from classifier.rules import MONEY_MOVEMENT_FLOOR
+from classifier.rules import MONEY_MOVEMENT_DIMENSION, MONEY_MOVEMENT_FLOOR
+from tests.conftest import make_draft
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -37,16 +38,8 @@ class FakeProvider:
         return self._proposer
 
 
-LOWBALL_DRAFT = {
-    "autonomy": {"score": 2, "rationale": "acts with confirmation", "evidence": ["desc"]},
-    "delegated_authority": {
-        "score": 1,
-        "rationale": "no authority",
-        "evidence": ["desc"],
-    },
-    "tool_access": {"score": 2, "rationale": "few tools", "evidence": ["desc"]},
-    "data_exposure": {"score": 2, "rationale": "limited data", "evidence": ["desc"]},
-}
+# A draft where the LLM deliberately UNDER-scores action_authority to 1.
+LOWBALL_DRAFT = make_draft(action_authority=1)
 NO_FLAGS = {"flagged": False, "notes": []}
 
 
@@ -60,9 +53,11 @@ def test_money_movement_floor_holds_on_the_live_path():
         "An agent that will initiate payment to suppliers over ACH.", provider
     )
     entry = payload["entry"]
-    # Deterministic floor applies to unseen input even though the LLM lowballed to 1.
-    assert entry["dimensions"]["delegated_authority"]["score"] >= MONEY_MOVEMENT_FLOOR
+    # Deterministic floor applies to unseen input even though the LLM lowballed to 1:
+    # Action Authority is pinned to 3 ("Execute transactions") -> Tier 3 (high).
+    assert entry["dimensions"][MONEY_MOVEMENT_DIMENSION]["score"] >= MONEY_MOVEMENT_FLOOR
     assert entry["risk_tier"] == "high"
+    assert MONEY_MOVEMENT_DIMENSION in entry["tier_derivation"]["driving_dimensions"]
     assert payload[
         "deterministic_notes"
     ], "the override should be reported for the banner"

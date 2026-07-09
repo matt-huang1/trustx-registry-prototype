@@ -2,14 +2,20 @@
 
 ## What this is
 A prototype open-source registry that classifies AI agents by risk with
-defensible, evidence-backed entries (not self-asserted labels). Placeholder
-schema until RAI's real 12-dimension model lands. Working name only — do NOT
-use "ROAR" or imply official RAI status anywhere.
+defensible, evidence-backed entries (not self-asserted labels). Entries are
+scored against the real ARC 12-dimension model (4 groups, dimensions tiered
+1/2/3; the verbatim strings live in schema/dimensions.json — never paraphrase
+them). Working name only — do NOT use "ROAR" or imply official RAI status
+anywhere.
 
 ## Core principle (encode this, don't just cite it)
 The model proposes; deterministic checks decide wherever a fact can be pinned
 down; an accountable human owns the rest — and how much human scrutiny applies
 scales with the risk tier. Never let an LLM silently finalise a risk score.
+Scoring and tier weighting are separate: ALL 12 dimensions are always scored;
+WHICH of them drive the tier is a per-system-type profile in
+policy/tier_weighting_profiles.yaml (data, not code), recorded on every entry
+as tier_derivation. See ADR-0012/0013.
 
 ## Commands
 - Install:  pip install -e ".[dev]"

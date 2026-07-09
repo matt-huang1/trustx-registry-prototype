@@ -1,0 +1,98 @@
+agent:
+  slug: internal-knowledge-assistant
+  description: >-
+    Read-only question-answering assistant over public and approved internal reference material.
+    Advisory only; takes no actions.
+  title: Internal Knowledge Assistant
+  registry_id: RAI-OPEN-0002
+system_type: knowledge_assistant
+autonomy_level: 1
+dimensions:
+  autonomy:
+    score: 1
+    rationale: Human-in-the-loop
+    evidence:
+    - Adopted from the published ARC reference assessment (RAI-OPEN-0002 v1.0, 2026-05-18).
+  decision_scope:
+    score: 1
+    rationale: Local decisions
+    evidence:
+    - Adopted from the published ARC reference assessment (RAI-OPEN-0002 v1.0, 2026-05-18).
+  temporal_coupling:
+    score: 1
+    rationale: Isolated actions
+    evidence:
+    - Adopted from the published ARC reference assessment (RAI-OPEN-0002 v1.0, 2026-05-18).
+  action_authority:
+    score: 1
+    rationale: Read-only / advisory
+    evidence:
+    - Adopted from the published ARC reference assessment (RAI-OPEN-0002 v1.0, 2026-05-18).
+  system_reach:
+    score: 1
+    rationale: Single system
+    evidence:
+    - Adopted from the published ARC reference assessment (RAI-OPEN-0002 v1.0, 2026-05-18).
+  blast_radius:
+    score: 1
+    rationale: Single user
+    evidence:
+    - Adopted from the published ARC reference assessment (RAI-OPEN-0002 v1.0, 2026-05-18).
+  persistence:
+    score: 1
+    rationale: Stateless
+    evidence:
+    - Adopted from the published ARC reference assessment (RAI-OPEN-0002 v1.0, 2026-05-18).
+  reversibility:
+    score: 1
+    rationale: Fully reversible
+    evidence:
+    - Adopted from the published ARC reference assessment (RAI-OPEN-0002 v1.0, 2026-05-18).
+  control_authority:
+    score: 1
+    rationale: Standalone
+    evidence:
+    - Adopted from the published ARC reference assessment (RAI-OPEN-0002 v1.0, 2026-05-18).
+  data_sensitivity:
+    score: 1
+    rationale: Public / non-sensitive
+    evidence:
+    - Adopted from the published ARC reference assessment (RAI-OPEN-0002 v1.0, 2026-05-18).
+  aggregation_risk:
+    score: 1
+    rationale: No aggregation
+    evidence:
+    - Adopted from the published ARC reference assessment (RAI-OPEN-0002 v1.0, 2026-05-18).
+  data_egress_paths:
+    score: 1
+    rationale: Constrained outputs
+    evidence:
+    - Adopted from the published ARC reference assessment (RAI-OPEN-0002 v1.0, 2026-05-18).
+risk_tier: low
+tier_derivation:
+  profile: knowledge_assistant
+  tier_dimensions:
+  - autonomy
+  - action_authority
+  - blast_radius
+  - persistence
+  - reversibility
+  driving_dimensions:
+  - autonomy
+  - action_authority
+  - blast_radius
+  - persistence
+  - reversibility
+  autonomy_level_driven: false
+challenge:
+  flagged: false
+  notes:
+  - >-
+    Adopted seed entry from the RAI ARC reference registry; the published per-dimension tiers
+    are kept verbatim and the published overall tier (Tier 1) reproduces under the knowledge_assistant
+    tier-weighting profile. No automated challenger pass was run.
+  iterations: 1
+provenance:
+  submitted_by: RAI-ARC-reference
+  approved_by: '@matt-huang1'
+  timestamp: '2026-07-09T00:00:00+00:00'

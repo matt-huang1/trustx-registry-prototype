@@ -1,0 +1,164 @@
+{
+  "source": "Extracted from RAI ARC/AEGIS assets (registry.html + AEGIS v1.1 classification tools). Verbatim strings; do not paraphrase.",
+  "scale": "Each dimension scored 1/2/3 (Tier 1 Low / Tier 2 Medium / Tier 3 High).",
+  "groups": [
+    [
+      "autonomy_decision_power",
+      "Autonomy & Decision Power"
+    ],
+    [
+      "action_authority_reach",
+      "Action Authority & Reach"
+    ],
+    [
+      "persistence_control",
+      "Persistence & Control"
+    ],
+    [
+      "data_authority_confidentiality",
+      "Data Authority & Confidentiality"
+    ]
+  ],
+  "dimensions": [
+    {
+      "id": "autonomy",
+      "name": "Autonomy",
+      "group": "autonomy_decision_power",
+      "tiers": {
+        "1": "Human-in-the-loop",
+        "2": "Human-on-the-loop",
+        "3": "Fully autonomous"
+      }
+    },
+    {
+      "id": "decision_scope",
+      "name": "Decision Scope",
+      "group": "autonomy_decision_power",
+      "tiers": {
+        "1": "Local decisions",
+        "2": "Domain-level",
+        "3": "Enterprise-wide"
+      }
+    },
+    {
+      "id": "temporal_coupling",
+      "name": "Temporal Coupling",
+      "group": "autonomy_decision_power",
+      "tiers": {
+        "1": "Isolated actions",
+        "2": "Chained workflows",
+        "3": "Continuous loops"
+      }
+    },
+    {
+      "id": "action_authority",
+      "name": "Action Authority",
+      "group": "action_authority_reach",
+      "tiers": {
+        "1": "Read-only / advisory",
+        "2": "Create or modify",
+        "3": "Execute transactions"
+      }
+    },
+    {
+      "id": "system_reach",
+      "name": "System Reach",
+      "group": "action_authority_reach",
+      "tiers": {
+        "1": "Single system",
+        "2": "Multiple internal",
+        "3": "Cross-domain / third-party"
+      }
+    },
+    {
+      "id": "blast_radius",
+      "name": "Blast Radius",
+      "group": "action_authority_reach",
+      "tiers": {
+        "1": "Single user",
+        "2": "Team / department",
+        "3": "Enterprise / public"
+      }
+    },
+    {
+      "id": "persistence",
+      "name": "Persistence",
+      "group": "persistence_control",
+      "tiers": {
+        "1": "Stateless",
+        "2": "Session-based",
+        "3": "Long-term memory"
+      }
+    },
+    {
+      "id": "reversibility",
+      "name": "Reversibility",
+      "group": "persistence_control",
+      "tiers": {
+        "1": "Fully reversible",
+        "2": "Partially reversible",
+        "3": "Irreversible"
+      }
+    },
+    {
+      "id": "control_authority",
+      "name": "Control Authority",
+      "group": "persistence_control",
+      "tiers": {
+        "1": "Standalone",
+        "2": "Supervises agents",
+        "3": "Orchestrates fleets"
+      }
+    },
+    {
+      "id": "data_sensitivity",
+      "name": "Data Sensitivity",
+      "group": "data_authority_confidentiality",
+      "tiers": {
+        "1": "Public / non-sensitive",
+        "2": "Internal / confidential",
+        "3": "Regulated / crown-jewel"
+      }
+    },
+    {
+      "id": "aggregation_risk",
+      "name": "Aggregation Risk",
+      "group": "data_authority_confidentiality",
+      "tiers": {
+        "1": "No aggregation",
+        "2": "Limited",
+        "3": "Cross-session / inferential"
+      }
+    },
+    {
+      "id": "data_egress_paths",
+      "name": "Data Egress Paths",
+      "group": "data_authority_confidentiality",
+      "tiers": {
+        "1": "Constrained outputs",
+        "2": "Multiple controlled",
+        "3": "External egress"
+      }
+    }
+  ],
+  "risk_tier_defs": {
+    "1": "Tier 1 — Low. All twelve dimensions at baseline. Standard documentation and acceptable-use controls.",
+    "2": "Tier 2 — Medium. Elevated dimensions but none at the highest level. Enhanced oversight, documented controls, periodic review.",
+    "3": "Tier 3 — High. At least one dimension at its highest level (worst-case-wins). Comprehensive governance: executive approval, real-time monitoring, kill-switch capability, pre-deployment testing."
+  },
+  "autonomy_level_defs": {
+    "1": "Level 1 — Human-in-the-loop. A human reviews and approves each consequential action before it executes.",
+    "2": "Level 2 — Human-on-the-loop. The system acts within set bounds while a human monitors and can intervene or roll back.",
+    "3": "Level 3 — Fully autonomous. Plans and executes without per-action review; oversight is by monitoring, audit, and shutdown controls."
+  },
+  "system_types": {
+    "knowledge_assistant": "Knowledge assistant",
+    "code_content_generator": "Code / content generator",
+    "decision_support_system": "Decision support",
+    "tool_using_agent": "Tool-using agent",
+    "transaction_commerce_agent": "Transaction / commerce agent",
+    "autonomous_agent": "Autonomous agent",
+    "embedded_physical_ai": "Embedded / physical AI"
+  },
+  "rollup_rule_stated": "worst-case-wins: any dimension at 3 -> Tier 3; else max 2 or average >= 1.5 -> Tier 2; else Tier 1."
+}

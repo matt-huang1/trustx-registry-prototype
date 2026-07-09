@@ -16,15 +16,20 @@ import re
 from dataclasses import dataclass
 from typing import MutableMapping
 
-# Capabilities that, if present in the description, imply the agent can move money and
-# therefore wields real delegated authority regardless of how the LLM scored it.
+# Capabilities that, if present in the description, imply the agent can move money —
+# in ARC terms it can "Execute transactions" — regardless of how the LLM scored it.
 MONEY_MOVEMENT_PATTERNS: tuple[str, ...] = (
     r"initiate\s+payment",
     r"transfer\s+funds",
     r"\bACH\b",
 )
 
-MONEY_MOVEMENT_FLOOR = 4  # delegated_authority must be at least this if money moves.
+# Moving money IS executing transactions: Action Authority tier 3 by definition
+# ("Execute transactions"). Under worst-case-wins this alone yields Tier 3 (high)
+# for every committed tier-weighting profile, since action_authority is in all of
+# them. See docs/adr/0013-*.md.
+MONEY_MOVEMENT_DIMENSION = "action_authority"
+MONEY_MOVEMENT_FLOOR = 3  # action_authority must be at least this if money moves.
 
 
 @dataclass(frozen=True)
@@ -72,21 +77,23 @@ def apply_deterministic_rules(description: str, proposal: MutableMapping) -> Rul
     }
     notes: list[str] = []
 
-    # RULE: money-movement capability forces delegated_authority >= MONEY_MOVEMENT_FLOOR.
+    # RULE: money-movement capability forces action_authority >= MONEY_MOVEMENT_FLOOR
+    # (= 3, "Execute transactions") — worst-case-wins then yields Tier 3 (high).
     if _mentions_money_movement(description):
-        da = updated.get("delegated_authority")
-        if da is not None:
-            llm_score = da["score"]
+        aa = updated.get(MONEY_MOVEMENT_DIMENSION)
+        if aa is not None:
+            llm_score = aa["score"]
             if llm_score < MONEY_MOVEMENT_FLOOR:
-                da["score"] = MONEY_MOVEMENT_FLOOR
-                da["evidence"].append(
+                aa["score"] = MONEY_MOVEMENT_FLOOR
+                aa["evidence"].append(
                     "deterministic-rule: money-movement capability detected in description"
                 )
                 notes.append(
                     "Deterministic override: description implies money movement "
-                    f"(initiate payment / transfer funds / ACH); the LLM scored "
-                    f"delegated_authority={llm_score} but it was forced to "
-                    f">= {MONEY_MOVEMENT_FLOOR}."
+                    f"(initiate payment / transfer funds / ACH), which is executing "
+                    f"transactions; the LLM scored action_authority={llm_score} but it "
+                    f'was forced to {MONEY_MOVEMENT_FLOOR} ("Execute transactions"). '
+                    f"Under worst-case-wins this yields Tier 3 (high)."
                 )
 
     return RuleResult(proposal=updated, notes=notes, fired=bool(notes))

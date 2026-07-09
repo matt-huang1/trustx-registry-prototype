@@ -1,0 +1,884 @@
+{
+  "source": "Extracted from RAI ARC/AEGIS assets (registry.html + AEGIS v1.1 classification tools). Verbatim strings; do not paraphrase.",
+  "scale": "Each dimension scored 1/2/3 (Tier 1 Low / Tier 2 Medium / Tier 3 High).",
+  "groups": [
+    [
+      "autonomy_decision_power",
+      "Autonomy & Decision Power"
+    ],
+    [
+      "action_authority_reach",
+      "Action Authority & Reach"
+    ],
+    [
+      "persistence_control",
+      "Persistence & Control"
+    ],
+    [
+      "data_authority_confidentiality",
+      "Data Authority & Confidentiality"
+    ]
+  ],
+  "dimensions": [
+    {
+      "id": "autonomy",
+      "name": "Autonomy",
+      "group": "autonomy_decision_power",
+      "tiers": {
+        "1": "Human-in-the-loop",
+        "2": "Human-on-the-loop",
+        "3": "Fully autonomous"
+      }
+    },
+    {
+      "id": "decision_scope",
+      "name": "Decision Scope",
+      "group": "autonomy_decision_power",
+      "tiers": {
+        "1": "Local decisions",
+        "2": "Domain-level",
+        "3": "Enterprise-wide"
+      }
+    },
+    {
+      "id": "temporal_coupling",
+      "name": "Temporal Coupling",
+      "group": "autonomy_decision_power",
+      "tiers": {
+        "1": "Isolated actions",
+        "2": "Chained workflows",
+        "3": "Continuous loops"
+      }
+    },
+    {
+      "id": "action_authority",
+      "name": "Action Authority",
+      "group": "action_authority_reach",
+      "tiers": {
+        "1": "Read-only / advisory",
+        "2": "Create or modify",
+        "3": "Execute transactions"
+      }
+    },
+    {
+      "id": "system_reach",
+      "name": "System Reach",
+      "group": "action_authority_reach",
+      "tiers": {
+        "1": "Single system",
+        "2": "Multiple internal",
+        "3": "Cross-domain / third-party"
+      }
+    },
+    {
+      "id": "blast_radius",
+      "name": "Blast Radius",
+      "group": "action_authority_reach",
+      "tiers": {
+        "1": "Single user",
+        "2": "Team / department",
+        "3": "Enterprise / public"
+      }
+    },
+    {
+      "id": "persistence",
+      "name": "Persistence",
+      "group": "persistence_control",
+      "tiers": {
+        "1": "Stateless",
+        "2": "Session-based",
+        "3": "Long-term memory"
+      }
+    },
+    {
+      "id": "reversibility",
+      "name": "Reversibility",
+      "group": "persistence_control",
+      "tiers": {
+        "1": "Fully reversible",
+        "2": "Partially reversible",
+        "3": "Irreversible"
+      }
+    },
+    {
+      "id": "control_authority",
+      "name": "Control Authority",
+      "group": "persistence_control",
+      "tiers": {
+        "1": "Standalone",
+        "2": "Supervises agents",
+        "3": "Orchestrates fleets"
+      }
+    },
+    {
+      "id": "data_sensitivity",
+      "name": "Data Sensitivity",
+      "group": "data_authority_confidentiality",
+      "tiers": {
+        "1": "Public / non-sensitive",
+        "2": "Internal / confidential",
+        "3": "Regulated / crown-jewel"
+      }
+    },
+    {
+      "id": "aggregation_risk",
+      "name": "Aggregation Risk",
+      "group": "data_authority_confidentiality",
+      "tiers": {
+        "1": "No aggregation",
+        "2": "Limited",
+        "3": "Cross-session / inferential"
+      }
+    },
+    {
+      "id": "data_egress_paths",
+      "name": "Data Egress Paths",
+      "group": "data_authority_confidentiality",
+      "tiers": {
+        "1": "Constrained outputs",
+        "2": "Multiple controlled",
+        "3": "External egress"
+      }
+    }
+  ],
+  "risk_tier_defs": {
+    "1": "Tier 1 \u2014 Low. All twelve dimensions at baseline. Standard documentation and acceptable-use controls.",
+    "2": "Tier 2 \u2014 Medium. Elevated dimensions but none at the highest level. Enhanced oversight, documented controls, periodic review.",
+    "3": "Tier 3 \u2014 High. At least one dimension at its highest level (worst-case-wins). Comprehensive governance: executive approval, real-time monitoring, kill-switch capability, pre-deployment testing."
+  },
+  "autonomy_level_defs": {
+    "1": "Level 1 \u2014 Human-in-the-loop. A human reviews and approves each consequential action before it executes.",
+    "2": "Level 2 \u2014 Human-on-the-loop. The system acts within set bounds while a human monitors and can intervene or roll back.",
+    "3": "Level 3 \u2014 Fully autonomous. Plans and executes without per-action review; oversight is by monitoring, audit, and shutdown controls."
+  },
+  "frameworks": [
+    [
+      "nist_ai_rmf",
+      "NIST AI RMF"
+    ],
+    [
+      "iso_42001",
+      "ISO/IEC 42001"
+    ],
+    [
+      "eu_ai_act",
+      "EU AI Act"
+    ],
+    [
+      "owasp_llm",
+      "OWASP LLM Top 10"
+    ],
+    [
+      "mitre_atlas",
+      "MITRE ATLAS"
+    ],
+    [
+      "sr_11_7",
+      "SR 11-7"
+    ]
+  ],
+  "standards_matrix": {
+    "autonomy": {
+      "nist_ai_rmf": [
+        "Govern",
+        "Manage"
+      ],
+      "iso_42001": [
+        "Oversight controls"
+      ],
+      "eu_ai_act": [
+        "Art. 14 human oversight"
+      ],
+      "owasp_llm": [
+        "Excessive agency"
+      ],
+      "sr_11_7": [
+        "Use governance"
+      ]
+    },
+    "decision_scope": {
+      "nist_ai_rmf": [
+        "Map",
+        "Measure"
+      ],
+      "iso_42001": [
+        "Impact assessment"
+      ],
+      "eu_ai_act": [
+        "Scope determination"
+      ],
+      "sr_11_7": [
+        "Model use scope"
+      ]
+    },
+    "temporal_coupling": {
+      "nist_ai_rmf": [
+        "Manage"
+      ],
+      "iso_42001": [
+        "Lifecycle controls"
+      ],
+      "owasp_llm": [
+        "Excessive agency"
+      ],
+      "mitre_atlas": [
+        "Chained TTPs"
+      ],
+      "sr_11_7": [
+        "Ongoing monitoring"
+      ]
+    },
+    "action_authority": {
+      "nist_ai_rmf": [
+        "Manage"
+      ],
+      "iso_42001": [
+        "Operational controls"
+      ],
+      "eu_ai_act": [
+        "High-risk obligations"
+      ],
+      "owasp_llm": [
+        "Insecure output",
+        "Excessive agency"
+      ],
+      "mitre_atlas": [
+        "Execution TTPs"
+      ]
+    },
+    "system_reach": {
+      "nist_ai_rmf": [
+        "Map"
+      ],
+      "iso_42001": [
+        "Supplier & interface controls"
+      ],
+      "owasp_llm": [
+        "Supply chain"
+      ],
+      "mitre_atlas": [
+        "Initial access",
+        "Lateral movement"
+      ]
+    },
+    "blast_radius": {
+      "nist_ai_rmf": [
+        "Map",
+        "Measure"
+      ],
+      "iso_42001": [
+        "Impact assessment"
+      ],
+      "eu_ai_act": [
+        "Annex III classification"
+      ],
+      "mitre_atlas": [
+        "Impact TTPs"
+      ],
+      "sr_11_7": [
+        "Materiality"
+      ]
+    },
+    "persistence": {
+      "nist_ai_rmf": [
+        "Manage"
+      ],
+      "iso_42001": [
+        "Data & lifecycle controls"
+      ],
+      "owasp_llm": [
+        "Sensitive info disclosure"
+      ],
+      "mitre_atlas": [
+        "Persistence TTPs"
+      ]
+    },
+    "reversibility": {
+      "nist_ai_rmf": [
+        "Manage"
+      ],
+      "iso_42001": [
+        "Operational controls"
+      ],
+      "eu_ai_act": [
+        "Art. 12 record-keeping"
+      ],
+      "sr_11_7": [
+        "Validation"
+      ]
+    },
+    "control_authority": {
+      "nist_ai_rmf": [
+        "Govern",
+        "Manage"
+      ],
+      "iso_42001": [
+        "Governance controls"
+      ],
+      "owasp_llm": [
+        "Excessive agency"
+      ],
+      "mitre_atlas": [
+        "Orchestration TTPs"
+      ],
+      "sr_11_7": [
+        "Governance"
+      ]
+    },
+    "data_sensitivity": {
+      "nist_ai_rmf": [
+        "Map",
+        "Measure"
+      ],
+      "iso_42001": [
+        "Data controls"
+      ],
+      "eu_ai_act": [
+        "Art. 10 data governance"
+      ],
+      "owasp_llm": [
+        "Sensitive info disclosure"
+      ],
+      "mitre_atlas": [
+        "Exfiltration TTPs"
+      ],
+      "sr_11_7": [
+        "Data quality"
+      ]
+    },
+    "aggregation_risk": {
+      "nist_ai_rmf": [
+        "Measure"
+      ],
+      "iso_42001": [
+        "Privacy controls"
+      ],
+      "eu_ai_act": [
+        "Data governance"
+      ],
+      "owasp_llm": [
+        "Sensitive info disclosure"
+      ],
+      "mitre_atlas": [
+        "Inference TTPs"
+      ]
+    },
+    "data_egress_paths": {
+      "nist_ai_rmf": [
+        "Manage"
+      ],
+      "iso_42001": [
+        "Interface controls"
+      ],
+      "owasp_llm": [
+        "Insecure output",
+        "Data leakage"
+      ],
+      "mitre_atlas": [
+        "Exfiltration TTPs"
+      ]
+    }
+  },
+  "system_types": {
+    "knowledge_assistant": "Knowledge assistant",
+    "code_content_generator": "Code / content generator",
+    "decision_support_system": "Decision support",
+    "tool_using_agent": "Tool-using agent",
+    "transaction_commerce_agent": "Transaction / commerce agent",
+    "autonomous_agent": "Autonomous agent",
+    "embedded_physical_ai": "Embedded / physical AI"
+  },
+  "rollup_rule_stated": "worst-case-wins: any dimension at 3 -> Tier 3; else max 2 or average >= 1.5 -> Tier 2; else Tier 1.",
+  "tier_weighting_profiles": {
+    "_note": "tier_dimensions = which dimensions drive the tier for this system_type (worst-case-wins over them). Derived from AEGIS v1.1 tool formulas. 'recommended_default' is the profile Matthew argues for.",
+    "knowledge_assistant": {
+      "tier_dimensions": [
+        "autonomy",
+        "action_authority",
+        "blast_radius",
+        "persistence",
+        "reversibility"
+      ],
+      "use_autonomy_level": false
+    },
+    "autonomous_agent": {
+      "tier_dimensions": [
+        "autonomy",
+        "action_authority",
+        "blast_radius",
+        "persistence",
+        "reversibility"
+      ],
+      "use_autonomy_level": false
+    },
+    "tool_using_agent": {
+      "tier_dimensions": [
+        "autonomy",
+        "action_authority",
+        "blast_radius",
+        "persistence",
+        "reversibility"
+      ],
+      "use_autonomy_level": false
+    },
+    "coding_assistant": {
+      "tier_dimensions": [
+        "autonomy",
+        "action_authority",
+        "blast_radius",
+        "persistence",
+        "reversibility"
+      ],
+      "use_autonomy_level": false
+    },
+    "decision_support_system": {
+      "tier_dimensions": [
+        "autonomy",
+        "action_authority",
+        "blast_radius",
+        "persistence",
+        "reversibility"
+      ],
+      "use_autonomy_level": false
+    },
+    "embedded_physical_ai": {
+      "tier_dimensions": [
+        "autonomy",
+        "action_authority",
+        "blast_radius",
+        "persistence",
+        "reversibility"
+      ],
+      "use_autonomy_level": false
+    },
+    "transaction_commerce_agent": {
+      "tier_dimensions": [
+        "autonomy",
+        "decision_scope",
+        "temporal_coupling",
+        "action_authority",
+        "system_reach",
+        "blast_radius",
+        "persistence",
+        "reversibility",
+        "control_authority",
+        "data_sensitivity",
+        "aggregation_risk",
+        "data_egress_paths"
+      ],
+      "use_autonomy_level": true
+    },
+    "recommended_default": {
+      "tier_dimensions": "ALL_12",
+      "use_autonomy_level": false,
+      "why": "worst-case-wins over all 12 so no dangerous dimension (e.g. Data Sensitivity=3) can be ignored; matches what the reference registry states."
+    }
+  },
+  "finding": "AEGIS tools tier off different dimension sets by type (5 critical for most; 12 + autonomy-level for transaction/commerce), while the reference registry states worst-case-wins across 12. Treat tier-weighting as an explicit, per-type, configurable profile; always SCORE all 12.",
+  "adoptable_seed_entries": [
+    {
+      "registry_id": "RAI-OPEN-0001",
+      "title": "TrustWise Commerce Agent",
+      "system_type": "transaction_commerce_agent",
+      "description": "Detects buying and payment intent, recommends allowed financial actions, and prepares transactions for human approval. Acts as a trust boundary between consumer AI assistants and payment systems.",
+      "industry": "Retail",
+      "geography": "US",
+      "owner": "Evan Thomas \u00b7 Trustwise AI",
+      "status": "published",
+      "version": "1.2",
+      "autonomy_level": 2,
+      "overall_tier": 3,
+      "developed": true,
+      "last_updated": "2026-06-02",
+      "assessments": [
+        {
+          "dimension_id": "autonomy",
+          "tier": 2
+        },
+        {
+          "dimension_id": "decision_scope",
+          "tier": 2
+        },
+        {
+          "dimension_id": "temporal_coupling",
+          "tier": 2
+        },
+        {
+          "dimension_id": "action_authority",
+          "tier": 3
+        },
+        {
+          "dimension_id": "system_reach",
+          "tier": 3
+        },
+        {
+          "dimension_id": "blast_radius",
+          "tier": 2
+        },
+        {
+          "dimension_id": "persistence",
+          "tier": 2
+        },
+        {
+          "dimension_id": "reversibility",
+          "tier": 3
+        },
+        {
+          "dimension_id": "control_authority",
+          "tier": 2
+        },
+        {
+          "dimension_id": "data_sensitivity",
+          "tier": 3
+        },
+        {
+          "dimension_id": "aggregation_risk",
+          "tier": 2
+        },
+        {
+          "dimension_id": "data_egress_paths",
+          "tier": 2
+        }
+      ],
+      "policies": [
+        [
+          "Delegated Authority Policy",
+          "delegated_authority"
+        ],
+        [
+          "Human Oversight Policy",
+          "human_oversight"
+        ],
+        [
+          "Data Access & Confidentiality Policy",
+          "data_access_confidentiality"
+        ]
+      ],
+      "controls": [
+        [
+          "Human-in-the-loop approval for financial actions",
+          "human_oversight"
+        ],
+        [
+          "Transaction ceiling & rollback",
+          "approval"
+        ],
+        [
+          "Prompt-injection isolation",
+          "security"
+        ],
+        [
+          "Schema-level action logging",
+          "audit_evidence"
+        ]
+      ],
+      "versions": [
+        [
+          "1.2",
+          "2026-06-02",
+          "controls",
+          "Runtime control stack and policies attached."
+        ],
+        [
+          "1.1",
+          "2026-04-21",
+          "classification",
+          "ARC assessment completed \u2014 High risk; four dimensions at High."
+        ],
+        [
+          "1.0",
+          "2026-05-06",
+          "initial",
+          "Agent registered."
+        ]
+      ],
+      "chains": [
+        {
+          "triggers": [
+            "EU AI Act \u00b7 Art. 14 human oversight",
+            "NIST AI RMF \u00b7 Manage",
+            "OWASP \u00b7 Excessive agency"
+          ],
+          "policy": "Human Oversight Policy",
+          "controls": [
+            "Human-in-the-loop approval for financial actions"
+          ]
+        },
+        {
+          "triggers": [
+            "SR 11-7 \u00b7 Use governance",
+            "ISO/IEC 42001 \u00b7 Operational controls"
+          ],
+          "policy": "Delegated Authority Policy",
+          "controls": [
+            "Transaction ceiling & rollback"
+          ]
+        },
+        {
+          "triggers": [
+            "EU AI Act \u00b7 Art. 10 data governance",
+            "OWASP \u00b7 Sensitive info disclosure",
+            "MITRE ATLAS \u00b7 Exfiltration TTPs"
+          ],
+          "policy": "Data Access & Confidentiality Policy",
+          "controls": [
+            "Prompt-injection isolation",
+            "Schema-level action logging"
+          ]
+        }
+      ]
+    },
+    {
+      "registry_id": "RAI-OPEN-0002",
+      "title": "Internal Knowledge Assistant",
+      "system_type": "knowledge_assistant",
+      "description": "Read-only question-answering assistant over public and approved internal reference material. Advisory only; takes no actions.",
+      "industry": "Cross-industry",
+      "geography": "Global",
+      "owner": "Maya Chen \u00b7 Employee Experience",
+      "status": "published",
+      "version": "1.0",
+      "autonomy_level": 1,
+      "overall_tier": 1,
+      "developed": true,
+      "last_updated": "2026-05-18",
+      "assessments": [
+        {
+          "dimension_id": "autonomy",
+          "tier": 1
+        },
+        {
+          "dimension_id": "decision_scope",
+          "tier": 1
+        },
+        {
+          "dimension_id": "temporal_coupling",
+          "tier": 1
+        },
+        {
+          "dimension_id": "action_authority",
+          "tier": 1
+        },
+        {
+          "dimension_id": "system_reach",
+          "tier": 1
+        },
+        {
+          "dimension_id": "blast_radius",
+          "tier": 1
+        },
+        {
+          "dimension_id": "persistence",
+          "tier": 1
+        },
+        {
+          "dimension_id": "reversibility",
+          "tier": 1
+        },
+        {
+          "dimension_id": "control_authority",
+          "tier": 1
+        },
+        {
+          "dimension_id": "data_sensitivity",
+          "tier": 1
+        },
+        {
+          "dimension_id": "aggregation_risk",
+          "tier": 1
+        },
+        {
+          "dimension_id": "data_egress_paths",
+          "tier": 1
+        }
+      ],
+      "policies": [
+        [
+          "Acceptable Use Policy",
+          "acceptable_use"
+        ],
+        [
+          "System Classification Policy",
+          "system_classification"
+        ]
+      ],
+      "controls": [
+        [
+          "Output sourcing & disclaimer",
+          "documentation"
+        ],
+        [
+          "Access & usage logging",
+          "audit_evidence"
+        ]
+      ],
+      "versions": [
+        [
+          "1.0",
+          "2026-05-18",
+          "initial",
+          "Registered and classified \u2014 Low risk across all dimensions."
+        ]
+      ],
+      "chains": [
+        {
+          "triggers": [
+            "Baseline \u00b7 documentation & acceptable use"
+          ],
+          "policy": "Acceptable Use Policy",
+          "controls": [
+            "Output sourcing & disclaimer"
+          ]
+        },
+        {
+          "triggers": [
+            "Baseline \u00b7 classification record"
+          ],
+          "policy": "System Classification Policy",
+          "controls": [
+            "Access & usage logging"
+          ]
+        }
+      ]
+    },
+    {
+      "registry_id": "RAI-OPEN-0003",
+      "title": "Invoice Triage Agent",
+      "system_type": "tool_using_agent",
+      "description": "Classifies and routes incoming invoices across internal systems and prepares actions for human approval. Maintains a full audit trail.",
+      "industry": "Financial services",
+      "geography": "US / EU",
+      "owner": "Daniel Okafor \u00b7 Finance Operations",
+      "status": "published",
+      "version": "1.1",
+      "autonomy_level": 2,
+      "overall_tier": 2,
+      "developed": true,
+      "last_updated": "2026-05-24",
+      "assessments": [
+        {
+          "dimension_id": "autonomy",
+          "tier": 2
+        },
+        {
+          "dimension_id": "decision_scope",
+          "tier": 2
+        },
+        {
+          "dimension_id": "temporal_coupling",
+          "tier": 2
+        },
+        {
+          "dimension_id": "action_authority",
+          "tier": 2
+        },
+        {
+          "dimension_id": "system_reach",
+          "tier": 2
+        },
+        {
+          "dimension_id": "blast_radius",
+          "tier": 2
+        },
+        {
+          "dimension_id": "persistence",
+          "tier": 2
+        },
+        {
+          "dimension_id": "reversibility",
+          "tier": 2
+        },
+        {
+          "dimension_id": "control_authority",
+          "tier": 1
+        },
+        {
+          "dimension_id": "data_sensitivity",
+          "tier": 2
+        },
+        {
+          "dimension_id": "aggregation_risk",
+          "tier": 2
+        },
+        {
+          "dimension_id": "data_egress_paths",
+          "tier": 2
+        }
+      ],
+      "policies": [
+        [
+          "Human Oversight Policy",
+          "human_oversight"
+        ],
+        [
+          "Delegated Authority Policy",
+          "delegated_authority"
+        ],
+        [
+          "Documentation & Evidence Policy",
+          "documentation_evidence"
+        ]
+      ],
+      "controls": [
+        [
+          "Human approval before actioning",
+          "human_oversight"
+        ],
+        [
+          "Change documentation",
+          "documentation"
+        ],
+        [
+          "Data access control",
+          "data_governance"
+        ]
+      ],
+      "versions": [
+        [
+          "1.1",
+          "2026-05-24",
+          "classification",
+          "Re-scored after workflow expansion \u2014 Medium risk."
+        ],
+        [
+          "1.0",
+          "2026-04-02",
+          "initial",
+          "Registered."
+        ]
+      ],
+      "chains": [
+        {
+          "triggers": [
+            "NIST AI RMF \u00b7 Manage",
+            "EU AI Act \u00b7 Art. 14 human oversight"
+          ],
+          "policy": "Human Oversight Policy",
+          "controls": [
+            "Human approval before actioning"
+          ]
+        },
+        {
+          "triggers": [
+            "SR 11-7 \u00b7 Governance",
+            "ISO/IEC 42001 \u00b7 Lifecycle controls"
+          ],
+          "policy": "Delegated Authority Policy",
+          "controls": [
+            "Data access control"
+          ]
+        },
+        {
+          "triggers": [
+            "ISO/IEC 42001 \u00b7 Documentation",
+            "NIST AI RMF \u00b7 Govern"
+          ],
+          "policy": "Documentation & Evidence Policy",
+          "controls": [
+            "Change documentation"
+          ]
+        }
+      ]
+    }
+  ]
+}

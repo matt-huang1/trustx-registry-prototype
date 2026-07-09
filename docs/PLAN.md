@@ -164,8 +164,9 @@ TODO
 ## 8. Non-goals & limitations
 
 *State what the registry deliberately does not do: it does not decide truth about
-the world, it does not replace the accountable human, and its dimensions are
-placeholders pending the real schema.*
+the world and it does not replace the accountable human. (The dimensions were
+placeholders when this plan was written; the ARC 12-dimension model has since
+landed — see ADR-0012.)*
 
 TODO
 

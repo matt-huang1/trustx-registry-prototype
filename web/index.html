@@ -86,18 +86,19 @@
     border-radius: 2px;
     transform: translateY(-0.18em);
   }
+  /* Both masthead intro lines span the full content envelope, left-aligned —
+     the same treatment as the tab intro ledes (.panel-note--wide). Body prose
+     elsewhere keeps its readable measure. */
   .lede {
     font-family: var(--serif);
     font-size: clamp(1.02rem, 1.6vw, 1.16rem);
     color: var(--ink-2);
-    max-width: 62ch;
     margin: 0.9rem 0 0;
   }
   .placeholder-note {
     font-family: var(--sans);
     font-size: 0.82rem;
     color: var(--ink-3);
-    max-width: 66ch;
     margin: 0.85rem 0 0;
     padding-left: 0.9rem;
     border-left: 2px solid var(--rule);
@@ -122,18 +123,24 @@
     color: var(--ink-3);
     margin: 1.6rem 0 0;
   }
+  /* All three examples share one row (equal columns) at normal widths and only
+     stack when the viewport is genuinely narrow. */
   .cls-examples {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 0.45rem;
     margin: 0.6rem 0 0;
+  }
+  @media (max-width: 560px) {
+    .cls-examples { grid-template-columns: 1fr; }
   }
   .cls-examples button {
     appearance: none;
     cursor: pointer;
-    display: inline-flex;
+    display: flex;
+    flex-wrap: wrap;
     align-items: baseline;
-    gap: 0.6rem;
+    gap: 0.25rem 0.6rem;
     background: transparent;
     border: 1px solid var(--rule);
     border-radius: 3px;
@@ -443,6 +450,41 @@
     margin-top: 0.3rem;
   }
 
+  /* record meta chips: quiet facts (system type, autonomy level) beside the tier */
+  .rec-chip {
+    font-family: var(--sans);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    padding: 0.14em 0.5em;
+    white-space: nowrap;
+  }
+
+  /* tier derivation: the WHY of the tier, set as quiet prose */
+  .derivation {
+    font-family: var(--sans);
+    font-size: 0.9rem;
+    line-height: 1.55;
+    color: var(--ink-2);
+    max-width: 74ch;
+    margin: 1.1rem 0 0;
+  }
+  .derivation strong { color: var(--ink); font-weight: 600; }
+
+  /* group headings inside the 12-dimension ledger */
+  .dim-group {
+    font-family: var(--serif);
+    font-size: 1.05rem;
+    font-weight: 600;
+    font-style: italic;
+    color: var(--ink-2);
+    margin: 1.9rem 0 0;
+  }
+
   /* dimension rows read like ledger entries, not cards */
   .dimension {
     padding: 1.5rem 0;
@@ -455,12 +497,68 @@
     gap: 1rem;
     flex-wrap: wrap;
   }
+  .dim-name-wrap { display: flex; align-items: baseline; gap: 0.7rem; flex-wrap: wrap; }
   .dimension .dim-name {
     font-family: var(--serif);
-    font-size: 1.2rem;
+    font-size: 1.08rem;
     font-weight: 600;
     margin: 0;
   }
+  /* whether this dimension drove the tier, or is scored but outside the profile */
+  .dim-flag {
+    font-family: var(--sans);
+    font-size: 0.64rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .dim-flag.drives { color: var(--accent); }
+
+  /* The verbatim per-tier definition shown beside the 1–3 figure. The tier is
+     the key fact of each dimension block, so it reads at least as prominently
+     as the dimension name: ink weight plus the tier's muted colour marker
+     (same metrics as the .tier / .pg-outcome marks — one family of markers). */
+  .score .tier-def {
+    font-family: var(--sans);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .score .mark {
+    width: 0.62em;
+    height: 0.62em;
+    background: var(--tier-color, var(--ink-2));
+    flex: none;
+  }
+  .score--1 { --tier-color: var(--tier-low); }
+  .score--2 { --tier-color: var(--tier-medium); }
+  .score--3 { --tier-color: var(--tier-high); }
+
+  /* per-dimension standards mappings (read-only, from the committed matrix).
+     A wrapping group: each mapping (framework name + its control tags) is one
+     flex item, and the set flows onto as many lines as the container needs —
+     standards must never force horizontal scroll. */
+  .standards {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.25rem 1.1rem;
+    font-family: var(--sans);
+    font-size: 0.78rem;
+    line-height: 1.6;
+    color: var(--ink-3);
+    margin: 0.8rem 0 0;
+  }
+  .standards .std-label {
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .standards .std-item { min-width: 0; }
+  .standards .std-fw { font-weight: 600; color: var(--ink-2); white-space: nowrap; }
 
   /* score as a small, restrained scale — figure + sharp pips, never a bar */
   .score { display: inline-flex; align-items: center; gap: 0.6rem; }
@@ -938,9 +1036,10 @@
       ratified by an accountable human, not self-asserted.
     </p>
     <p class="placeholder-note">
-      The four scored dimensions shown here are a labelled placeholder for
-      demonstration, pending the real risk-dimension schema. Treat the taxonomy as
-      illustrative, not canonical.
+      Entries are scored against the ARC 12-dimension classification model (four
+      groups, each dimension tiered 1–3), adopted from RAI's published reference
+      material. This is an independent working prototype, not an official RAI
+      registry.
     </p>
     <nav class="tabs" aria-label="Sections">
       <a href="#registry" data-tab="registry">Registry</a>
@@ -1089,41 +1188,59 @@
   </main>
 
   <footer class="colophon">
-    Working prototype. Not affiliated with, nor endorsed by, any standards body; the
-    scoring schema is a placeholder. Data compiled from <code>entries/*.yaml</code> into
-    <code>web/data/registry.js</code> by <code>scripts/build_registry.py</code>.
+    Working prototype. Not affiliated with, nor endorsed by, any standards body.
+    Entries are scored against the ARC 12-dimension model; which dimensions drive each
+    tier is an explicit per-type weighting profile
+    (<code>policy/tier_weighting_profiles.yaml</code>). Data compiled from
+    <code>entries/*.yaml</code> into <code>web/data/registry.js</code> by
+    <code>scripts/build_registry.py</code>.
   </footer>
 </div>
 
 <script src="data/registry.js"></script>
 <script src="data/examples.js"></script>
 <script src="data/policy.js"></script>
+<script src="data/meta.js"></script>
 <script>
   (function () {
     "use strict";
 
     var DATA = Array.isArray(window.__REGISTRY__) ? window.__REGISTRY__ : [];
 
-    // Placeholder dimension order + display labels (mirrors classifier/schema.py).
-    var DIMENSIONS = [
-      ["autonomy", "Autonomy"],
-      ["delegated_authority", "Delegated authority"],
-      ["tool_access", "Tool access"],
-      ["data_exposure", "Data exposure"],
-    ];
+    // ARC model metadata: verbatim dimension names/groups/tier labels, system types,
+    // autonomy levels, and the per-dimension standards mappings. Compiled onto
+    // window.__ARC_META__ by scripts/build_registry.py from schema/dimensions.json and
+    // schema/standards_matrix.json — nothing about the model is restated inline here.
+    var META = window.__ARC_META__ || {};
+    var GROUPS = Array.isArray(META.groups) ? META.groups : []; // [[id, name], ...]
+    var DIM_META = Array.isArray(META.dimensions) ? META.dimensions : [];
+    var SYSTEM_TYPE_LABEL = META.system_types || {};
+    var AUTONOMY_LEVEL_DEFS = META.autonomy_level_defs || {};
+    var FRAMEWORKS = Array.isArray(META.frameworks) ? META.frameworks : []; // [[id, name], ...]
+    var STANDARDS = META.standards_matrix || {};
+    var DIM_BY_ID = {};
+    DIM_META.forEach(function (d) { DIM_BY_ID[d.id] = d; });
 
     var TIER_LABEL = { low: "Low", medium: "Medium", high: "High" };
     // Acronyms to keep upper-cased when deriving a display name from a slug.
     var ACRONYMS = { kyc: "KYC", pii: "PII", ach: "ACH", api: "API", id: "ID", ai: "AI" };
 
-    function displayName(slug) {
-      return String(slug || "")
+    function displayName(slugOrEntry) {
+      if (slugOrEntry && slugOrEntry.agent) {
+        if (slugOrEntry.agent.title) return slugOrEntry.agent.title;
+        slugOrEntry = slugOrEntry.agent.slug;
+      }
+      return String(slugOrEntry || "")
         .split("-")
         .map(function (w) {
           if (ACRONYMS[w]) return ACRONYMS[w];
           return w ? w.charAt(0).toUpperCase() + w.slice(1) : w;
         })
         .join(" ");
+    }
+
+    function dimensionName(id) {
+      return DIM_BY_ID[id] ? DIM_BY_ID[id].name : displayName(String(id).replace(/_/g, "-"));
     }
 
     function el(tag, opts) {
@@ -1146,15 +1263,21 @@
       return wrap;
     }
 
-    function scoreScale(score) {
-      var wrap = el("span", { className: "score" });
+    // A dimension's tier: a tier-toned marker, the verbatim per-tier label, then
+    // the 1–3 figure + pips. Shared everywhere a dimension renders.
+    function scoreScale(dimId, score) {
+      var wrap = el("span", { className: "score score--" + score });
+      wrap.appendChild(el("span", { className: "mark", attrs: { "aria-hidden": "true" } }));
+      var meta = DIM_BY_ID[dimId];
+      var tierText = meta && meta.tiers ? meta.tiers[String(score)] : null;
+      if (tierText) wrap.appendChild(el("span", { className: "tier-def", text: tierText }));
       var fig = el("span", { className: "figure" });
       var strong = el("b", { text: String(score) });
       fig.appendChild(strong);
-      fig.appendChild(document.createTextNode(" / 5"));
+      fig.appendChild(document.createTextNode(" / 3"));
       wrap.appendChild(fig);
       var pips = el("span", { className: "pips", attrs: { "aria-hidden": "true" } });
-      for (var i = 1; i <= 5; i++) {
+      for (var i = 1; i <= 3; i++) {
         pips.appendChild(el("span", { className: "pip" + (i <= score ? " on" : "") }));
       }
       wrap.appendChild(pips);
@@ -1170,9 +1293,9 @@
 
     var state = { tier: "all", query: "", selected: null };
 
-    // Pre-compute a searchable name for each entry.
+    // Pre-compute a searchable name for each entry (published title, or the slug prettified).
     DATA.forEach(function (e) {
-      e.__name = displayName(e.agent && e.agent.slug);
+      e.__name = displayName(e);
     });
 
     function visibleEntries() {
@@ -1252,52 +1375,133 @@
     // One renderer for both the registry detail pane AND the classifier hero result, so a
     // cached example, a live classification, and a stored entry all look like one system.
     function renderEntryInto(container, entry) {
-      var name = entry.__name || displayName(entry.agent && entry.agent.slug);
+      var name = entry.__name || displayName(entry);
 
       var head = el("div", { className: "rec-head" });
       head.appendChild(el("h2", { className: "rec-title", text: name }));
       var meta = el("div", { className: "rec-meta" });
       meta.appendChild(tierBadge(entry.risk_tier));
+      if (entry.system_type && SYSTEM_TYPE_LABEL[entry.system_type]) {
+        meta.appendChild(el("span", {
+          className: "rec-chip",
+          text: SYSTEM_TYPE_LABEL[entry.system_type],
+        }));
+      }
+      if (entry.autonomy_level) {
+        meta.appendChild(el("span", {
+          className: "rec-chip",
+          text: "Autonomy level " + entry.autonomy_level,
+          // Full verbatim ARC definition on hover.
+          attrs: { title: AUTONOMY_LEVEL_DEFS[String(entry.autonomy_level)] || "" },
+        }));
+      }
+      if (entry.agent.registry_id) {
+        meta.appendChild(el("span", { className: "slug", text: entry.agent.registry_id }));
+      }
       meta.appendChild(el("span", { className: "slug", text: entry.agent.slug }));
       head.appendChild(meta);
       container.appendChild(head);
 
       container.appendChild(el("p", { className: "description", text: entry.agent.description }));
 
-      // Dimensions
+      // Tier derivation: WHY this tier — which weighting profile applied and which
+      // dimensions drove it. All 12 dimensions are always scored; the profile only
+      // chooses which of them the worst-case-wins rollup tiers off.
+      var td = entry.tier_derivation;
+      if (td) {
+        container.appendChild(el("h3", { className: "section-label", text: "Tier derivation" }));
+        var deriv = el("p", { className: "derivation" });
+        deriv.appendChild(document.createTextNode("Weighting profile "));
+        deriv.appendChild(el("strong", { text: td.profile }));
+        var weighted = Array.isArray(td.tier_dimensions) ? td.tier_dimensions : [];
+        deriv.appendChild(document.createTextNode(
+          " — worst-case-wins over " + weighted.length + " of 12 scored dimensions ("
+          + weighted.map(dimensionName).join(", ") + ")."
+        ));
+        var driving = Array.isArray(td.driving_dimensions) ? td.driving_dimensions : [];
+        if (driving.length) {
+          deriv.appendChild(document.createTextNode(" Tier driven by: "));
+          deriv.appendChild(el("strong", { text: driving.map(dimensionName).join(", ") }));
+          deriv.appendChild(document.createTextNode("."));
+        }
+        if (td.autonomy_level_driven) {
+          deriv.appendChild(document.createTextNode(
+            " Autonomy level 3 independently forces Tier 3 under this profile."
+          ));
+        }
+        container.appendChild(deriv);
+      }
+
+      // Dimensions: all 12, in their four ARC groups.
       var dimLabel = el("h3", { className: "section-label", text: "Risk dimensions" });
       dimLabel.appendChild(el("span", {
         className: "schema-caveat",
-        text: "Placeholder taxonomy — four sample dimensions pending the real schema.",
+        text: "ARC 12-dimension model — every dimension is scored 1–3; the tier is "
+          + "weighted over the profile named above.",
       }));
       container.appendChild(dimLabel);
 
-      DIMENSIONS.forEach(function (pair) {
-        var key = pair[0], label = pair[1];
-        var dim = entry.dimensions && entry.dimensions[key];
-        if (!dim) return;
+      var driving = td && Array.isArray(td.driving_dimensions) ? td.driving_dimensions : [];
+      var weightedSet = td && Array.isArray(td.tier_dimensions) ? td.tier_dimensions : null;
 
-        var block = el("section", { className: "dimension" });
-        var dh = el("div", { className: "dim-head" });
-        dh.appendChild(el("h4", { className: "dim-name", text: label }));
-        dh.appendChild(scoreScale(dim.score));
-        block.appendChild(dh);
+      GROUPS.forEach(function (groupPair) {
+        var groupId = groupPair[0], groupName = groupPair[1];
+        var groupDims = DIM_META.filter(function (d) { return d.group === groupId; });
+        var present = groupDims.filter(function (d) {
+          return entry.dimensions && entry.dimensions[d.id];
+        });
+        if (!present.length) return;
 
-        block.appendChild(el("p", { className: "rationale", text: dim.rationale }));
+        container.appendChild(el("h4", { className: "dim-group", text: groupName }));
 
-        var ev = el("div", { className: "evidence" });
-        ev.appendChild(el("p", { className: "ev-label", text: "Evidence" }));
-        var evidence = Array.isArray(dim.evidence) ? dim.evidence : [];
-        if (evidence.length) {
-          var ul = el("ul");
-          evidence.forEach(function (q) { ul.appendChild(el("li", { text: q })); });
-          ev.appendChild(ul);
-        } else {
-          ev.appendChild(el("p", { className: "none", text: "No evidence recorded." }));
-        }
-        block.appendChild(ev);
+        present.forEach(function (d) {
+          var dim = entry.dimensions[d.id];
+          var block = el("section", { className: "dimension" });
+          var dh = el("div", { className: "dim-head" });
+          var nameWrap = el("div", { className: "dim-name-wrap" });
+          nameWrap.appendChild(el("h5", { className: "dim-name", text: d.name }));
+          if (driving.indexOf(d.id) !== -1) {
+            nameWrap.appendChild(el("span", { className: "dim-flag drives", text: "Drove the tier" }));
+          } else if (weightedSet && weightedSet.indexOf(d.id) === -1) {
+            nameWrap.appendChild(el("span", { className: "dim-flag", text: "Scored · not tier-weighted for this type" }));
+          }
+          dh.appendChild(nameWrap);
+          dh.appendChild(scoreScale(d.id, dim.score));
+          block.appendChild(dh);
 
-        container.appendChild(block);
+          block.appendChild(el("p", { className: "rationale", text: dim.rationale }));
+
+          var ev = el("div", { className: "evidence" });
+          ev.appendChild(el("p", { className: "ev-label", text: "Evidence" }));
+          var evidence = Array.isArray(dim.evidence) ? dim.evidence : [];
+          if (evidence.length) {
+            var ul = el("ul");
+            evidence.forEach(function (q) { ul.appendChild(el("li", { text: q })); });
+            ev.appendChild(ul);
+          } else {
+            ev.appendChild(el("p", { className: "none", text: "No evidence recorded." }));
+          }
+          block.appendChild(ev);
+
+          // Standards mappings for this dimension (read-only, from the committed matrix).
+          var mappings = STANDARDS[d.id];
+          if (mappings) {
+            var std = el("p", { className: "standards" });
+            std.appendChild(el("span", { className: "std-label", text: "Standards" }));
+            FRAMEWORKS.forEach(function (fw) {
+              var fwId = fw[0], fwName = fw[1];
+              var refs = mappings[fwId];
+              if (!refs || !refs.length) return;
+              var item = el("span", { className: "std-item" });
+              item.appendChild(el("span", { className: "std-fw", text: fwName }));
+              item.appendChild(document.createTextNode(" " + refs.join(", ")));
+              std.appendChild(item);
+            });
+            block.appendChild(std);
+          }
+
+          container.appendChild(block);
+        });
       });
 
       // Provenance
@@ -1433,7 +1637,7 @@
         });
         btn.appendChild(el("span", {
           className: "ex-name",
-          text: displayName(ex.agent && ex.agent.slug),
+          text: displayName(ex),
         }));
         btn.appendChild(tierBadge(ex.risk_tier));
         btn.addEventListener("click", function () { selectExample(i); });
@@ -1711,7 +1915,11 @@
         var head = el("div", { className: "pg-step-head" });
         var left = el("div");
         left.appendChild(el("span", { className: "pg-step-n", text: "Step " + step.n }));
-        left.appendChild(el("span", { className: "pg-step-title", text: displayName(step.slug) }));
+        var stepEntry = findEntry(step.slug);
+        left.appendChild(el("span", {
+          className: "pg-step-title",
+          text: stepEntry ? stepEntry.__name : displayName(step.slug),
+        }));
         head.appendChild(left);
         li.appendChild(head);
 
@@ -1832,7 +2040,11 @@
         return;
       }
       var head = el("div", { className: "rec-head" });
-      head.appendChild(el("h4", { className: "rec-title", text: displayName(slug) }));
+      var checkedEntry = findEntry(slug);
+      head.appendChild(el("h4", {
+        className: "rec-title",
+        text: checkedEntry ? checkedEntry.__name : displayName(slug),
+      }));
       pgDecisionEl.appendChild(head);
       decisionDetail(pgDecisionEl, dec, { showEvidence: true, link: true });
     }

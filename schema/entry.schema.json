@@ -1,16 +1,25 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://trustx.example/schema/entry.schema.json",
-  "title": "AI Agent Risk Registry Entry (PLACEHOLDER)",
-  "description": "PLACEHOLDER schema for a single AI-agent risk-registry entry. The four scored dimensions below (autonomy, delegated_authority, tool_access, data_exposure) are SAMPLES ONLY and MUST be swapped for RAI's real 12-dimension model when it lands. Do not treat these four as the canonical taxonomy.",
+  "title": "AI Agent Risk Registry Entry (ARC 12-dimension model)",
+  "description": "A single AI-agent risk-registry entry, scored against the ARC 12-dimension classification model in four groups (Autonomy & Decision Power; Action Authority & Reach; Persistence & Control; Data Authority & Confidentiality). Every dimension is ALWAYS scored 1/2/3; which dimensions drive the rolled-up risk_tier is a separate, per-system-type tier-weighting profile (policy/tier_weighting_profiles.yaml) recorded in tier_derivation. Dimension names, tier labels, and definitions are verbatim from the ARC reference (assets/arc_reference.json).",
   "type": "object",
   "additionalProperties": false,
-  "required": ["agent", "dimensions", "risk_tier", "provenance"],
+  "required": [
+    "agent",
+    "dimensions",
+    "risk_tier",
+    "tier_derivation",
+    "provenance"
+  ],
   "properties": {
     "agent": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["slug", "description"],
+      "required": [
+        "slug",
+        "description"
+      ],
       "properties": {
         "slug": {
           "type": "string",
@@ -21,31 +30,208 @@
           "type": "string",
           "minLength": 1,
           "description": "Free-text description of the agent that was classified."
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Display title. Optional; adopted entries keep their published title, otherwise the slug is prettified for display."
+        },
+        "registry_id": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Upstream registry identifier (e.g. 'RAI-OPEN-0001') for entries adopted from a published reference registry."
         }
       }
     },
+    "system_type": {
+      "type": "string",
+      "enum": [
+        "knowledge_assistant",
+        "code_content_generator",
+        "decision_support_system",
+        "tool_using_agent",
+        "transaction_commerce_agent",
+        "autonomous_agent",
+        "embedded_physical_ai"
+      ],
+      "description": "ARC system type: knowledge_assistant = Knowledge assistant; code_content_generator = Code / content generator; decision_support_system = Decision support; tool_using_agent = Tool-using agent; transaction_commerce_agent = Transaction / commerce agent; autonomous_agent = Autonomous agent; embedded_physical_ai = Embedded / physical AI. Selects the tier-weighting profile; an entry without a system_type (or whose type has no profile) uses the default profile."
+    },
+    "autonomy_level": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 3,
+      "description": "1: Level 1 — Human-in-the-loop. A human reviews and approves each consequential action before it executes. 2: Level 2 — Human-on-the-loop. The system acts within set bounds while a human monitors and can intervene or roll back. 3: Level 3 — Fully autonomous. Plans and executes without per-action review; oversight is by monitoring, audit, and shutdown controls."
+    },
     "dimensions": {
       "type": "object",
-      "description": "PLACEHOLDER: 4 sample risk dimensions. SWAP FOR RAI'S REAL 12 DIMENSIONS.",
+      "description": "The 12 ARC risk dimensions. ALL 12 are always scored (1/2/3), regardless of which subset the tier-weighting profile tiers off.",
       "additionalProperties": false,
-      "required": ["autonomy", "delegated_authority", "tool_access", "data_exposure"],
+      "required": [
+        "autonomy",
+        "decision_scope",
+        "temporal_coupling",
+        "action_authority",
+        "system_reach",
+        "blast_radius",
+        "persistence",
+        "reversibility",
+        "control_authority",
+        "data_sensitivity",
+        "aggregation_risk",
+        "data_egress_paths"
+      ],
       "properties": {
-        "autonomy": { "$ref": "#/$defs/dimension" },
-        "delegated_authority": { "$ref": "#/$defs/dimension" },
-        "tool_access": { "$ref": "#/$defs/dimension" },
-        "data_exposure": { "$ref": "#/$defs/dimension" }
+        "autonomy": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/dimension"
+            }
+          ],
+          "description": "Autonomy (Autonomy & Decision Power). 1 = Human-in-the-loop; 2 = Human-on-the-loop; 3 = Fully autonomous."
+        },
+        "decision_scope": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/dimension"
+            }
+          ],
+          "description": "Decision Scope (Autonomy & Decision Power). 1 = Local decisions; 2 = Domain-level; 3 = Enterprise-wide."
+        },
+        "temporal_coupling": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/dimension"
+            }
+          ],
+          "description": "Temporal Coupling (Autonomy & Decision Power). 1 = Isolated actions; 2 = Chained workflows; 3 = Continuous loops."
+        },
+        "action_authority": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/dimension"
+            }
+          ],
+          "description": "Action Authority (Action Authority & Reach). 1 = Read-only / advisory; 2 = Create or modify; 3 = Execute transactions."
+        },
+        "system_reach": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/dimension"
+            }
+          ],
+          "description": "System Reach (Action Authority & Reach). 1 = Single system; 2 = Multiple internal; 3 = Cross-domain / third-party."
+        },
+        "blast_radius": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/dimension"
+            }
+          ],
+          "description": "Blast Radius (Action Authority & Reach). 1 = Single user; 2 = Team / department; 3 = Enterprise / public."
+        },
+        "persistence": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/dimension"
+            }
+          ],
+          "description": "Persistence (Persistence & Control). 1 = Stateless; 2 = Session-based; 3 = Long-term memory."
+        },
+        "reversibility": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/dimension"
+            }
+          ],
+          "description": "Reversibility (Persistence & Control). 1 = Fully reversible; 2 = Partially reversible; 3 = Irreversible."
+        },
+        "control_authority": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/dimension"
+            }
+          ],
+          "description": "Control Authority (Persistence & Control). 1 = Standalone; 2 = Supervises agents; 3 = Orchestrates fleets."
+        },
+        "data_sensitivity": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/dimension"
+            }
+          ],
+          "description": "Data Sensitivity (Data Authority & Confidentiality). 1 = Public / non-sensitive; 2 = Internal / confidential; 3 = Regulated / crown-jewel."
+        },
+        "aggregation_risk": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/dimension"
+            }
+          ],
+          "description": "Aggregation Risk (Data Authority & Confidentiality). 1 = No aggregation; 2 = Limited; 3 = Cross-session / inferential."
+        },
+        "data_egress_paths": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/dimension"
+            }
+          ],
+          "description": "Data Egress Paths (Data Authority & Confidentiality). 1 = Constrained outputs; 2 = Multiple controlled; 3 = External egress."
+        }
       }
     },
     "risk_tier": {
       "type": "string",
-      "enum": ["low", "medium", "high"],
-      "description": "Rolled-up risk tier derived from the dimension scores."
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "description": "Rolled-up risk tier (low/medium/high == Tier 1/2/3), computed by worst-case-wins over the tier-weighting profile's dimensions. Tier 1 — Low. All twelve dimensions at baseline. Standard documentation and acceptable-use controls. Tier 2 — Medium. Elevated dimensions but none at the highest level. Enhanced oversight, documented controls, periodic review. Tier 3 — High. At least one dimension at its highest level (worst-case-wins). Comprehensive governance: executive approval, real-time monitoring, kill-switch capability, pre-deployment testing."
+    },
+    "tier_derivation": {
+      "type": "object",
+      "description": "How the risk_tier was derived, so the derivation is inspectable: which tier-weighting profile applied and which dimensions actually drove the tier under worst-case-wins.",
+      "additionalProperties": false,
+      "required": [
+        "profile",
+        "tier_dimensions",
+        "driving_dimensions"
+      ],
+      "properties": {
+        "profile": {
+          "type": "string",
+          "description": "Name of the tier-weighting profile applied (policy/tier_weighting_profiles.yaml)."
+        },
+        "tier_dimensions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "description": "The dimensions the profile tiers off (the weighting set)."
+        },
+        "driving_dimensions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "The tier_dimensions at the peak score — the ones that actually set the tier. Empty only if autonomy_level alone drove Tier 3."
+        },
+        "autonomy_level_driven": {
+          "type": "boolean",
+          "description": "True if autonomy_level 3 forced Tier 3 under a profile with use_autonomy_level."
+        }
+      }
     },
     "challenge": {
       "type": "object",
       "description": "Record of the challenger (red-team) pass over the proposal.",
       "additionalProperties": false,
-      "required": ["flagged", "notes", "iterations"],
+      "required": [
+        "flagged",
+        "notes",
+        "iterations"
+      ],
       "properties": {
         "flagged": {
           "type": "boolean",
@@ -53,7 +239,9 @@
         },
         "notes": {
           "type": "array",
-          "items": { "type": "string" },
+          "items": {
+            "type": "string"
+          },
           "description": "Human-readable challenge notes, including any deterministic overrides that fired."
         },
         "iterations": {
@@ -66,14 +254,21 @@
     "provenance": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["submitted_by", "approved_by", "timestamp"],
+      "required": [
+        "submitted_by",
+        "approved_by",
+        "timestamp"
+      ],
       "properties": {
         "submitted_by": {
           "type": "string",
-          "description": "Who/what submitted the draft (e.g. 'classifier' or an operator id)."
+          "description": "Who/what submitted the draft (e.g. 'classifier', an operator id, or 'RAI-ARC-reference' for adopted seed entries)."
         },
         "approved_by": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Accountable human who ratified the entry. Null until ratified."
         },
         "timestamp": {
@@ -88,13 +283,17 @@
     "dimension": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["score", "rationale", "evidence"],
+      "required": [
+        "score",
+        "rationale",
+        "evidence"
+      ],
       "properties": {
         "score": {
           "type": "integer",
           "minimum": 1,
-          "maximum": 5,
-          "description": "Risk score for this dimension, 1 (lowest) to 5 (highest)."
+          "maximum": 3,
+          "description": "Tier score for this dimension: 1 (Tier 1 Low) to 3 (Tier 3 High)."
         },
         "rationale": {
           "type": "string",
@@ -103,7 +302,9 @@
         },
         "evidence": {
           "type": "array",
-          "items": { "type": "string" },
+          "items": {
+            "type": "string"
+          },
           "description": "Evidence pointers supporting the score (quotes from the description, links, doc refs). May be empty for a draft but SHOULD be populated for a defensible entry."
         }
       }
