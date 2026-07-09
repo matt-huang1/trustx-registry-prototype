@@ -1,0 +1,156 @@
+window.__REGISTRY__ = [
+  {
+    "agent": {
+      "description": "An internal document summarisation assistant with read-only access to the company's internal document store. It produces draft summaries of internal documents that are always reviewed by a human before use. It cannot take any action, call external tools, or modify any record.",
+      "slug": "internal-document-summarisation-assistant"
+    },
+    "challenge": {
+      "flagged": false,
+      "iterations": 1,
+      "notes": [
+        "Curated, human-authored reference entry; scores reasoned by hand. No automated challenger pass was run."
+      ]
+    },
+    "dimensions": {
+      "autonomy": {
+        "evidence": [
+          "draft summaries ... always reviewed by a human before use",
+          "It cannot take any action"
+        ],
+        "rationale": "Produces drafts only; a human reviews every output before use.",
+        "score": 1
+      },
+      "data_exposure": {
+        "evidence": [
+          "read-only access to the company's internal document store",
+          "draft summaries of internal documents"
+        ],
+        "rationale": "Reads internal business documents; no customer PII or external data.",
+        "score": 2
+      },
+      "delegated_authority": {
+        "evidence": [
+          "It cannot take any action, call external tools, or modify any record"
+        ],
+        "rationale": "Holds no authority to act, transact, or change anything.",
+        "score": 1
+      },
+      "tool_access": {
+        "evidence": [
+          "read-only access to the company's internal document store"
+        ],
+        "rationale": "Single read-only integration with the internal document store; no action tools.",
+        "score": 2
+      }
+    },
+    "provenance": {
+      "approved_by": "@matt-huang1",
+      "submitted_by": "curated-reference",
+      "timestamp": "2026-07-09T00:00:00+00:00"
+    },
+    "risk_tier": "low"
+  },
+  {
+    "agent": {
+      "description": "A KYC onboarding triage agent that reads sensitive customer personal data (PII) — identity documents, addresses, and dates of birth — to draft an onboarding risk recommendation for a human compliance officer. It cannot approve onboarding, open accounts, or act autonomously; a human officer makes every decision.",
+      "slug": "kyc-onboarding-triage-agent"
+    },
+    "challenge": {
+      "flagged": false,
+      "iterations": 1,
+      "notes": [
+        "Curated, human-authored reference entry; scores reasoned by hand. No automated challenger pass was run."
+      ]
+    },
+    "dimensions": {
+      "autonomy": {
+        "evidence": [
+          "draft an onboarding risk recommendation for a human compliance officer",
+          "a human officer makes every decision"
+        ],
+        "rationale": "Drafts a recommendation, which leans toward an outcome rather than staying neutral like a summary; the human officer still makes every decision.",
+        "score": 2
+      },
+      "data_exposure": {
+        "evidence": [
+          "reads sensitive customer personal data (PII)",
+          "identity documents, addresses, and dates of birth"
+        ],
+        "rationale": "Handles sensitive customer PII, though scoped per-applicant and read-only.",
+        "score": 3
+      },
+      "delegated_authority": {
+        "evidence": [
+          "It cannot approve onboarding, open accounts, or act autonomously"
+        ],
+        "rationale": "Cannot approve onboarding, open accounts, or take any action itself.",
+        "score": 1
+      },
+      "tool_access": {
+        "evidence": [
+          "reads sensitive customer personal data (PII) — identity documents, addresses, and dates of birth"
+        ],
+        "rationale": "Read access to KYC/identity data sources; no ability to invoke action tools.",
+        "score": 2
+      }
+    },
+    "provenance": {
+      "approved_by": "@matt-huang1",
+      "submitted_by": "curated-reference",
+      "timestamp": "2026-07-09T00:00:00+00:00"
+    },
+    "risk_tier": "medium"
+  },
+  {
+    "agent": {
+      "description": "A payments initiation agent that can initiate payments and transfer funds through bank payment-rail APIs (ACH and wire) on behalf of the finance team, with only limited human oversight of individual transactions.",
+      "slug": "payments-initiation-agent"
+    },
+    "challenge": {
+      "flagged": true,
+      "iterations": 1,
+      "notes": [
+        "Curated, human-authored reference entry; scores reasoned by hand. No automated challenger pass was run.",
+        "Deterministic rule: description contains money-movement language (initiate payments / transfer funds / ACH), so delegated_authority is pinned to >= 4."
+      ]
+    },
+    "dimensions": {
+      "autonomy": {
+        "evidence": [
+          "with only limited human oversight of individual transactions"
+        ],
+        "rationale": "Executes transactions with only limited human oversight of individual payments.",
+        "score": 4
+      },
+      "data_exposure": {
+        "evidence": [
+          "transfer funds through bank payment-rail APIs",
+          "on behalf of the finance team"
+        ],
+        "rationale": "Accesses finance/payment and counterparty account data to execute transfers.",
+        "score": 3
+      },
+      "delegated_authority": {
+        "evidence": [
+          "can initiate payments and transfer funds through bank payment-rail APIs (ACH and wire)",
+          "on behalf of the finance team"
+        ],
+        "rationale": "Moves real money over ACH/wire on the organisation's behalf with limited oversight — 5 on the merits; the deterministic money-movement rule independently guarantees a floor of ≥4.",
+        "score": 5
+      },
+      "tool_access": {
+        "evidence": [
+          "bank payment-rail APIs (ACH and wire)"
+        ],
+        "rationale": "Wields powerful bank payment-rail tools capable of moving funds externally.",
+        "score": 4
+      }
+    },
+    "provenance": {
+      "approved_by": "@matt-huang1",
+      "submitted_by": "curated-reference",
+      "timestamp": "2026-07-09T00:00:00+00:00"
+    },
+    "risk_tier": "high"
+  }
+];
