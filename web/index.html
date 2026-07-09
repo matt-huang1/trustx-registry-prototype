@@ -653,6 +653,10 @@
     max-width: 66ch;
     margin: 0.6rem 0 0;
   }
+  /* Tab intro ledes may span the envelope (ADR-0008 refinement): the short
+     description under a tab heading fills the width, left-aligned. Body prose
+     (rationales, reasons, evidence, notes) keeps the 66ch measure. */
+  .panel-note--wide { max-width: none; }
 
   /* ---- Policy gate ------------------------------------------------------ */
   /* Active policy and the agent checker share a two-column row on wide screens
@@ -955,7 +959,7 @@
     <section class="panel" id="panel-registry" aria-labelledby="registryHeading">
       <div class="panel-head">
         <h2 class="panel-title" id="registryHeading">The registry</h2>
-        <p class="panel-note">
+        <p class="panel-note panel-note--wide">
           Filter by risk tier or name, and select an entry to read its full record: scored
           dimensions, the quoted evidence behind each score, provenance, and any challenges.
         </p>
@@ -1000,7 +1004,7 @@
     <section class="panel" id="panel-classify" aria-labelledby="clsHeading" hidden>
       <div class="panel-head">
         <h2 class="panel-title" id="clsHeading">Classify an agent</h2>
-        <p class="panel-note">
+        <p class="panel-note panel-note--wide">
           Pick an example for an instant, identical classification — cached for reliability — or
           paste your own below to classify it live. Every score is proposed by a model, then
           overridden by deterministic rules wherever a fact can be pinned down, and ratified by
@@ -1039,7 +1043,7 @@
     <section class="panel" id="panel-gate" aria-labelledby="pgHeading" hidden>
       <div class="panel-head">
         <h2 class="panel-title" id="pgHeading">Runtime policy gate</h2>
-        <p class="panel-note">
+        <p class="panel-note panel-note--wide">
           The registry is not just a catalogue — it is something an orchestrator consults at the
           moment an agent tries to act. The gate maps an agent's evidence-backed risk tier to an
           org policy action: allow, allow&nbsp;with&nbsp;logging, or escalate to a human. The

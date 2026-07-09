@@ -20,6 +20,9 @@ max-width 1160px with symmetric margins), and within it the rule is:
 - **One breakpoint family.** Both scaffolds stack to a single column ≤800px (the
   registry's existing breakpoint); the scenario row additionally requires ≥960px so
   step cards are never squashed at mid widths.
+- *Refinement:* the short intro lede directly under each tab heading (all three tabs)
+  is exempt from the 66ch cap and spans the envelope (`.panel-note--wide`),
+  left-aligned; all body prose keeps the readable measure.
 
 ## Context
 After the tab restructure (ADR-0007), Classify and Policy Gate were capped at ~70ch and
