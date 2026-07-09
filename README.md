@@ -37,6 +37,7 @@ export LLM_MODEL="gpt-4o-mini"
 
 ## Documentation
 
+- [docs/PLAN.md](docs/PLAN.md)
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 - [docs/OPEN_SOURCE_MODEL.md](docs/OPEN_SOURCE_MODEL.md)
 - [docs/ROADMAP.md](docs/ROADMAP.md)
