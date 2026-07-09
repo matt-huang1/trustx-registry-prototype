@@ -17,13 +17,13 @@ That is the principle the rest of this document builds on: a registry is only tr
 
 ## 2. What the registry is
 
-*Define the registry as a set of evidence-backed entries rather than asserted
-labels: one source of truth producing two outputs (machine-readable JSON and a
-human-readable page), with the computed risk tier as the single source of truth.*
+At its core the registry holds one kind of thing: a defensible classification of an agent's risk. Not a label, and not a verdict handed down — a record. Each entry classifies an agent across twelve dimensions, and for every dimension it carries not just a score but the reasoning and the specific evidence behind that score. This is the direct expression of the principle from the previous section. A number on its own can be asserted; a number attached to the evidence that produced it can be inspected, and inspection is what makes it trustworthy. An entry, then, is less like a rating and more like a worked answer: you can see not only what the classification concluded, but why.
 
-Draws on: [schema/entry.schema.json](../schema/entry.schema.json), [scripts/build_registry.py](../scripts/build_registry.py).
+The twelve dimensions are not something I devised. They are RAI's Agent Risk Classification model, adopted directly: four families covering agent's autonomy and decision power, its authority and reach, its persistence and control, and its data authority and confidentiality, each dimension scored on a three-point scale. Building on their model rather than inventing a parallel one is a deliberate choice. A registry meant to become shared infrastructure gains nothing from a bespoke taxonomy; it gains everything from speaking the standard the community is already converging on. The contribution here is not a new way to measure risk, but a way to make measurements against that standard defensible.
 
-TODO
+The most important property follows from this: the overall risk tier is computed, never declared. A submitter does not get to write "low risk" at the top of an entry. The tier is derived from the twelve dimension scores by an explicit, published rule, and the entry records which dimensions actually drove it. This closes the gap that self-attestation leaves open. You cannot claim a comfortable tier while the underlying scores tell a different story, because the tier is a consequence of the scores, not a separate assertion laid beside them. Even the headline number, the thing a busy reader glances at first, is evidence-backed by construction.
+
+Finally, an entry has one source and two readers. The canonical form is structured data; the human-readable record and the machine-readable form are two renderings of that single source, not two copies that must be kept in step. This matters more than it first appears. A registry that a person browses and a registry that another agent queries at runtime have to be the same registry, or the trust does not transfer. Keeping one source of truth beneath both readers is what lets the same classification a compliance officer reads on a page be the classification an orchestrating agent consults before it delegates a task. The registry is not a website with data behind it; it is the data, with the website as one of its faces.
 
 ## 3. Architecture
 
