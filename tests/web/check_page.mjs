@@ -88,9 +88,13 @@ async function waitFor(cond, ms = 1000) {
     "registry tab: detail record rendered"
   );
   check(
-    doc.querySelectorAll("#clsExamples button").length >= 3 &&
-      doc.querySelector("#clsResult .rec-title") !== null,
-    "classify tab: cached examples and result rendered (even while hidden)"
+    doc.querySelectorAll("#clsExamples button").length >= 3,
+    "classify tab: cached example buttons rendered (even while hidden)"
+  );
+  check(
+    doc.querySelector("#clsResult .rec-title") === null &&
+      doc.querySelector("#clsResult .panel-note") !== null,
+    "classify tab: quiet empty state before any selection"
   );
   check(
     doc.querySelectorAll("#pgPlan > li").length === 3 &&
@@ -99,12 +103,33 @@ async function waitFor(cond, ms = 1000) {
     "gate tab: policy table, scenario plan, and check decision rendered"
   );
 
-  // Layout scaffolds (ADR-0008): Classify mirrors Registry's master–detail, and the
-  // gate's policy + checker share the two-column row while the scenario spans full width.
+  // Layout scaffolds: Classify is a vertical flow (ADR-0011) — a centered input
+  // block, then the result region below it; no master-detail grid on this tab.
+  // The gate keeps its two-column row with the scenario spanning full width.
+  const FOLLOWS = dom.window.Node.DOCUMENT_POSITION_FOLLOWING;
+  const inputBlock = doc.querySelector("#panel-classify .cls-input-block");
   check(
-    doc.querySelector("#panel-classify .master-detail .cls-master #clsForm") !== null &&
-      doc.querySelector("#panel-classify .master-detail > .cls-result") !== null,
-    "classify tab: shared master-detail scaffold (inputs | result)"
+    inputBlock !== null &&
+      inputBlock.querySelector("#clsForm") !== null &&
+      doc.querySelector("#panel-classify .master-detail") === null &&
+      !!(inputBlock.compareDocumentPosition(doc.getElementById("clsResult")) & FOLLOWS),
+    "classify tab: centered input block precedes the full-width result region"
+  );
+  // ADR-0010: the free-text input is the hero — it precedes the cached examples.
+  check(
+    !!(
+      doc.getElementById("clsForm").compareDocumentPosition(
+        doc.getElementById("clsExamples")
+      ) & FOLLOWS
+    ),
+    "classify input block: input leads, cached examples follow as secondary"
+  );
+  // Clicking an example populates the result region below it.
+  doc.querySelector("#clsExamples button").click();
+  check(
+    doc.querySelector("#clsResult .rec-title") !== null &&
+      doc.querySelector('#clsExamples button[aria-pressed="true"]') !== null,
+    "clicking an example renders its record in the result region"
   );
   check(
     doc.querySelector("#panel-gate .pg-columns #pgPolicy") !== null &&

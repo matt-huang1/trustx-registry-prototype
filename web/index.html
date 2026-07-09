@@ -104,36 +104,46 @@
   }
 
   /* ---- Classifier (the one interactive moment on a calm page) ----------- */
-  /* Inputs are the master column (like the registry index); the result is the
-     detail. Sticky for the same reason the registry index is sticky. */
-  .cls-master { align-self: start; position: sticky; top: 1.25rem; }
-  .cls-master > .section-label:first-child { margin-top: 0; }
+  /* Vertical flow: the input block is the ONE deliberately-contained element on
+     the page — centered at form width with balanced margins — because it is the
+     hero action. The result region below it uses the full envelope width. */
+  .cls-input-block {
+    max-width: 42rem;
+    margin: 2.4rem auto 0;
+  }
+  .cls-live > .section-label { margin-top: 0; }
 
+  /* Quiet subheading for the secondary examples: sentence case, no rule —
+     deliberately lighter than the hero's section-label. */
+  .cls-examples-label {
+    font-family: var(--sans);
+    font-size: 0.8rem;
+    font-weight: 400;
+    color: var(--ink-3);
+    margin: 1.6rem 0 0;
+  }
   .cls-examples {
     display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0.6rem;
-    margin: 1.1rem 0 0;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    margin: 0.6rem 0 0;
   }
   .cls-examples button {
     appearance: none;
     cursor: pointer;
-    display: flex;
+    display: inline-flex;
     align-items: baseline;
-    gap: 0.75rem;
+    gap: 0.6rem;
     background: transparent;
     border: 1px solid var(--rule);
     border-radius: 3px;
-    padding: 0.6rem 0.8rem;
+    padding: 0.35rem 0.6rem;
     font-family: var(--sans);
-    font-size: 0.86rem;
+    font-size: 0.8rem;
     text-align: left;
-    color: var(--ink);
+    color: var(--ink-2);
   }
-  /* Name left, tier right — the same anatomy as a registry index row. */
-  .cls-examples button .ex-name { flex: 1 1 auto; }
-  .cls-examples button:hover { background: var(--paper-2); }
+  .cls-examples button:hover { background: var(--paper-2); color: var(--ink); }
   .cls-examples button[aria-pressed="true"] {
     border-color: var(--accent-dim);
     box-shadow: inset 0 0 0 1px var(--accent-dim);
@@ -144,7 +154,7 @@
   .cls-live textarea {
     margin-top: 1.1rem;
     width: 100%;
-    min-height: 7.5rem;
+    min-height: 9rem;
     resize: vertical;
     font-family: var(--sans);
     font-size: 0.95rem;
@@ -180,8 +190,10 @@
   .cls-status { font-family: var(--sans); font-size: 0.82rem; color: var(--ink-3); }
 
   /* The classified result renders with the SAME open record treatment as the
-     registry detail pane (shared renderer, shared classes, shared column). */
-  .cls-result { min-width: 0; }
+     registry detail pane (shared renderer, shared classes), below the input
+     block at full envelope width. */
+  .cls-result { min-width: 0; margin: 3rem 0 0; }
+  .cls-result > .panel-note { max-width: none; text-align: center; }
 
   .cls-banner {
     font-family: var(--sans);
@@ -206,6 +218,8 @@
   .cls-banner.ratify .b-label { color: var(--tier-medium); }
 
   .cls-unavailable {
+    max-width: 42rem;
+    margin: 0 auto;
     font-family: var(--sans);
     font-size: 0.9rem;
     line-height: 1.5;
@@ -616,8 +630,8 @@
   .panel { padding: 2.4rem 0 5rem; }
   .panel[hidden] { display: none; }
 
-  /* Shared master–detail scaffold: Registry (index | record) and Classify
-     (inputs | result) use the identical grid so the tabs read as siblings. */
+  /* Master–detail scaffold for browse-many/inspect-one content (Registry).
+     Classify deliberately does NOT use it — see ADR-0011. */
   .master-detail {
     display: grid;
     grid-template-columns: minmax(230px, 300px) minmax(0, 1fr);
@@ -897,7 +911,7 @@
 
   @media (max-width: 800px) {
     .master-detail, .pg-columns { grid-template-columns: 1fr; }
-    .index, .cls-master { position: static; }
+    .index { position: static; }
     .index ol { max-height: none; }
   }
 
@@ -994,23 +1008,25 @@
         </p>
       </div>
 
-      <div class="master-detail">
-        <div class="cls-master">
-          <h3 class="section-label" id="clsExamplesLabel">Cached examples</h3>
-          <div class="cls-examples" id="clsExamples" role="group" aria-labelledby="clsExamplesLabel"></div>
+      <!-- Vertical flow (ADR-0011): one centered, contained input block — the free-text
+           input as hero, cached examples as a compact secondary row — then the result
+           below it at full envelope width. Classify is a single-action → single-result
+           task, so it flows top-to-bottom; Registry keeps master–detail. -->
+      <div class="cls-input-block">
+        <form class="cls-live" id="clsForm" novalidate>
+          <label class="section-label" for="clsInput">Describe an agent to classify</label>
+          <textarea id="clsInput" placeholder="Describe an AI agent — what it can do, what it can access, and how much human oversight it has…" spellcheck="true"></textarea>
+          <div class="cls-actions">
+            <button type="submit" id="clsSubmit">Classify</button>
+            <span class="cls-status" id="clsStatus" role="status" aria-live="polite"></span>
+          </div>
+        </form>
 
-          <form class="cls-live" id="clsForm" novalidate>
-            <label class="section-label" for="clsInput">Classify your own description</label>
-            <textarea id="clsInput" placeholder="Describe an AI agent — what it can do, what it can access, and how much human oversight it has…" spellcheck="true"></textarea>
-            <div class="cls-actions">
-              <button type="submit" id="clsSubmit">Classify</button>
-              <span class="cls-status" id="clsStatus" role="status" aria-live="polite"></span>
-            </div>
-          </form>
-        </div>
-
-        <div class="cls-result" id="clsResult" aria-live="polite"></div>
+        <h3 class="cls-examples-label" id="clsExamplesLabel">Or try an example</h3>
+        <div class="cls-examples" id="clsExamples" role="group" aria-labelledby="clsExamplesLabel"></div>
       </div>
+
+      <div class="cls-result" id="clsResult" aria-live="polite"></div>
     </section>
 
     <!--
@@ -1437,6 +1453,15 @@
       );
     }
 
+    // Quiet empty state until the user selects an example or classifies a description.
+    function showResultEmpty() {
+      markExample(-1);
+      showResultMessage(el("p", {
+        className: "panel-note",
+        text: "Select an example or classify a description to see its full risk record.",
+      }));
+    }
+
     function showLiveUnavailable() {
       markExample(-1);
       var box = el("div", { className: "cls-unavailable" });
@@ -1503,7 +1528,7 @@
     }
 
     renderExamples();
-    if (EXAMPLES.length) selectExample(0);
+    showResultEmpty();
 
     // ---- Policy gate: display pre-computed deterministic decisions --------
     // No decisions are made here. Everything is looked up from the globals set by

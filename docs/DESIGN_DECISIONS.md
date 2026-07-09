@@ -15,3 +15,5 @@ here. If you are unsure whether a decision needs an ADR, err toward writing one.
 | [0007](adr/0007-hash-based-tabs.md) | Hash-based tabbed single-page layout; left-aligned horizontal nav | Accepted |
 | [0008](adr/0008-content-envelope-widths.md) | Centered content envelope; structured content uses full width, prose stays at readable measure | Accepted |
 | [0009](adr/0009-consistent-active-state-and-record-treatment.md) | Consistent restrained active-state and unified record treatment across tabs | Accepted |
+| [0010](adr/0010-classify-input-as-hero.md) | Classify master column reweighted: free-text input as hero, cached examples as secondary | Accepted |
+| [0011](adr/0011-classify-vertical-flow.md) | Classify uses vertical flow (centered input, full-width result below), not master-detail | Accepted |
