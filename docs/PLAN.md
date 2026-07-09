@@ -7,13 +7,13 @@
 
 ## 1. Problem & who it's for
 
-*State why self-attestation fails as a basis for trusting an AI agent's risk
-posture, then name the concrete users and the job each brings: the developer
-classifying their own build, the risk officer looking up an existing agent, the
-auditor who needs evidence, the procurement reviewer assessing a vendor agent,
-and the working group curating the standard.*
+Agentic AI is arriving in regulated industries faster than the governance meant to contain it. Banks are already piloting agents that read customer data, draft decisions, and in some cases move money, and the gap between what these systems can do and the oversight wrapped around them is widening, not closing. The pressing question is no longer whether agents will be deployed in finance, but how anyone will know which ones are safe to trust.
 
-TODO
+Today the default answer is self-attestation: each organisation privately decides its own agents are acceptable and moves on. That does not scale, and more importantly it is not defensible, because a risk rating with nothing behind it is an assertion, not evidence. An agent labelled "low risk" by the team that built it tells you what that team concluded, not what is true. This is the gap RAI's own framework is built to close: the shift from private self-attestation toward classifications backed by evidence that can withstand outside scrutiny. The problem this registry addresses is therefore not the absence of a catalogue of agents. It is the absence of a *trustworthy* way to know an agent's risk, one where the classification can be inspected, questioned, and stood behind.
+
+That distinction shapes who the registry is for, because several different people need to trust the same entry for different reasons. A developer who has built an agent needs to classify it in a way they can defend, not just assert. A second-line risk officer needs to look an agent up and rely on the tier without re-doing the analysis. An auditor needs the evidence beneath the score, not the score alone. Someone in procurement needs to assess a third-party agent they did not build and cannot see inside. And the working group maintaining the standard needs entries consistent enough to govern. One registry serves all of them only if every entry carries not just a verdict but the reasoning that produced it.
+
+That is the principle the rest of this document builds on: a registry is only trustworthy if every entry carries the evidence of how its risk was derived. Everything that follows — the classification model, the evidence-backed entries, the challenge and review process, the runtime enforcement — is in service of making a risk classification something you can stand behind rather than something you are asked to take on faith.
 
 ## 2. What the registry is
 
