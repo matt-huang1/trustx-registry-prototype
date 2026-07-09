@@ -602,6 +602,329 @@
     color: var(--ink-2);
   }
 
+  /* ---- In-page nav ------------------------------------------------------ */
+  .mainnav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.4rem;
+    margin: 1.2rem 0 0;
+  }
+  .mainnav a {
+    font-family: var(--sans);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    text-decoration: none;
+    padding: 0 0 0.2rem;
+    border-bottom: 2px solid transparent;
+  }
+  .mainnav a:hover { color: var(--accent); border-bottom-color: var(--accent-dim); }
+  .mainnav a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+  /* Anchored sections should not hide under nothing; give a little breathing room. */
+  #classifier, #registrySection, #policyGate { scroll-margin-top: 1.25rem; }
+
+  /* ---- Policy gate ------------------------------------------------------ */
+  .policy-gate {
+    margin: 3.5rem 0 1rem;
+    padding: 1.6rem clamp(1.1rem, 3vw, 2rem) 1.9rem;
+    background: var(--paper-2);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+  }
+  .policy-gate .pg-title {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: clamp(1.25rem, 2.4vw, 1.55rem);
+    letter-spacing: -0.01em;
+    margin: 0;
+  }
+  .policy-gate .pg-note {
+    font-family: var(--sans);
+    font-size: 0.82rem;
+    line-height: 1.5;
+    color: var(--ink-3);
+    max-width: 74ch;
+    margin: 0.5rem 0 0;
+  }
+
+  .pg-subhead {
+    font-family: var(--sans);
+    font-size: 0.66rem;
+    font-weight: 600;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin: 2rem 0 0.8rem;
+  }
+
+  /* The stated policy: a small tier -> action table */
+  .pg-policy { margin: 1.4rem 0 0; }
+  .pg-policy .pg-policy-name {
+    font-family: var(--serif);
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+  }
+  .pg-policy .pg-policy-desc {
+    font-family: var(--sans);
+    font-size: 0.85rem;
+    color: var(--ink-2);
+    max-width: 74ch;
+    margin: 0.35rem 0 0;
+  }
+  table.pg-table {
+    border-collapse: collapse;
+    margin: 0.9rem 0 0;
+    font-family: var(--sans);
+    font-size: 0.88rem;
+  }
+  table.pg-table th, table.pg-table td {
+    text-align: left;
+    padding: 0.5rem 1.2rem 0.5rem 0;
+    border-bottom: 1px solid var(--rule);
+    vertical-align: baseline;
+  }
+  table.pg-table th {
+    font-size: 0.64rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  table.pg-table td .rule-action { font-family: var(--mono); font-size: 0.82rem; color: var(--ink); }
+  .pg-override-note {
+    font-family: var(--sans);
+    font-size: 0.82rem;
+    color: var(--ink-2);
+    margin: 0.8rem 0 0;
+    padding-left: 0.9rem;
+    border-left: 2px solid var(--tier-high);
+  }
+
+  /* Scenario player */
+  .pg-scenario { margin: 0.6rem 0 0; }
+  .pg-scenario .pg-scenario-task {
+    font-family: var(--serif);
+    font-size: 1.05rem;
+    color: var(--ink);
+    margin: 0 0 0.2rem;
+  }
+  .pg-scenario .pg-scenario-sub {
+    font-family: var(--sans);
+    font-size: 0.82rem;
+    color: var(--ink-3);
+    margin: 0 0 1rem;
+  }
+  ol.pg-plan { list-style: none; margin: 0; padding: 0; }
+  ol.pg-plan > li {
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--rule);
+    border-radius: 3px;
+    padding: 0.85rem 1rem;
+    margin: 0 0 0.7rem;
+    opacity: 0.55;
+    transition: opacity 0.2s ease, border-color 0.2s ease;
+  }
+  ol.pg-plan > li.is-active { opacity: 1; border-left-color: var(--accent); }
+  ol.pg-plan > li.is-done   { opacity: 1; }
+  ol.pg-plan > li.is-done.act-allow    { border-left-color: var(--tier-low); }
+  ol.pg-plan > li.is-done.act-log      { border-left-color: var(--tier-medium); }
+  ol.pg-plan > li.is-halted { opacity: 1; border-left-color: var(--tier-high); }
+  .pg-step-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+  }
+  .pg-step-title { font-family: var(--serif); font-size: 1.02rem; font-weight: 600; margin: 0; }
+  .pg-step-n {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--ink-3);
+    margin-right: 0.5rem;
+  }
+  .pg-step-task {
+    font-family: var(--sans);
+    font-size: 0.86rem;
+    color: var(--ink-2);
+    margin: 0.35rem 0 0;
+  }
+  .pg-step-body { margin: 0.7rem 0 0; }
+  .pg-step-body:empty { display: none; }
+  .pg-beat {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--ink-3);
+  }
+  .pg-beat .dots::after {
+    content: "";
+    animation: pgdots 1.2s steps(4, end) infinite;
+  }
+  @keyframes pgdots { 0% { content: ""; } 25% { content: "."; } 50% { content: ".."; } 75% { content: "..."; } }
+  @media (prefers-reduced-motion: reduce) { .pg-beat .dots::after { animation: none; content: "…"; } }
+
+  .pg-verdict {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    font-family: var(--sans);
+  }
+  .pg-outcome {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.42em;
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--out-color, var(--ink-2));
+  }
+  .pg-outcome .mark { width: 0.62em; height: 0.62em; background: var(--out-color, var(--ink-2)); flex: none; }
+  .pg-outcome.act-allow    { --out-color: var(--tier-low); }
+  .pg-outcome.act-log      { --out-color: var(--tier-medium); }
+  .pg-outcome.act-escalate { --out-color: var(--tier-high); }
+  .pg-rule {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: var(--ink-2);
+  }
+  .pg-reason {
+    font-family: var(--sans);
+    font-size: 0.88rem;
+    line-height: 1.5;
+    color: var(--ink);
+    margin: 0.6rem 0 0;
+    max-width: 74ch;
+  }
+  .pg-requirement {
+    font-family: var(--sans);
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: var(--ink);
+    background: var(--paper-2);
+    border-left: 3px solid var(--tier-high);
+    padding: 0.6rem 0.85rem;
+    margin: 0.7rem 0 0;
+  }
+  .pg-requirement .req-label {
+    display: block;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--tier-high);
+    margin: 0 0 0.3rem;
+  }
+  .pg-evidence-refs { margin: 0.7rem 0 0; }
+  .pg-evidence-refs .ev-label {
+    font-family: var(--sans);
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 0.35rem;
+  }
+  .pg-evidence-refs ul { list-style: none; margin: 0; padding: 0; }
+  .pg-evidence-refs li {
+    position: relative;
+    padding-left: 1.1rem;
+    margin: 0.3rem 0;
+    font-family: var(--sans);
+    font-size: 0.85rem;
+    line-height: 1.4;
+    color: var(--ink-2);
+  }
+  .pg-evidence-refs li::before {
+    content: "\201C";
+    position: absolute; left: 0; top: -0.05em;
+    color: var(--accent-dim);
+  }
+  a.pg-entry-link {
+    font-family: var(--sans);
+    font-size: 0.82rem;
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 1px solid var(--accent-dim);
+  }
+  a.pg-entry-link:hover { color: var(--accent-dim); }
+
+  .pg-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    flex-wrap: wrap;
+    margin: 0.4rem 0 0;
+  }
+  .pg-controls button {
+    appearance: none;
+    cursor: pointer;
+    font-family: var(--sans);
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--paper);
+    background: var(--accent);
+    border: 1px solid var(--accent);
+    border-radius: 3px;
+    padding: 0.45rem 1rem;
+  }
+  .pg-controls button.secondary {
+    color: var(--ink);
+    background: var(--paper);
+    border-color: var(--rule);
+  }
+  .pg-controls button:hover:not(:disabled) { background: var(--accent-dim); border-color: var(--accent-dim); color: var(--paper); }
+  .pg-controls button.secondary:hover:not(:disabled) { background: var(--paper-3); color: var(--ink); }
+  .pg-controls button:disabled { opacity: 0.45; cursor: default; }
+  .pg-controls button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .pg-controls .pg-status {
+    font-family: var(--sans);
+    font-size: 0.82rem;
+    color: var(--ink-3);
+  }
+
+  .pg-halt-banner {
+    font-family: var(--sans);
+    font-size: 0.88rem;
+    line-height: 1.5;
+    color: var(--ink);
+    background: var(--paper);
+    border: 1px solid var(--tier-high);
+    border-left: 3px solid var(--tier-high);
+    border-radius: 3px;
+    padding: 0.8rem 1rem;
+    margin: 0.4rem 0 0;
+  }
+  .pg-halt-banner:empty { display: none; }
+  .pg-halt-banner strong { color: var(--tier-high); }
+
+  /* Check-any-agent picker */
+  .pg-check select {
+    font-family: var(--sans);
+    font-size: 0.9rem;
+    color: var(--ink);
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    padding: 0.5rem 0.7rem;
+    max-width: 100%;
+  }
+  .pg-check select:focus-visible { outline: 2px solid var(--accent); outline-offset: -1px; border-color: var(--accent-dim); }
+  .pg-check-result {
+    margin: 1.3rem 0 0;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 1.1rem clamp(1rem, 2.5vw, 1.3rem) 1.3rem;
+  }
+
   @media (max-width: 800px) {
     .registry { grid-template-columns: 1fr; }
     .index { position: static; }
@@ -631,6 +954,11 @@
       demonstration, pending the real risk-dimension schema. Treat the taxonomy as
       illustrative, not canonical.
     </p>
+    <nav class="mainnav" aria-label="Sections">
+      <a href="#registrySection">Registry</a>
+      <a href="#classifier">Classify</a>
+      <a href="#policyGate">Policy Gate</a>
+    </nav>
   </header>
 
   <!--
@@ -663,7 +991,7 @@
     <div class="cls-result" id="clsResult" aria-live="polite"></div>
   </section>
 
-  <div class="toolbar">
+  <div class="toolbar" id="registrySection">
     <div role="group" aria-label="Filter by risk tier">
       <span class="field-label" id="tier-filter-label">Risk tier</span>
       <div class="tier-filter" role="group" aria-labelledby="tier-filter-label" id="tierFilter">
@@ -688,6 +1016,51 @@
     <section class="record" id="record" aria-live="polite" aria-label="Selected entry"></section>
   </div>
 
+  <!--
+    Runtime policy gate. Everything shown here is PRE-COMPUTED offline by
+    scripts/build_registry.py (classifier/policy_gate.py) and injected as
+    window.__POLICY__ / window.__GATE_DECISIONS__ / window.__SCENARIO__ via
+    data/policy.js. The browser does NO deciding — it only looks decisions up by slug.
+    See docs/adr/0006-runtime-policy-gate.md.
+  -->
+  <section class="policy-gate" id="policyGate" aria-labelledby="pgHeading">
+    <h2 class="pg-title" id="pgHeading">Runtime policy gate</h2>
+    <p class="pg-note">
+      The registry is not just a catalogue — it is something an orchestrator consults at the
+      moment an agent tries to act. The gate maps an agent's evidence-backed risk tier to an
+      org policy action: allow, allow&nbsp;with&nbsp;logging, or escalate to a human. The
+      decision is <strong>deterministic</strong> — no model runs at enforcement time — and
+      every decision below was computed offline over the committed registry; this page only
+      looks them up.
+    </p>
+
+    <div class="pg-policy" id="pgPolicy" aria-label="The active policy"></div>
+
+    <h3 class="pg-subhead">Scenario · an orchestrator paying an invoice</h3>
+    <div class="pg-scenario" id="pgScenario">
+      <p class="pg-scenario-task" id="pgScenarioTask"></p>
+      <p class="pg-scenario-sub">
+        The orchestrator queries the gate before each delegation. Safe steps pass; the
+        money-movement step halts and escalates.
+      </p>
+      <ol class="pg-plan" id="pgPlan"></ol>
+      <div class="pg-halt-banner" id="pgHalt" role="status" aria-live="polite"></div>
+      <div class="pg-controls">
+        <button type="button" id="pgRun">Run workflow</button>
+        <button type="button" class="secondary" id="pgStep">Step</button>
+        <button type="button" class="secondary" id="pgReset">Reset</button>
+        <span class="pg-status" id="pgScenarioStatus" role="status" aria-live="polite"></span>
+      </div>
+    </div>
+
+    <h3 class="pg-subhead">Check any agent against the policy</h3>
+    <div class="pg-check">
+      <label class="field-label" for="pgSelect">Registry entry</label>
+      <select id="pgSelect" aria-label="Choose a registry entry to check"></select>
+      <div class="pg-check-result" id="pgDecision" aria-live="polite"></div>
+    </div>
+  </section>
+
   <footer class="colophon">
     Working prototype. Not affiliated with, nor endorsed by, any standards body; the
     scoring schema is a placeholder. Data compiled from <code>entries/*.yaml</code> into
@@ -697,6 +1070,7 @@
 
 <script src="data/registry.js"></script>
 <script src="data/examples.js"></script>
+<script src="data/policy.js"></script>
 <script>
   (function () {
     "use strict";
@@ -1111,6 +1485,325 @@
 
     renderExamples();
     if (EXAMPLES.length) selectExample(0);
+
+    // ---- Policy gate: display pre-computed deterministic decisions --------
+    // No decisions are made here. Everything is looked up from the globals set by
+    // data/policy.js (window.__POLICY__ / __GATE_DECISIONS__ / __SCENARIO__).
+    var POLICY = window.__POLICY__ || null;
+    var GATE = window.__GATE_DECISIONS__ || {};
+    var SCENARIO = window.__SCENARIO__ || null;
+
+    var ACTION_META = {
+      allow:              { label: "Allow",                outcome: "Allowed",          cls: "act-allow" },
+      allow_with_logging: { label: "Allow with logging",   outcome: "Allowed · logged", cls: "act-log" },
+      escalate_to_human:  { label: "Escalate to human",    outcome: "Escalated — halt", cls: "act-escalate" },
+      require_dual_approval: { label: "Require dual approval", outcome: "Dual approval", cls: "act-escalate" },
+    };
+    function actionMeta(a) { return ACTION_META[a] || { label: a, outcome: a, cls: "" }; }
+
+    function findEntry(slug) {
+      return DATA.filter(function (e) { return e.agent.slug === slug; })[0] || null;
+    }
+
+    // Jump to a registry entry from a policy decision: clear filters so it is visible,
+    // select it, and scroll the registry into view — one system, one selection model.
+    function revealEntry(slug) {
+      state.tier = "all";
+      state.query = "";
+      nameInput.value = "";
+      Array.prototype.forEach.call(tierFilterEl.querySelectorAll("button"), function (b) {
+        b.setAttribute("aria-pressed", b.getAttribute("data-tier") === "all" ? "true" : "false");
+      });
+      renderList();
+      select(slug);
+      var anchor = document.getElementById("registrySection");
+      if (anchor) anchor.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function outcomeBadge(action) {
+      var m = actionMeta(action);
+      var wrap = el("span", { className: "pg-outcome " + m.cls });
+      wrap.appendChild(el("span", { className: "mark", attrs: { "aria-hidden": "true" } }));
+      wrap.appendChild(document.createTextNode(m.outcome));
+      return wrap;
+    }
+
+    // Shared decision renderer for the scenario steps and the check-any-agent panel.
+    function decisionDetail(container, decision, opts) {
+      opts = opts || {};
+      var verdict = el("div", { className: "pg-verdict" });
+      verdict.appendChild(outcomeBadge(decision.action));
+      var entry = findEntry(decision.slug);
+      if (entry) verdict.appendChild(tierBadge(entry.risk_tier));
+      verdict.appendChild(el("span", { className: "pg-rule", text: decision.policy_rule }));
+      container.appendChild(verdict);
+
+      container.appendChild(el("p", { className: "pg-reason", text: decision.reason }));
+
+      var overrides = Array.isArray(decision.overrides) ? decision.overrides : [];
+      overrides.forEach(function (ov) {
+        var req = el("div", { className: "pg-requirement" });
+        req.appendChild(el("span", { className: "req-label", text: "Human approval required · " + actionMeta(ov.action).label }));
+        req.appendChild(document.createTextNode(ov.reason));
+        container.appendChild(req);
+      });
+
+      if (opts.showEvidence) {
+        var refs = Array.isArray(decision.evidence_refs) ? decision.evidence_refs : [];
+        var ev = el("div", { className: "pg-evidence-refs" });
+        ev.appendChild(el("p", { className: "ev-label", text: "Evidence that drove the tier" }));
+        if (refs.length) {
+          var ul = el("ul");
+          refs.forEach(function (q) { ul.appendChild(el("li", { text: q })); });
+          ev.appendChild(ul);
+        } else {
+          ev.appendChild(el("p", { className: "pg-reason", text: "No evidence recorded." }));
+        }
+        container.appendChild(ev);
+      }
+
+      if (opts.link && entry) {
+        var link = el("a", {
+          className: "pg-entry-link",
+          text: "View full registry entry ↗",
+          attrs: { href: "#registrySection" },
+        });
+        link.addEventListener("click", function (e) {
+          e.preventDefault();
+          revealEntry(decision.slug);
+        });
+        var wrap = el("p", { attrs: { style: "margin:0.8rem 0 0;" } });
+        wrap.appendChild(link);
+        container.appendChild(wrap);
+      }
+    }
+
+    // ---- Policy table (the stated, configurable policy) ------------------
+    var pgPolicyEl = document.getElementById("pgPolicy");
+    function renderPolicy() {
+      if (!pgPolicyEl) return;
+      pgPolicyEl.innerHTML = "";
+      if (!POLICY) {
+        pgPolicyEl.appendChild(el("p", {
+          className: "pg-note",
+          text: "No policy loaded. Run scripts/build_registry.py to generate web/data/policy.js.",
+        }));
+        return;
+      }
+      pgPolicyEl.appendChild(el("p", { className: "pg-policy-name", text: POLICY.name || "Policy" }));
+      if (POLICY.description) {
+        pgPolicyEl.appendChild(el("p", { className: "pg-policy-desc", text: POLICY.description }));
+      }
+      var table = el("table", { className: "pg-table" });
+      var thead = el("thead");
+      var htr = el("tr");
+      htr.appendChild(el("th", { text: "Risk tier" }));
+      htr.appendChild(el("th", { text: "Gate action" }));
+      thead.appendChild(htr);
+      table.appendChild(thead);
+      var tbody = el("tbody");
+      ["low", "medium", "high"].forEach(function (tier) {
+        var action = (POLICY.tier_actions || {})[tier];
+        if (!action) return;
+        var tr = el("tr");
+        var tierCell = el("td");
+        tierCell.appendChild(tierBadge(tier));
+        tr.appendChild(tierCell);
+        var actionCell = el("td");
+        actionCell.appendChild(el("span", { className: "rule-action", text: actionMeta(action).label }));
+        tr.appendChild(actionCell);
+        tbody.appendChild(tr);
+      });
+      table.appendChild(tbody);
+      pgPolicyEl.appendChild(table);
+
+      var overrides = POLICY.capability_overrides || {};
+      Object.keys(overrides).forEach(function (cap) {
+        var note = el("p", { className: "pg-override-note" });
+        note.appendChild(el("strong", { text: "Capability override · " }));
+        note.appendChild(document.createTextNode(
+          cap.replace(/_/g, " ") + " → " + actionMeta(overrides[cap]).label
+          + " (applied on top of the tier rule whenever an agent can move money)."
+        ));
+        pgPolicyEl.appendChild(note);
+      });
+    }
+
+    // ---- Scenario player -------------------------------------------------
+    var STEPS = (SCENARIO && Array.isArray(SCENARIO.steps)) ? SCENARIO.steps : [];
+    var QUERY_MS = 650;   // the "querying registry…" beat
+    var STEP_GAP = 500;   // pause between auto-advanced steps
+    var pgPlanEl = document.getElementById("pgPlan");
+    var pgHaltEl = document.getElementById("pgHalt");
+    var pgTaskEl = document.getElementById("pgScenarioTask");
+    var pgRunBtn = document.getElementById("pgRun");
+    var pgStepBtn = document.getElementById("pgStep");
+    var pgResetBtn = document.getElementById("pgReset");
+    var pgScenarioStatus = document.getElementById("pgScenarioStatus");
+
+    var pgState = { idx: -1, halted: false, busy: false, running: false };
+    var planItems = [];
+
+    function stepDecision(i) { return GATE[STEPS[i].slug] || null; }
+
+    function buildPlan() {
+      if (!pgPlanEl) return;
+      pgPlanEl.innerHTML = "";
+      planItems = [];
+      if (pgTaskEl && SCENARIO) pgTaskEl.textContent = SCENARIO.task || SCENARIO.name || "";
+      STEPS.forEach(function (step, i) {
+        var li = el("li", { attrs: { "data-i": String(i) } });
+
+        var head = el("div", { className: "pg-step-head" });
+        var left = el("div");
+        left.appendChild(el("span", { className: "pg-step-n", text: "Step " + step.n }));
+        left.appendChild(el("span", { className: "pg-step-title", text: displayName(step.slug) }));
+        head.appendChild(left);
+        li.appendChild(head);
+
+        li.appendChild(el("p", { className: "pg-step-task", text: step.task }));
+        li.appendChild(el("div", { className: "pg-step-body" }));
+        pgPlanEl.appendChild(li);
+        planItems.push(li);
+      });
+    }
+
+    function resetScenario() {
+      pgState = { idx: -1, halted: false, busy: false, running: false };
+      if (pgHaltEl) pgHaltEl.innerHTML = "";
+      if (pgScenarioStatus) pgScenarioStatus.textContent = "";
+      planItems.forEach(function (li) {
+        li.className = "";
+        li.querySelector(".pg-step-body").innerHTML = "";
+        var old = li.querySelector(".pg-step-head .pg-outcome");
+        if (old) old.parentNode.removeChild(old);
+      });
+      updateScenarioControls();
+    }
+
+    function updateScenarioControls() {
+      var done = pgState.halted || (pgState.idx >= STEPS.length - 1 && pgState.idx > -1 && !pgState.busy);
+      if (pgRunBtn) pgRunBtn.disabled = pgState.busy || pgState.running || done || !STEPS.length;
+      if (pgStepBtn) pgStepBtn.disabled = pgState.busy || pgState.running || done || !STEPS.length;
+      if (pgResetBtn) pgResetBtn.disabled = pgState.idx === -1 && !pgState.busy;
+    }
+
+    function playStep(i, thenContinue) {
+      pgState.idx = i;
+      pgState.busy = true;
+      var li = planItems[i];
+      li.className = "is-active";
+      var body = li.querySelector(".pg-step-body");
+      body.innerHTML = "";
+      var beat = el("span", { className: "pg-beat" });
+      beat.appendChild(document.createTextNode("querying registry"));
+      beat.appendChild(el("span", { className: "dots", attrs: { "aria-hidden": "true" } }));
+      body.appendChild(beat);
+      if (pgScenarioStatus) pgScenarioStatus.textContent = "Step " + STEPS[i].n + ": querying the registry…";
+      updateScenarioControls();
+
+      setTimeout(function () {
+        var dec = stepDecision(i);
+        var m = actionMeta(dec ? dec.action : "");
+        body.innerHTML = "";
+        if (!dec) {
+          body.appendChild(el("p", { className: "pg-reason", text: "No gate decision found for this tool." }));
+          pgState.busy = false;
+          updateScenarioControls();
+          return;
+        }
+        // outcome badge into the step head (right side)
+        li.querySelector(".pg-step-head").appendChild(outcomeBadge(dec.action));
+        decisionDetail(body, dec, { link: true });
+
+        var escalated = dec.action === "escalate_to_human";
+        li.className = escalated ? "is-halted" : ("is-done " + m.cls);
+        pgState.busy = false;
+
+        if (escalated) {
+          pgState.halted = true;
+          pgState.running = false;
+          if (pgHaltEl) {
+            pgHaltEl.innerHTML = "";
+            var strong = el("strong", { text: "Workflow halted. " });
+            pgHaltEl.appendChild(strong);
+            pgHaltEl.appendChild(document.createTextNode(
+              "The money-movement delegation was escalated: it cannot proceed until an "
+              + "accountable human (two, per the money-movement override) approves. The "
+              + "remaining steps do not run."
+            ));
+          }
+          if (pgScenarioStatus) pgScenarioStatus.textContent = "Halted at step " + STEPS[i].n + " — awaiting human approval.";
+          updateScenarioControls();
+          return;
+        }
+
+        if (pgScenarioStatus) pgScenarioStatus.textContent = "Step " + STEPS[i].n + ": " + m.outcome + ".";
+
+        if (thenContinue && i < STEPS.length - 1) {
+          setTimeout(function () { playStep(i + 1, true); }, STEP_GAP);
+        } else {
+          pgState.running = false;
+          if (thenContinue && pgScenarioStatus) pgScenarioStatus.textContent = "Workflow complete.";
+          updateScenarioControls();
+        }
+      }, QUERY_MS);
+    }
+
+    function runScenario() {
+      if (pgState.busy || pgState.running) return;
+      if (pgState.idx >= STEPS.length - 1 || pgState.halted) resetScenario();
+      pgState.running = true;
+      playStep(pgState.idx + 1, true);
+    }
+
+    function stepScenario() {
+      if (pgState.busy || pgState.running || pgState.halted) return;
+      if (pgState.idx >= STEPS.length - 1) return;
+      playStep(pgState.idx + 1, false);
+    }
+
+    if (pgRunBtn) pgRunBtn.addEventListener("click", runScenario);
+    if (pgStepBtn) pgStepBtn.addEventListener("click", stepScenario);
+    if (pgResetBtn) pgResetBtn.addEventListener("click", resetScenario);
+
+    // ---- Check any agent against the policy ------------------------------
+    var pgSelect = document.getElementById("pgSelect");
+    var pgDecisionEl = document.getElementById("pgDecision");
+
+    function renderCheck(slug) {
+      if (!pgDecisionEl) return;
+      pgDecisionEl.innerHTML = "";
+      var dec = GATE[slug];
+      if (!dec) {
+        pgDecisionEl.appendChild(el("p", { className: "pg-reason", text: "No gate decision found for this entry." }));
+        return;
+      }
+      var head = el("div", { className: "rec-head" });
+      head.appendChild(el("h4", { className: "pg-step-title", text: displayName(slug) }));
+      pgDecisionEl.appendChild(head);
+      decisionDetail(pgDecisionEl, dec, { showEvidence: true, link: true });
+    }
+
+    function renderCheckPicker() {
+      if (!pgSelect) return;
+      pgSelect.innerHTML = "";
+      DATA.forEach(function (e) {
+        var opt = el("option", {
+          text: e.__name + " — " + TIER_LABEL[e.risk_tier],
+          attrs: { value: e.agent.slug },
+        });
+        pgSelect.appendChild(opt);
+      });
+      pgSelect.addEventListener("change", function () { renderCheck(pgSelect.value); });
+    }
+
+    // Boot the policy-gate section.
+    renderPolicy();
+    buildPlan();
+    updateScenarioControls();
+    renderCheckPicker();
+    if (DATA.length) renderCheck(DATA[0].agent.slug);
 
     // ---- Boot (registry) -------------------------------------------------
     if (!DATA.length) {

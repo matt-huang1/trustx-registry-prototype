@@ -36,11 +36,22 @@ class RuleResult:
     fired: bool  # True if any deterministic rule changed or flagged the proposal
 
 
-def _mentions_money_movement(description: str) -> bool:
+def mentions_money_movement(description: str) -> bool:
+    """Does ``description`` trip the money-movement rule?
+
+    The single detector for money-movement capability, shared by the classifier's
+    deterministic override (below) and the runtime policy gate
+    (:mod:`classifier.policy_gate`). Keeping one function means the score floor and the
+    gate's dual-approval override can never disagree about what counts as moving money.
+    """
     return any(
         re.search(pattern, description, flags=re.IGNORECASE)
         for pattern in MONEY_MOVEMENT_PATTERNS
     )
+
+
+# Back-compat private alias; prefer the public :func:`mentions_money_movement`.
+_mentions_money_movement = mentions_money_movement
 
 
 def apply_deterministic_rules(description: str, proposal: MutableMapping) -> RuleResult:

@@ -12,3 +12,6 @@ entries.
 - [ ] M3: Persistence + entry lifecycle (draft/challenged/ratified/published).
 - [ ] M4: Web UI in `web/` for browsing, submitting, and challenging entries.
 - [ ] M5: Batch classification + evidence-source ingestion.
+- [ ] M6: Expose the runtime policy gate (ADR-0006) as a live **MCP/A2A endpoint** any agent
+  queries at the moment it tries to act — the prototype's offline `decide()` and
+  `web/data/policy.json` are the display-time projection of this service.

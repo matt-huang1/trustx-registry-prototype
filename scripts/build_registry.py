@@ -15,6 +15,12 @@ Artifacts, all emitted from the same validated data:
     results of running examples/*.txt through the maker/checker loop).
   * ``web/data/examples.js``   — the identical array on ``window.__EXAMPLES__``, read by
     the classifier hero the same zero-fetch way. See docs/adr/0005-*.md.
+  * ``web/data/policy.json``   — canonical runtime-policy-gate bundle: the org policy, the
+    deterministic gate decision for every entry (keyed by slug), and the scripted scenario.
+  * ``web/data/policy.js``     — the same bundle on ``window.__POLICY__`` /
+    ``window.__GATE_DECISIONS__`` / ``window.__SCENARIO__`` for the Policy Gate web section.
+    Decisions are computed here (offline, deterministic — no LLM); the browser only looks
+    them up. See docs/adr/0006-*.md.
 
 OFFLINE by default. The default command and ``--check`` make NO network calls and need
 no API key: they compile the registry and re-derive examples.js from the committed
@@ -39,15 +45,38 @@ import jsonschema
 import yaml
 
 # Import from the installed package so this works regardless of cwd.
+from classifier.policy_gate import decide as gate_decide
 from classifier.schema import load_schema, roll_up_risk_tier
 
 ROOT = Path(__file__).resolve().parent.parent
 ENTRIES_DIR = ROOT / "entries"
 EXAMPLES_DIR = ROOT / "examples"
+POLICY_PATH = ROOT / "policy" / "example-bank-policy.yaml"
 OUTPUT_JSON = ROOT / "web" / "data" / "registry.json"
 OUTPUT_JS = ROOT / "web" / "data" / "registry.js"
 OUTPUT_EXAMPLES_JSON = ROOT / "web" / "data" / "examples.json"
 OUTPUT_EXAMPLES_JS = ROOT / "web" / "data" / "examples.js"
+OUTPUT_POLICY_JSON = ROOT / "web" / "data" / "policy.json"
+OUTPUT_POLICY_JS = ROOT / "web" / "data" / "policy.js"
+
+# The scripted "cinematic" demo path: an invoice-payment workflow whose steps reference
+# real registry slugs across the tiers, so safe steps pass and the money-movement step
+# halts. Represented as data; the gate decision for each slug is looked up, never computed
+# in the browser. If the registry's low/medium archetypes change slug, update these.
+SCENARIO_STEPS: tuple[dict, ...] = (
+    {
+        "slug": "internal-document-summarisation-assistant",
+        "task": "Read the vendor invoice and extract the amount, payee, and line items.",
+    },
+    {
+        "slug": "kyc-onboarding-triage-agent",
+        "task": "Look up the vendor's records to confirm identity and banking details.",
+    },
+    {
+        "slug": "payments-initiation-agent",
+        "task": "Initiate the ACH payment of the invoiced amount to the vendor.",
+    },
+)
 
 # Display order for the cached examples in the hero (low → medium → high).
 _TIER_RANK = {"low": 0, "medium": 1, "high": 2}
@@ -139,6 +168,80 @@ def render_examples_js(examples: list[dict]) -> str:
     return f"window.__EXAMPLES__ = {_canonical_json(examples)};\n"
 
 
+# --------------------------------------------------------------------------- #
+# Policy gate (offline, deterministic)
+# --------------------------------------------------------------------------- #
+def load_policy() -> dict:
+    """Load and lightly validate the committed org policy."""
+    try:
+        policy = yaml.safe_load(POLICY_PATH.read_text(encoding="utf-8"))
+    except yaml.YAMLError as exc:
+        _fail(f"{POLICY_PATH.relative_to(ROOT)}: could not parse YAML: {exc}")
+    if not isinstance(policy, dict) or "tier_actions" not in policy:
+        _fail(f"{POLICY_PATH.relative_to(ROOT)}: must be a mapping with 'tier_actions'")
+    for tier in ("low", "medium", "high"):
+        if tier not in policy["tier_actions"]:
+            _fail(f"{POLICY_PATH.relative_to(ROOT)}: tier_actions missing '{tier}'")
+    return policy
+
+
+def build_gate_decisions(entries: list[dict], policy: dict) -> dict:
+    """Run the deterministic gate over every entry, keyed by slug."""
+    return {e["agent"]["slug"]: gate_decide(e, policy) for e in entries}
+
+
+def build_scenario(entries: list[dict]) -> dict:
+    """Assemble the scripted orchestrator task plan, asserting each slug exists."""
+    known = {e["agent"]["slug"] for e in entries}
+    for step in SCENARIO_STEPS:
+        if step["slug"] not in known:
+            _fail(
+                f"scenario references unknown slug '{step['slug']}'. Update SCENARIO_STEPS "
+                f"in build_registry.py to reference a committed registry entry."
+            )
+    return {
+        "name": "Invoice payment workflow",
+        "task": "An orchestrator is asked to pay a vendor invoice end to end.",
+        "steps": [
+            {"n": i + 1, "slug": step["slug"], "task": step["task"]}
+            for i, step in enumerate(SCENARIO_STEPS)
+        ],
+    }
+
+
+def build_policy_payload(entries: list[dict]) -> dict:
+    """The full gate bundle: the policy, per-slug decisions, and the scripted scenario."""
+    policy = load_policy()
+    return {
+        "policy": policy,
+        "gate_decisions": build_gate_decisions(entries, policy),
+        "scenario": build_scenario(entries),
+    }
+
+
+def render_policy_json(payload: dict) -> str:
+    """Canonical policy.json content (the machine-readable gate bundle)."""
+    return json.dumps(payload, indent=2, ensure_ascii=False, sort_keys=True) + "\n"
+
+
+def render_policy_js(payload: dict) -> str:
+    """policy.js content: the same bundle split across three browser globals."""
+    body = json.dumps(payload, indent=2, ensure_ascii=False, sort_keys=True)
+    obj = json.loads(body)
+    policy_js = json.dumps(obj["policy"], indent=2, ensure_ascii=False, sort_keys=True)
+    decisions_js = json.dumps(
+        obj["gate_decisions"], indent=2, ensure_ascii=False, sort_keys=True
+    )
+    scenario_js = json.dumps(
+        obj["scenario"], indent=2, ensure_ascii=False, sort_keys=True
+    )
+    return (
+        f"window.__POLICY__ = {policy_js};\n"
+        f"window.__GATE_DECISIONS__ = {decisions_js};\n"
+        f"window.__SCENARIO__ = {scenario_js};\n"
+    )
+
+
 def _check_stale(path: Path, expected: str) -> None:
     if not path.exists():
         _fail(f"{path.relative_to(ROOT)} does not exist; run build_registry.py")
@@ -206,6 +309,12 @@ def main(argv: list[str] | None = None) -> int:
     json_text = render_json(entries)
     js_text = render_js(entries)
 
+    # Policy gate: deterministic decisions over every entry + the scripted scenario.
+    # Purely offline — no network, no LLM, no key.
+    policy_payload = build_policy_payload(entries)
+    policy_json_text = render_policy_json(policy_payload)
+    policy_js_text = render_policy_js(policy_payload)
+
     if rebuild:
         # The ONLY path that touches the network. Rewrite examples.json from live results.
         examples = rebuild_examples_live()
@@ -225,6 +334,8 @@ def main(argv: list[str] | None = None) -> int:
     if check:
         _check_stale(OUTPUT_JSON, json_text)
         _check_stale(OUTPUT_JS, js_text)
+        _check_stale(OUTPUT_POLICY_JSON, policy_json_text)
+        _check_stale(OUTPUT_POLICY_JS, policy_js_text)
         if examples is None:
             _fail(
                 f"{OUTPUT_EXAMPLES_JSON.relative_to(ROOT)} is missing; generate it with "
@@ -234,15 +345,22 @@ def main(argv: list[str] | None = None) -> int:
         _check_stale(OUTPUT_EXAMPLES_JS, examples_js_text)
         print(
             f"OK: {OUTPUT_JSON.relative_to(ROOT)}, {OUTPUT_JS.relative_to(ROOT)}, "
-            f"{OUTPUT_EXAMPLES_JSON.relative_to(ROOT)} and "
-            f"{OUTPUT_EXAMPLES_JS.relative_to(ROOT)} are up to date."
+            f"{OUTPUT_EXAMPLES_JSON.relative_to(ROOT)}, {OUTPUT_EXAMPLES_JS.relative_to(ROOT)}, "
+            f"{OUTPUT_POLICY_JSON.relative_to(ROOT)} and {OUTPUT_POLICY_JS.relative_to(ROOT)} "
+            f"are up to date."
         )
         return 0
 
     OUTPUT_JSON.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT_JSON.write_text(json_text, encoding="utf-8")
     OUTPUT_JS.write_text(js_text, encoding="utf-8")
+    OUTPUT_POLICY_JSON.write_text(policy_json_text, encoding="utf-8")
+    OUTPUT_POLICY_JS.write_text(policy_js_text, encoding="utf-8")
     written = f"{OUTPUT_JSON.relative_to(ROOT)} and {OUTPUT_JS.relative_to(ROOT)} ({len(entries)} entries)"
+    written += (
+        f"; {OUTPUT_POLICY_JSON.relative_to(ROOT)} and {OUTPUT_POLICY_JS.relative_to(ROOT)} "
+        f"({len(policy_payload['gate_decisions'])} gate decisions)"
+    )
     if examples is not None:
         OUTPUT_EXAMPLES_JS.write_text(examples_js_text, encoding="utf-8")
         written += f"; {OUTPUT_EXAMPLES_JS.relative_to(ROOT)} ({len(examples)} examples)"

@@ -1,0 +1,34 @@
+# Example org policy for the runtime delegation gate.
+#
+# This is a READABLE, configurable stand-in for a real organisation's agent
+# delegation policy. The runtime gate (classifier/policy_gate.py) reads it and,
+# for each agent an orchestrator tries to delegate to, maps the agent's committed
+# risk tier to an action. It is deliberately plain YAML so a compliance owner can
+# read and edit it without touching code — the gate enforces a STATED policy, not
+# a hardcoded verdict.
+#
+# In production this same policy would sit behind an MCP/A2A endpoint that any
+# agent queries at the moment it tries to act. Here it is compiled offline into
+# web/data/policy.{json,js} for display. See docs/adr/0006-*.md.
+
+name: Example Bank — Agent Delegation Policy
+description: >-
+  How Example Bank governs what an autonomous agent is allowed to do at runtime,
+  by the risk tier of the tool it is delegating to. Higher risk demands more human
+  scrutiny; money movement always demands a second human.
+
+# The core rule: an agent's risk tier maps to a gate action.
+#   allow               — proceed automatically; no human in the loop.
+#   allow_with_logging  — proceed, but record the delegation for audit.
+#   escalate_to_human   — halt and require an accountable human to approve first.
+tier_actions:
+  low: allow
+  medium: allow_with_logging
+  high: escalate_to_human
+
+# Capability overrides are applied ON TOP OF the tier rule when an entry trips a
+# named capability. Money movement is non-negotiable: whatever the tier says, a
+# fund-moving delegation additionally requires two humans to approve.
+#   require_dual_approval — needs two distinct accountable approvers.
+capability_overrides:
+  money_movement: require_dual_approval

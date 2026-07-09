@@ -1,0 +1,77 @@
+window.__POLICY__ = {
+  "capability_overrides": {
+    "money_movement": "require_dual_approval"
+  },
+  "description": "How Example Bank governs what an autonomous agent is allowed to do at runtime, by the risk tier of the tool it is delegating to. Higher risk demands more human scrutiny; money movement always demands a second human.",
+  "name": "Example Bank — Agent Delegation Policy",
+  "tier_actions": {
+    "high": "escalate_to_human",
+    "low": "allow",
+    "medium": "allow_with_logging"
+  }
+};
+window.__GATE_DECISIONS__ = {
+  "internal-document-summarisation-assistant": {
+    "action": "allow",
+    "evidence_refs": [
+      "read-only access to the company's internal document store",
+      "draft summaries of internal documents"
+    ],
+    "overrides": [],
+    "policy_rule": "low → allow",
+    "reason": "Allowed: tier LOW. Policy permits low-risk delegations to proceed automatically. Low-risk because: read-only access to the company's internal document store; draft summaries of internal documents.",
+    "slug": "internal-document-summarisation-assistant",
+    "tier": "low"
+  },
+  "kyc-onboarding-triage-agent": {
+    "action": "allow_with_logging",
+    "evidence_refs": [
+      "reads sensitive customer personal data (PII)",
+      "identity documents, addresses, and dates of birth"
+    ],
+    "overrides": [],
+    "policy_rule": "medium → allow_with_logging",
+    "reason": "Allowed with logging: tier MEDIUM. Policy permits medium-risk delegations but logs them for audit. Medium-risk because: reads sensitive customer personal data (PII); identity documents, addresses, and dates of birth.",
+    "slug": "kyc-onboarding-triage-agent",
+    "tier": "medium"
+  },
+  "payments-initiation-agent": {
+    "action": "escalate_to_human",
+    "evidence_refs": [
+      "can initiate payments and transfer funds through bank payment-rail APIs (ACH and wire)",
+      "on behalf of the finance team"
+    ],
+    "overrides": [
+      {
+        "action": "require_dual_approval",
+        "capability": "money_movement",
+        "reason": "Money-movement capability detected: delegated_authority is pinned to its floor by the deterministic money-movement rule, and policy requires dual human approval before any funds move."
+      }
+    ],
+    "policy_rule": "high → escalate_to_human",
+    "reason": "Escalated: tier HIGH. Policy requires human approval for high-risk delegations. High-risk because: can initiate payments and transfer funds through bank payment-rail APIs (ACH and wire); on behalf of the finance team. Money-movement rule fired: delegated_authority pinned to its floor; policy additionally requires dual human approval.",
+    "slug": "payments-initiation-agent",
+    "tier": "high"
+  }
+};
+window.__SCENARIO__ = {
+  "name": "Invoice payment workflow",
+  "steps": [
+    {
+      "n": 1,
+      "slug": "internal-document-summarisation-assistant",
+      "task": "Read the vendor invoice and extract the amount, payee, and line items."
+    },
+    {
+      "n": 2,
+      "slug": "kyc-onboarding-triage-agent",
+      "task": "Look up the vendor's records to confirm identity and banking details."
+    },
+    {
+      "n": 3,
+      "slug": "payments-initiation-agent",
+      "task": "Initiate the ACH payment of the invoiced amount to the vendor."
+    }
+  ],
+  "task": "An orchestrator is asked to pay a vendor invoice end to end."
+};
