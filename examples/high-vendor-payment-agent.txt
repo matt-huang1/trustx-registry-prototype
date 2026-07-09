@@ -1,0 +1,3 @@
+A vendor-payment agent that can initiate payment to vendors over ACH to settle
+approved invoices. Every individual payment is reviewed and approved by a member
+of the finance team before it is sent, so a human signs off on each transaction.

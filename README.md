@@ -32,8 +32,35 @@ export LLM_MODEL="gpt-4o-mini"
 | `schema/`     | JSON Schema for a registry entry (placeholder dimensions) |
 | `classifier/` | LangGraph maker/checker classification loop + CLI |
 | `entries/`    | Ratified registry entries, one YAML file per agent |
+| `examples/`   | Plain-text agent descriptions for the demo's cached classifier examples |
+| `scripts/`    | `build_registry.py` (compile entries + examples) and `serve_classify.py` (local live endpoint) |
 | `docs/`       | Architecture, open-source model, roadmap, ADRs |
-| `web/`        | (empty) future web UI — not built yet |
+| `web/`        | Single-file reference view + interactive classifier hero (zero-build, offline-capable) |
+
+## Web demo
+
+`web/index.html` is a single, zero-build page. Open it by double-click (`file://`), from a
+static server, or on GitHub Pages — it renders the registry and a **classifier hero** with
+no network call, reading committed data injected as JS globals
+([ADR-0004](docs/adr/0004-single-file-web-demo.md),
+[ADR-0005](docs/adr/0005-cached-first-classifier-demo.md)).
+
+```bash
+# Compile entries/ + examples into web/data/*.js (offline; no key, no network):
+python scripts/build_registry.py
+python scripts/build_registry.py --check          # CI gate: fails if generated files are stale
+
+# Refresh the cached classifier examples via the live LLM (author-run; needs a key):
+python scripts/build_registry.py --rebuild-examples
+
+# Run the live "Classify your own" box locally, then open the URL it prints:
+python scripts/serve_classify.py                  # http://localhost:8000  (POST /classify)
+```
+
+The hero is **cached-first**: example buttons show committed classifications instantly. The
+free-text box classifies live **only** when a local endpoint is configured (via
+`serve_classify.py`); elsewhere it degrades gracefully. No API key ever lives in client-side
+code.
 
 ## Documentation
 

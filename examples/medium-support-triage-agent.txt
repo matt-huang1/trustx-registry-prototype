@@ -1,0 +1,5 @@
+A support-triage agent that reads customer support tickets containing the
+customer's name, order number, and message, then drafts a suggested reply and a
+priority label for a human support agent to review. It sees no payment details,
+identity documents, or account credentials, and cannot send replies, issue
+refunds, or change any account; a human makes every final decision.

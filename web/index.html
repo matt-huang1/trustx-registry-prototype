@@ -103,9 +103,151 @@
     border-left: 2px solid var(--rule);
   }
 
-  /* ---- Classifier slot (reserved; built in a later handoff) ------------- */
-  .classifier-slot {
-    min-height: 3.5rem;      /* reserved vertical space above the registry */
+  /* ---- Classifier hero (the one interactive moment on a calm page) ------ */
+  .classifier {
+    margin: 2rem 0 0.5rem;
+    padding: 1.6rem clamp(1.1rem, 3vw, 2rem) 1.9rem;
+    background: var(--paper-2);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+  }
+  .classifier .cls-title {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: clamp(1.25rem, 2.4vw, 1.55rem);
+    letter-spacing: -0.01em;
+    margin: 0;
+  }
+  .classifier .cls-note {
+    font-family: var(--sans);
+    font-size: 0.82rem;
+    line-height: 1.5;
+    color: var(--ink-3);
+    max-width: 72ch;
+    margin: 0.5rem 0 0;
+  }
+
+  .cls-examples {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin: 1.2rem 0 0;
+  }
+  .cls-examples button {
+    appearance: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    padding: 0.5rem 0.8rem;
+    font-family: var(--sans);
+    font-size: 0.86rem;
+    color: var(--ink);
+  }
+  .cls-examples button:hover { background: var(--paper-3); }
+  .cls-examples button[aria-pressed="true"] {
+    border-color: var(--accent-dim);
+    box-shadow: inset 0 0 0 1px var(--accent-dim);
+  }
+  .cls-examples button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .cls-live { margin: 1.5rem 0 0; }
+  .cls-live label {
+    display: block;
+    font-family: var(--sans);
+    font-size: 0.66rem;
+    font-weight: 600;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin: 0 0 0.5rem;
+  }
+  .cls-live textarea {
+    width: 100%;
+    min-height: 5rem;
+    resize: vertical;
+    font-family: var(--sans);
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: var(--ink);
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    padding: 0.7rem 0.8rem;
+  }
+  .cls-live textarea:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: -1px;
+    border-color: var(--accent-dim);
+  }
+  .cls-actions { display: flex; align-items: center; gap: 1rem; margin: 0.75rem 0 0; }
+  .cls-actions button {
+    appearance: none;
+    cursor: pointer;
+    font-family: var(--sans);
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--paper);
+    background: var(--accent);
+    border: 1px solid var(--accent);
+    border-radius: 3px;
+    padding: 0.5rem 1.1rem;
+  }
+  .cls-actions button:hover { background: var(--accent-dim); border-color: var(--accent-dim); }
+  .cls-actions button:disabled { opacity: 0.5; cursor: default; }
+  .cls-actions button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .cls-status { font-family: var(--sans); font-size: 0.82rem; color: var(--ink-3); }
+
+  .cls-result { margin: 1.6rem 0 0; }
+  .cls-result:empty { display: none; }
+  .cls-result.record {
+    max-width: none;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 1.2rem clamp(1rem, 2.5vw, 1.4rem) 1.5rem;
+  }
+
+  .cls-banner {
+    font-family: var(--sans);
+    font-size: 0.85rem;
+    line-height: 1.45;
+    color: var(--ink);
+    background: var(--paper-2);
+    border-left: 3px solid var(--accent);
+    padding: 0.7rem 0.9rem;
+    margin: 0 0 1.3rem;
+  }
+  .cls-banner .b-label {
+    display: block;
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 0.3rem;
+  }
+  .cls-banner.ratify { border-left-color: var(--tier-medium); }
+  .cls-banner.ratify .b-label { color: var(--tier-medium); }
+
+  .cls-unavailable {
+    font-family: var(--sans);
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: var(--ink-2);
+    background: var(--paper);
+    border: 1px dashed var(--rule);
+    border-radius: 3px;
+    padding: 0.9rem 1rem;
+  }
+  .cls-unavailable code {
+    font-family: var(--mono);
+    font-size: 0.88em;
+    color: var(--ink);
   }
 
   /* ---- Toolbar / filters ------------------------------------------------ */
@@ -491,8 +633,35 @@
     </p>
   </header>
 
-  <!-- classifier hero slots here later -->
-  <div class="classifier-slot" aria-hidden="true"><!-- reserved: interactive classifier (later handoff) --></div>
+  <!--
+    The one interactive moment on this page: a cached-first classifier.
+    Examples come from window.__EXAMPLES__ (committed, instant, no model call). The live
+    box POSTs to window.__CLASSIFY_ENDPOINT__ only if one is configured. The marker below
+    is replaced by scripts/serve_classify.py with a <script> setting that endpoint to
+    "/classify" when it serves this page; opened any other way (file://, GitHub Pages) the
+    endpoint stays empty and the live box degrades gracefully to the cached examples.
+    No API key ever appears in this file. See docs/adr/0005-*.md.
+  -->
+  <!--CLASSIFY_ENDPOINT-->
+  <section class="classifier" id="classifier" aria-labelledby="clsHeading">
+    <h2 class="cls-title" id="clsHeading">Classify an agent</h2>
+    <p class="cls-note">
+      Pick an example for an instant, identical classification — cached for reliability — or
+      paste your own below to classify it live. Every score is proposed by a model, then
+      overridden by deterministic rules wherever a fact can be pinned down, and ratified by
+      an accountable human before it enters the registry.
+    </p>
+    <div class="cls-examples" id="clsExamples" role="group" aria-label="Cached example classifications"></div>
+    <form class="cls-live" id="clsForm" novalidate>
+      <label for="clsInput">Classify your own description</label>
+      <textarea id="clsInput" placeholder="Describe an AI agent — what it can do, what it can access, and how much human oversight it has…" spellcheck="true"></textarea>
+      <div class="cls-actions">
+        <button type="submit" id="clsSubmit">Classify</button>
+        <span class="cls-status" id="clsStatus" role="status" aria-live="polite"></span>
+      </div>
+    </form>
+    <div class="cls-result" id="clsResult" aria-live="polite"></div>
+  </section>
 
   <div class="toolbar">
     <div role="group" aria-label="Filter by risk tier">
@@ -527,6 +696,7 @@
 </div>
 
 <script src="data/registry.js"></script>
+<script src="data/examples.js"></script>
 <script>
   (function () {
     "use strict";
@@ -675,20 +845,20 @@
     });
 
     // ---- Detail record ---------------------------------------------------
-    function renderRecord() {
-      var entry = DATA.filter(function (e) { return e.agent.slug === state.selected; })[0];
-      recordEl.innerHTML = "";
-      if (!entry) return;
+    // One renderer for both the registry detail pane AND the classifier hero result, so a
+    // cached example, a live classification, and a stored entry all look like one system.
+    function renderEntryInto(container, entry) {
+      var name = entry.__name || displayName(entry.agent && entry.agent.slug);
 
       var head = el("div", { className: "rec-head" });
-      head.appendChild(el("h2", { className: "rec-title", text: entry.__name }));
+      head.appendChild(el("h2", { className: "rec-title", text: name }));
       var meta = el("div", { className: "rec-meta" });
       meta.appendChild(tierBadge(entry.risk_tier));
       meta.appendChild(el("span", { className: "slug", text: entry.agent.slug }));
       head.appendChild(meta);
-      recordEl.appendChild(head);
+      container.appendChild(head);
 
-      recordEl.appendChild(el("p", { className: "description", text: entry.agent.description }));
+      container.appendChild(el("p", { className: "description", text: entry.agent.description }));
 
       // Dimensions
       var dimLabel = el("h3", { className: "section-label", text: "Risk dimensions" });
@@ -696,7 +866,7 @@
         className: "schema-caveat",
         text: "Placeholder taxonomy — four sample dimensions pending the real schema.",
       }));
-      recordEl.appendChild(dimLabel);
+      container.appendChild(dimLabel);
 
       DIMENSIONS.forEach(function (pair) {
         var key = pair[0], label = pair[1];
@@ -723,20 +893,20 @@
         }
         block.appendChild(ev);
 
-        recordEl.appendChild(block);
+        container.appendChild(block);
       });
 
       // Provenance
-      recordEl.appendChild(el("h3", { className: "section-label", text: "Provenance" }));
+      container.appendChild(el("h3", { className: "section-label", text: "Provenance" }));
       var prov = entry.provenance || {};
       var pg = el("div", { className: "meta-grid" });
       pg.appendChild(metaCell("Submitted by", prov.submitted_by || "—"));
       pg.appendChild(metaCell("Ratified by", prov.approved_by || "Not yet ratified"));
       pg.appendChild(metaCell("Ratified", formatTimestamp(prov.timestamp)));
-      recordEl.appendChild(pg);
+      container.appendChild(pg);
 
       // Challenge record
-      recordEl.appendChild(el("h3", { className: "section-label", text: "Challenge record" }));
+      container.appendChild(el("h3", { className: "section-label", text: "Challenge record" }));
       var ch = entry.challenge;
       if (ch) {
         var stateRow = el("p", { className: "challenge-state" + (ch.flagged ? " flagged" : "") });
@@ -745,17 +915,24 @@
           (ch.flagged ? "Flagged — one or more scores were challenged" : "Not flagged")
           + " · " + ch.iterations + (ch.iterations === 1 ? " iteration" : " iterations")
         ));
-        recordEl.appendChild(stateRow);
+        container.appendChild(stateRow);
 
         var notes = Array.isArray(ch.notes) ? ch.notes : [];
         if (notes.length) {
           var nul = el("ul", { className: "challenge-notes" });
           notes.forEach(function (n) { nul.appendChild(el("li", { text: n })); });
-          recordEl.appendChild(nul);
+          container.appendChild(nul);
         }
       } else {
-        recordEl.appendChild(el("p", { className: "challenge-state", text: "No challenge pass recorded." }));
+        container.appendChild(el("p", { className: "challenge-state", text: "No challenge pass recorded." }));
       }
+    }
+
+    function renderRecord() {
+      var entry = DATA.filter(function (e) { return e.agent.slug === state.selected; })[0];
+      recordEl.innerHTML = "";
+      if (!entry) return;
+      renderEntryInto(recordEl, entry);
     }
 
     function metaCell(k, v) {
@@ -794,7 +971,148 @@
       renderRecord();
     });
 
-    // ---- Boot ------------------------------------------------------------
+    // ---- Classifier hero: cached-first, live-secondary -------------------
+    var EXAMPLES = Array.isArray(window.__EXAMPLES__) ? window.__EXAMPLES__ : [];
+    var CLASSIFY_ENDPOINT =
+      typeof window.__CLASSIFY_ENDPOINT__ === "string" ? window.__CLASSIFY_ENDPOINT__ : "";
+
+    var clsExamplesEl = document.getElementById("clsExamples");
+    var clsResultEl = document.getElementById("clsResult");
+    var clsForm = document.getElementById("clsForm");
+    var clsInput = document.getElementById("clsInput");
+    var clsSubmit = document.getElementById("clsSubmit");
+    var clsStatus = document.getElementById("clsStatus");
+
+    function showResultEntry(entry, banner) {
+      clsResultEl.className = "cls-result record";
+      clsResultEl.innerHTML = "";
+      if (banner) clsResultEl.appendChild(banner);
+      renderEntryInto(clsResultEl, entry);
+    }
+
+    function showResultMessage(node) {
+      clsResultEl.className = "cls-result";
+      clsResultEl.innerHTML = "";
+      clsResultEl.appendChild(node);
+    }
+
+    function banner(kind, label, text) {
+      var b = el("div", { className: "cls-banner" + (kind ? " " + kind : "") });
+      b.appendChild(el("span", { className: "b-label", text: label }));
+      b.appendChild(document.createTextNode(text));
+      return b;
+    }
+
+    function renderExamples() {
+      if (!clsExamplesEl) return;
+      clsExamplesEl.innerHTML = "";
+      if (!EXAMPLES.length) {
+        clsExamplesEl.appendChild(el("span", {
+          className: "cls-status",
+          text: "No cached examples found. Run scripts/build_registry.py --rebuild-examples.",
+        }));
+        return;
+      }
+      EXAMPLES.forEach(function (ex, i) {
+        var btn = el("button", {
+          attrs: {
+            type: "button",
+            "data-i": String(i),
+            "aria-pressed": i === 0 ? "true" : "false",
+          },
+        });
+        btn.appendChild(tierBadge(ex.risk_tier));
+        btn.appendChild(el("span", { text: displayName(ex.agent && ex.agent.slug) }));
+        btn.addEventListener("click", function () { selectExample(i); });
+        clsExamplesEl.appendChild(btn);
+      });
+    }
+
+    function markExample(i) {
+      Array.prototype.forEach.call(clsExamplesEl.querySelectorAll("button"), function (b) {
+        b.setAttribute("aria-pressed", b.getAttribute("data-i") === String(i) ? "true" : "false");
+      });
+    }
+
+    function selectExample(i) {
+      markExample(i);
+      clsStatus.textContent = "";
+      showResultEntry(
+        EXAMPLES[i],
+        banner("", "Cached example",
+          "A committed classification, shown identically every time with no model call.")
+      );
+    }
+
+    function showLiveUnavailable() {
+      markExample(-1);
+      var box = el("div", { className: "cls-unavailable" });
+      box.appendChild(el("strong", { text: "Live classification runs locally. " }));
+      box.appendChild(document.createTextNode(
+        "This static page has no classifier server configured, and a model cannot be called "
+        + "securely from the browser (an API key must never live in client code). Run "
+      ));
+      box.appendChild(el("code", { text: "python scripts/serve_classify.py" }));
+      box.appendChild(document.createTextNode(
+        " and open the page it serves to classify your own text. The cached examples above "
+        + "show full classifications instantly in the meantime."
+      ));
+      showResultMessage(box);
+    }
+
+    function showLiveError(message) {
+      var box = el("div", { className: "cls-unavailable" });
+      box.appendChild(el("strong", { text: "Live classification failed. " }));
+      box.appendChild(document.createTextNode(String(message)));
+      showResultMessage(box);
+    }
+
+    function classifyLive(description) {
+      if (!CLASSIFY_ENDPOINT) { showLiveUnavailable(); return; }
+      clsSubmit.disabled = true;
+      clsStatus.textContent = "Classifying live…";
+      fetch(CLASSIFY_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ description: description }),
+      })
+        .then(function (r) {
+          return r.json().then(function (data) {
+            if (!r.ok) throw new Error(data && data.error ? data.error : "HTTP " + r.status);
+            return data;
+          });
+        })
+        .then(function (payload) {
+          clsStatus.textContent = "";
+          markExample(-1);
+          showResultEntry(
+            payload.entry,
+            banner("ratify", "Live · not yet ratified",
+              "Proposed by the model, then adjusted by deterministic rules, and auto-accepted "
+              + "here only for display. It would require review and ratification by an "
+              + "accountable human before entering the registry.")
+          );
+        })
+        .catch(function (err) {
+          clsStatus.textContent = "";
+          showLiveError(err && err.message ? err.message : err);
+        })
+        .then(function () { clsSubmit.disabled = false; });
+    }
+
+    if (clsForm) {
+      clsForm.addEventListener("submit", function (ev) {
+        ev.preventDefault();
+        var description = (clsInput.value || "").trim();
+        if (!description) { clsInput.focus(); return; }
+        classifyLive(description);
+      });
+    }
+
+    renderExamples();
+    if (EXAMPLES.length) selectExample(0);
+
+    // ---- Boot (registry) -------------------------------------------------
     if (!DATA.length) {
       recordEl.appendChild(el("p", {
         className: "description",

@@ -1,0 +1,5 @@
+A documentation assistant that reads the company's already-public help articles
+and drafts a plain-language FAQ answer for a writer to review. It has read-only
+access to published content only, holds no customer or personal data, and cannot
+send messages, call any external tool, or change any record; a person edits and
+publishes the answer before it is used.
