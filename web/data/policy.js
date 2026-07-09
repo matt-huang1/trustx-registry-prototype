@@ -13,26 +13,19 @@ window.__POLICY__ = {
 window.__GATE_DECISIONS__ = {
   "internal-document-summarisation-assistant": {
     "action": "allow",
-    "evidence_refs": [
-      "draft summaries ... always reviewed by a human before use",
-      "It cannot take any action",
-      "It cannot take any action, call external tools, or modify any record",
-      "produces draft summaries of internal documents"
-    ],
+    "evidence_refs": [],
     "overrides": [],
     "policy_rule": "low → allow",
-    "reason": "Policy permits low-risk delegations to proceed automatically. Low-risk because: draft summaries ... always reviewed by a human before use; It cannot take any action; It cannot take any action, call external tools, or modify any record; produces draft summaries of internal documents.",
+    "reason": "Policy permits low-risk delegations to proceed automatically. Low-risk because: no weighted dimension rises above baseline (all Tier 1).",
     "slug": "internal-document-summarisation-assistant",
     "tier": "low"
   },
   "internal-knowledge-assistant": {
     "action": "allow",
-    "evidence_refs": [
-      "Adopted from the published ARC reference assessment (RAI-OPEN-0002 v1.0, 2026-05-18)."
-    ],
+    "evidence_refs": [],
     "overrides": [],
     "policy_rule": "low → allow",
-    "reason": "Policy permits low-risk delegations to proceed automatically. Low-risk because: Adopted from the published ARC reference assessment (RAI-OPEN-0002 v1.0, 2026-05-18)..",
+    "reason": "Policy permits low-risk delegations to proceed automatically. Low-risk because: no weighted dimension rises above baseline (all Tier 1).",
     "slug": "internal-knowledge-assistant",
     "tier": "low"
   },

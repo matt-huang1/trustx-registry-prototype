@@ -44,6 +44,16 @@ def test_low_tier_allows():
     assert not d["overrides"]
 
 
+def test_low_no_driver_entry_reason_says_nothing_rose():
+    """A low entry with an (honest) empty driver list must not fall back to citing
+    every baseline dimension's evidence — the reason states that nothing rose."""
+    entry = _entries_by_tier()["low"]
+    assert entry["tier_derivation"]["driving_dimensions"] == []
+    d = decide(entry, _policy())
+    assert d["evidence_refs"] == []
+    assert "no weighted dimension rises above baseline" in d["reason"]
+
+
 def test_medium_tier_allows_with_logging():
     entry = _entries_by_tier()["medium"]
     d = decide(entry, _policy())

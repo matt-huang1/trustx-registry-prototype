@@ -46,14 +46,18 @@ def _driving_evidence(entry: Mapping) -> tuple[list[str], list[str]]:
     The entry's ``tier_derivation`` records which dimensions actually drove the
     tier under its tier-weighting profile (classifier.schema.derive_risk_tier),
     so citing their evidence is citing WHY the gate acted — deduped,
-    order-preserved. Entries without a derivation fall back to the dimensions at
-    the peak score.
+    order-preserved. An empty driver list on an entry WITH a derivation is
+    meaningful (nothing rose above baseline, or autonomy level alone drove it)
+    and is passed through as-is; only entries without a derivation at all fall
+    back to the dimensions at the peak score.
     """
     dims = entry.get("dimensions") or {}
     if not dims:
         return [], []
-    driving = list((entry.get("tier_derivation") or {}).get("driving_dimensions") or [])
-    if not driving:
+    derivation = entry.get("tier_derivation")
+    if derivation is not None:
+        driving = list(derivation.get("driving_dimensions") or [])
+    else:
         peak = max(int(d["score"]) for d in dims.values())
         driving = [name for name, d in dims.items() if int(d["score"]) == peak]
     evidence: list[str] = []
@@ -88,9 +92,15 @@ def decide(entry: Mapping, policy: Mapping) -> dict:
         action, f"Policy maps this tier to '{action}'."
     )
     adjective = _TIER_ADJECTIVE.get(tier, f"{tier.capitalize()}-risk")
-    because = (
-        "; ".join(evidence_refs) if evidence_refs else "no dimension evidence recorded"
-    )
+    derivation = entry.get("tier_derivation") or {}
+    if evidence_refs:
+        because = "; ".join(evidence_refs)
+    elif derivation.get("autonomy_level_driven"):
+        because = "autonomy level 3 alone forces Tier 3 under this weighting profile"
+    elif derivation and not derivation.get("driving_dimensions"):
+        because = "no weighted dimension rises above baseline (all Tier 1)"
+    else:
+        because = "no dimension evidence recorded"
     reason = f"{policy_sentence} {adjective} because: {because}."
 
     # Capability overrides: applied ON TOP OF the tier rule. Money movement pins

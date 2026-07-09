@@ -77,12 +77,7 @@ tier_derivation:
   - blast_radius
   - persistence
   - reversibility
-  driving_dimensions:
-  - autonomy
-  - action_authority
-  - blast_radius
-  - persistence
-  - reversibility
+  driving_dimensions: []
   autonomy_level_driven: false
 challenge:
   flagged: false

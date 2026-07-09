@@ -112,9 +112,12 @@ def resolve_profile(system_type: str | None) -> tuple[str, dict]:
 class TierDerivation:
     """The inspectable result of the rollup: the tier AND why.
 
-    ``driving_dimensions`` are the profile's tier_dimensions at the peak score —
-    exactly the ones that set the tier under worst-case-wins. It is empty only
-    when autonomy_level alone forced Tier 3 (``autonomy_level_driven``).
+    ``driving_dimensions`` are the profile's tier_dimensions at the
+    tier-determining score, and only when that score is ABOVE baseline —
+    exactly the ones that set the tier under worst-case-wins. It is empty when
+    nothing rose above Tier 1 (a low tier has no driver: the tier is low
+    because nothing rose) and when autonomy_level alone forced Tier 3
+    (``autonomy_level_driven``).
     """
 
     tier: str  # "low" | "medium" | "high"
@@ -173,9 +176,13 @@ def derive_risk_tier(
         else:
             tier_num = 1
 
+    # A dimension "drives" the tier only if it sits at the tier-determining
+    # score AND that score is above baseline. An all-baseline profile has no
+    # driver — the tier is low because nothing rose, not because of any one
+    # dimension.
     if tier_num == 3:
         driving = tuple(d for d in weighted if scores[d] == 3)
-    elif scores:
+    elif scores and max(scores.values()) > 1:
         peak = max(scores.values())
         driving = tuple(d for d in weighted if scores[d] == peak)
     else:

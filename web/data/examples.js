@@ -107,13 +107,7 @@ window.__EXAMPLES__ = [
     "system_type": "knowledge_assistant",
     "tier_derivation": {
       "autonomy_level_driven": false,
-      "driving_dimensions": [
-        "autonomy",
-        "action_authority",
-        "blast_radius",
-        "persistence",
-        "reversibility"
-      ],
+      "driving_dimensions": [],
       "profile": "knowledge_assistant",
       "tier_dimensions": [
         "autonomy",

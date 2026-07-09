@@ -56,6 +56,22 @@ def test_all_baseline_is_low():
     assert roll_up_risk_tier(make_dimensions()) == "low"
 
 
+def test_all_baseline_has_no_driving_dimensions():
+    """A low tier has no driver: the tier is low because NOTHING rose above
+    baseline, so no dimension can honestly be said to have driven it."""
+    d = derive_risk_tier(make_dimensions())
+    assert d.tier == "low"
+    assert d.driving_dimensions == ()
+
+
+def test_low_tier_with_an_unweighted_2_still_has_no_driver():
+    """An elevated score OUTSIDE the profile neither sets the tier nor drives it."""
+    dims = make_dimensions(data_sensitivity=2)  # not in the knowledge profile
+    d = derive_risk_tier(dims, system_type="knowledge_assistant")
+    assert d.tier == "low"
+    assert d.driving_dimensions == ()
+
+
 def test_any_dimension_at_3_forces_high_under_the_default_profile():
     for dim in DIMENSIONS:
         assert roll_up_risk_tier(make_dimensions(**{dim: 3})) == "high", dim
@@ -101,6 +117,8 @@ def test_data_sensitivity_3_knowledge_asset_is_high_by_default_but_not_under_kno
     assert knowledge.tier == "low"
     assert knowledge.profile == "knowledge_assistant"
     assert "data_sensitivity" not in knowledge.tier_dimensions
+    # Low under this profile means nothing weighted rose — so nothing drove it.
+    assert knowledge.driving_dimensions == ()
 
 
 # --------------------------------------------------------------------------- #
