@@ -18,6 +18,11 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Install
         run: pip install -e ".[dev]"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install jsdom harness deps (offline web view checks)
+        run: npm ci --prefix tests/web
       - name: Lint (black --check)
         run: black --check .
       - name: Registry is compiled and valid (fails if stale or invalid)

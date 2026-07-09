@@ -27,16 +27,12 @@ from typing import Mapping
 
 from classifier.rules import mentions_money_movement
 
-_TIER_UPPER = {"low": "LOW", "medium": "MEDIUM", "high": "HIGH"}
 _TIER_ADJECTIVE = {"low": "Low-risk", "medium": "Medium-risk", "high": "High-risk"}
 
-# Headline verb + policy sentence for each tier action, so the reason reads like a
-# stated policy being applied rather than a bare label.
-_ACTION_HEADLINE = {
-    "allow": "Allowed",
-    "allow_with_logging": "Allowed with logging",
-    "escalate_to_human": "Escalated",
-}
+# Policy sentence for each tier action, so the reason reads like a stated policy being
+# applied rather than a bare label. The reason never restates the tier or the action
+# headline: the caller displaying a decision already labels both (tier marker + outcome),
+# so the reason carries only the justification — the policy applied and the evidence.
 _TIER_POLICY_SENTENCE = {
     "allow": "Policy permits low-risk delegations to proceed automatically.",
     "allow_with_logging": "Policy permits medium-risk delegations but logs them for audit.",
@@ -70,7 +66,10 @@ def decide(entry: Mapping, policy: Mapping) -> dict:
     Deterministic: no network, no LLM. Returns a dict with, at minimum, the keys
     ``action``, ``reason``, ``tier``, ``policy_rule`` and ``evidence_refs`` (plus
     ``slug`` and any capability ``overrides`` that fired). The ``reason`` is
-    human-readable and names both the tier rule applied and the evidence that drove it.
+    human-readable and carries the justification only — the policy sentence applied and
+    the evidence that drove the tier. It deliberately does not restate the tier or the
+    action: displays label those from the structured ``tier``/``action`` fields, and a
+    reason that repeated them would show the tier twice everywhere it renders.
     """
     slug = (entry.get("agent") or {}).get("slug", "")
     tier = entry["risk_tier"]
@@ -79,17 +78,14 @@ def decide(entry: Mapping, policy: Mapping) -> dict:
 
     _driving, evidence_refs, _peak = _driving_evidence(entry)
 
-    headline = _ACTION_HEADLINE.get(action, action)
-    policy_sentence = _TIER_POLICY_SENTENCE.get(action, "")
-    adjective = _TIER_ADJECTIVE.get(tier, f"{tier}-risk")
+    policy_sentence = _TIER_POLICY_SENTENCE.get(
+        action, f"Policy maps this tier to '{action}'."
+    )
+    adjective = _TIER_ADJECTIVE.get(tier, f"{tier.capitalize()}-risk")
     because = (
         "; ".join(evidence_refs) if evidence_refs else "no dimension evidence recorded"
     )
-    reason = (
-        f"{headline}: tier {_TIER_UPPER.get(tier, tier.upper())}. "
-        f"{policy_sentence} "
-        f"{adjective} because: {because}."
-    )
+    reason = f"{policy_sentence} {adjective} because: {because}."
 
     # Capability overrides: applied ON TOP OF the tier rule. Money movement pins
     # delegated_authority to its floor (classifier.rules) AND, per policy, demands a

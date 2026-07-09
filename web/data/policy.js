@@ -19,7 +19,7 @@ window.__GATE_DECISIONS__ = {
     ],
     "overrides": [],
     "policy_rule": "low → allow",
-    "reason": "Allowed: tier LOW. Policy permits low-risk delegations to proceed automatically. Low-risk because: read-only access to the company's internal document store; draft summaries of internal documents.",
+    "reason": "Policy permits low-risk delegations to proceed automatically. Low-risk because: read-only access to the company's internal document store; draft summaries of internal documents.",
     "slug": "internal-document-summarisation-assistant",
     "tier": "low"
   },
@@ -31,7 +31,7 @@ window.__GATE_DECISIONS__ = {
     ],
     "overrides": [],
     "policy_rule": "medium → allow_with_logging",
-    "reason": "Allowed with logging: tier MEDIUM. Policy permits medium-risk delegations but logs them for audit. Medium-risk because: reads sensitive customer personal data (PII); identity documents, addresses, and dates of birth.",
+    "reason": "Policy permits medium-risk delegations but logs them for audit. Medium-risk because: reads sensitive customer personal data (PII); identity documents, addresses, and dates of birth.",
     "slug": "kyc-onboarding-triage-agent",
     "tier": "medium"
   },
@@ -49,7 +49,7 @@ window.__GATE_DECISIONS__ = {
       }
     ],
     "policy_rule": "high → escalate_to_human",
-    "reason": "Escalated: tier HIGH. Policy requires human approval for high-risk delegations. High-risk because: can initiate payments and transfer funds through bank payment-rail APIs (ACH and wire); on behalf of the finance team. Money-movement rule fired: delegated_authority pinned to its floor; policy additionally requires dual human approval.",
+    "reason": "Policy requires human approval for high-risk delegations. High-risk because: can initiate payments and transfer funds through bank payment-rail APIs (ACH and wire); on behalf of the finance team. Money-movement rule fired: delegated_authority pinned to its floor; policy additionally requires dual human approval.",
     "slug": "payments-initiation-agent",
     "tier": "high"
   }

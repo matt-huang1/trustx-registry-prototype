@@ -216,3 +216,6 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Node (jsdom harness for the web view checks)
+tests/web/node_modules/

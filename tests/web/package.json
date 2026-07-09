@@ -1,0 +1,13 @@
+{
+  "name": "trustx-registry-web-checks",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Offline jsdom checks for web/index.html (run via tests/test_web_view.py or `npm test`).",
+  "type": "module",
+  "scripts": {
+    "test": "node check_page.mjs"
+  },
+  "devDependencies": {
+    "jsdom": "^29.1.1"
+  }
+}

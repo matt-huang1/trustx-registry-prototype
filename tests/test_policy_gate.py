@@ -82,7 +82,10 @@ def test_reason_names_the_driving_evidence():
     d = decide(entry, _policy())
 
     reason = d["reason"]
-    assert "HIGH" in reason
+    # The reason must NOT restate the tier — the structured 'tier' field owns it, and any
+    # display already labels it. It starts from the policy justification instead.
+    assert "tier HIGH" not in reason
+    assert reason.startswith("Policy requires human approval")
     # An actual evidence quote from the driving dimension is surfaced in the reason.
     assert "ACH and wire" in reason
     assert d["evidence_refs"], "evidence_refs must be populated"

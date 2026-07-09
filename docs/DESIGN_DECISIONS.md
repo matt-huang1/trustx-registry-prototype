@@ -12,3 +12,6 @@ here. If you are unsure whether a decision needs an ADR, err toward writing one.
 | [0004](adr/0004-single-file-web-demo.md) | Single-file HTML demo; registry data injected as a JS global for zero-dependency offline rendering | Accepted |
 | [0005](adr/0005-cached-first-classifier-demo.md) | Cached-first classifier demo; live path via an optional local endpoint; no client-side keys | Accepted |
 | [0006](adr/0006-runtime-policy-gate.md) | Runtime policy gate: deterministic tier-to-action enforcement over committed registry data; client-side display of pre-computed decisions; MCP endpoint deferred | Accepted |
+| [0007](adr/0007-hash-based-tabs.md) | Hash-based tabbed single-page layout; left-aligned horizontal nav | Accepted |
+| [0008](adr/0008-content-envelope-widths.md) | Centered content envelope; structured content uses full width, prose stays at readable measure | Accepted |
+| [0009](adr/0009-consistent-active-state-and-record-treatment.md) | Consistent restrained active-state and unified record treatment across tabs | Accepted |
