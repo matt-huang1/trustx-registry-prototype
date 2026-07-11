@@ -25,7 +25,43 @@ jobs:
         run: npm ci --prefix tests/web
       - name: Lint (black --check)
         run: black --check .
-      - name: Registry is compiled and valid (fails if stale or invalid)
+      - name: Registry gate — schema + evidence + recomputed-tier + trust-level rules
+        # build_registry.py --check compiles entries/ and enforces, per entry:
+        #   schema · evidence-per-dimension · recomputed risk_tier & derivation ·
+        #   trust-level rule (verified/working-group-reviewed require a human reviewer).
+        # Fails the build if any committed generated artifact is stale.
         run: python scripts/build_registry.py --check
       - name: Test (offline, no API calls)
         run: python -m pytest -q
+
+  # Explicit gate for contributions that touch the registry data: any PR changing an
+  # entry (or the schema / rules / build that govern entries) must pass the same
+  # schema + evidence + recomputed-tier + trust-level checks before it can merge.
+  entries-gate:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Detect entry / schema / rule changes
+        id: changed
+        run: |
+          BASE="${{ github.event.pull_request.base.sha }}"
+          if git diff --name-only "$BASE" HEAD | grep -Eq '^(entries/|schema/|policy/|classifier/|scripts/build_registry\.py)'; then
+            echo "touched=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "touched=false" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/setup-python@v5
+        if: steps.changed.outputs.touched == 'true'
+        with:
+          python-version: "3.12"
+      - name: Install
+        if: steps.changed.outputs.touched == 'true'
+        run: pip install -e ".[dev]"
+      - name: Entry rules — schema + evidence + recomputed tier + trust level
+        if: steps.changed.outputs.touched == 'true'
+        run: |
+          python scripts/build_registry.py --check
+          python -m pytest -q tests/test_entries_valid.py tests/test_trust_level.py

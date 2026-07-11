@@ -355,6 +355,12 @@
     font-size: 1.02rem;
     line-height: 1.25;
   }
+  .index button.entry .entry-badges {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.35rem;
+  }
   .index button.entry[aria-current="true"] {
     background: var(--paper-2);
     border-left-color: var(--accent);
@@ -392,6 +398,60 @@
   .tier--low    { --tier-color: var(--tier-low); }
   .tier--medium { --tier-color: var(--tier-medium); }
   .tier--high   { --tier-color: var(--tier-high); }
+
+  /* Trust level: a DIFFERENT axis from risk tier (how reviewed the ENTRY is, not
+     how risky the AGENT is), so it gets a deliberately different mark family — a
+     rounded, bordered pill with a CIRCULAR glyph (risk uses a square mark and no
+     border) and the neutral ink/accent palette, never the tier tones. The two must
+     never read as the same scale. */
+  .trust {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.42em;
+    font-family: var(--sans);
+    font-size: 0.64rem;
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: var(--trust-color, var(--ink-3));
+    border: 1px solid var(--trust-border, var(--rule));
+    border-radius: 999px;
+    padding: 0.16em 0.6em 0.16em 0.5em;
+  }
+  .trust .dot {
+    width: 0.6em;
+    height: 0.6em;
+    border-radius: 50%;
+    border: 1.5px solid var(--trust-color, var(--ink-3));
+    background: var(--trust-fill, transparent);
+    flex: none;
+  }
+  .trust--community { --trust-color: var(--ink-3);     --trust-border: var(--rule);       --trust-fill: transparent; }
+  .trust--working   { --trust-color: var(--accent-dim); --trust-border: var(--accent-dim); --trust-fill: var(--accent-dim); }
+  .trust--verified  { --trust-color: var(--accent);     --trust-border: var(--accent);     --trust-fill: var(--accent); }
+
+  /* Trust-level legend: the one place the three levels are defined, so a reader
+     never has to guess what a badge means. */
+  .trust-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.4rem;
+    margin: 0.9rem 0 0;
+    font-family: var(--sans);
+    font-size: 0.8rem;
+    line-height: 1.4;
+    color: var(--ink-2);
+  }
+  .trust-legend .tl-item { display: flex; align-items: baseline; gap: 0.5em; }
+  .trust-legend .tl-item .trust { align-self: center; }
+  .trust-legend .tl-desc { max-width: 30rem; }
+  .trust-legend .tl-note {
+    flex-basis: 100%;
+    color: var(--ink-3);
+    font-size: 0.76rem;
+    margin: 0;
+  }
 
   /* detail record: fills its column (structured content uses the width);
      the running prose inside it (rationales) is capped individually, but the
@@ -798,6 +858,18 @@
     font-family: var(--sans);
     font-size: 0.85rem;
     color: var(--ink-3);
+  }
+
+  /* provenance note: a quiet italic gloss beneath the meta grid (e.g. why an
+     entry is 'verified'). */
+  .prov-note {
+    font-family: var(--sans);
+    font-size: 0.84rem;
+    font-style: italic;
+    line-height: 1.5;
+    color: var(--ink-2);
+    max-width: 46rem;
+    margin: 1rem 0 0;
   }
 
   /* provenance + challenge: quiet definition lists */
@@ -1234,7 +1306,10 @@
         <p class="panel-note panel-note--wide">
           Filter by risk tier or name, and select an entry to read its full record: scored
           dimensions, the quoted evidence behind each score, provenance, and any challenges.
+          Each entry carries two independent marks: a <strong>risk tier</strong> (how risky the
+          agent is) and a <strong>trust level</strong> (how reviewed the entry is).
         </p>
+        <div id="trustLegend" class="trust-legend" aria-label="What the trust levels mean"></div>
       </div>
 
       <div class="toolbar">
@@ -1448,6 +1523,40 @@
       return wrap;
     }
 
+    // Trust level: how reviewed the ENTRY is — a separate axis from the risk tier,
+    // rendered as a bordered pill with a circular glyph so the two never conflate.
+    var TRUST_META = {
+      "community-submitted": {
+        cls: "community",
+        label: "Community-submitted",
+        desc: "Passed every automated check (schema, evidence, deterministic floors, "
+          + "recomputed tier, challenger) but not yet reviewed by an identified maintainer.",
+      },
+      "working-group-reviewed": {
+        cls: "working",
+        label: "Working-group-reviewed",
+        desc: "An identified maintainer or working-group member has reviewed the scoring "
+          + "and evidence and ratified it.",
+      },
+      verified: {
+        cls: "verified",
+        label: "Verified",
+        desc: "Reviewed AND traceable to authoritative source material (e.g. adopted from "
+          + "a published reference registry).",
+      },
+    };
+
+    function trustBadge(level) {
+      var meta = TRUST_META[level] || { cls: "community", label: level || "—" };
+      var wrap = el("span", {
+        className: "trust trust--" + meta.cls,
+        attrs: { title: "Trust level: " + meta.label },
+      });
+      wrap.appendChild(el("span", { className: "dot", attrs: { "aria-hidden": "true" } }));
+      wrap.appendChild(document.createTextNode(meta.label));
+      return wrap;
+    }
+
     // A dimension's tier in the detail rows: the SAME number-in-box mark as the
     // strip cells (.scorebox — one score mark everywhere a score renders),
     // followed by the verbatim per-tier label.
@@ -1484,6 +1593,26 @@
     DATA.forEach(function (e) {
       e.__name = displayName(e);
     });
+
+    // Trust-level legend: define the three levels once, using the same badges the
+    // entries carry. Trust is a different axis from the risk tier — say so plainly.
+    (function renderTrustLegend() {
+      var box = document.getElementById("trustLegend");
+      if (!box) return;
+      ["community-submitted", "working-group-reviewed", "verified"].forEach(function (level) {
+        var meta = TRUST_META[level];
+        var item = el("span", { className: "tl-item" });
+        item.appendChild(trustBadge(level));
+        item.appendChild(el("span", { className: "tl-desc", text: meta.desc }));
+        box.appendChild(item);
+      });
+      box.appendChild(el("p", {
+        className: "tl-note",
+        text: "Trust level is earned, labelled, and revocable, and is independent of the "
+          + "risk tier. Entries expire and must be re-ratified. See CONTRIBUTING.md and "
+          + "GOVERNANCE.md.",
+      }));
+    })();
 
     function visibleEntries() {
       var q = state.query.trim().toLowerCase();
@@ -1526,7 +1655,10 @@
           },
         });
         btn.appendChild(el("span", { className: "entry-name", text: e.__name }));
-        btn.appendChild(tierBadge(e.risk_tier));
+        var badges = el("span", { className: "entry-badges" });
+        badges.appendChild(tierBadge(e.risk_tier));
+        if (e.trust_level) badges.appendChild(trustBadge(e.trust_level));
+        btn.appendChild(badges);
         btn.addEventListener("click", function () { select(e.agent.slug); });
         li.appendChild(btn);
         listEl.appendChild(li);
@@ -1652,6 +1784,7 @@
       head.appendChild(el("h2", { className: "rec-title", text: name }));
       var meta = el("div", { className: "rec-meta" });
       meta.appendChild(tierBadge(entry.risk_tier));
+      if (entry.trust_level) meta.appendChild(trustBadge(entry.trust_level));
       if (entry.system_type && SYSTEM_TYPE_LABEL[entry.system_type]) {
         meta.appendChild(el("span", {
           className: "rec-chip",
@@ -1796,14 +1929,23 @@
         });
       });
 
-      // Provenance
-      container.appendChild(el("h3", { className: "section-label", text: "Provenance" }));
+      // Provenance & review — WHO stands behind the entry and the trust level it
+      // has earned (a separate axis from the risk tier), plus the freshness horizon.
+      container.appendChild(el("h3", { className: "section-label", text: "Provenance & review" }));
       var prov = entry.provenance || {};
+      var rev = entry.review || {};
+      var trustMeta = TRUST_META[entry.trust_level];
       var pg = el("div", { className: "meta-grid" });
       pg.appendChild(metaCell("Submitted by", prov.submitted_by || "—"));
       pg.appendChild(metaCell("Ratified by", prov.approved_by || "Not yet ratified"));
       pg.appendChild(metaCell("Ratified", formatTimestamp(prov.timestamp)));
+      pg.appendChild(metaCell("Trust level", trustMeta ? trustMeta.label : (entry.trust_level || "—")));
+      pg.appendChild(metaCell("Reviewed by", rev.reviewed_by || "Not yet reviewed"));
+      pg.appendChild(metaCell("Re-ratification due", formatTimestamp(rev.expires_at)));
       container.appendChild(pg);
+      if (prov.note) {
+        container.appendChild(el("p", { className: "prov-note", text: prov.note }));
+      }
 
       // Challenge record
       container.appendChild(el("h3", { className: "section-label", text: "Challenge record" }));

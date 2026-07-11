@@ -61,6 +61,18 @@ def build_entry(state: ClassifierState, slug: str, approver: str | None) -> dict
     if autonomy_level is not None:
         entry["autonomy_level"] = autonomy_level
     entry |= {
+        # A freshly classified entry enters at the LOWEST trust level: it has
+        # passed the automated checks but no identified maintainer has reviewed
+        # it, so it is community-submitted with an empty review record. Promotion
+        # to working-group-reviewed / verified is a governance act recorded in
+        # `review` (see docs/GOVERNANCE.md, ADR-0016) — never inferred here, and
+        # never granted automatically by a CLI approval.
+        "trust_level": "community-submitted",
+        "review": {
+            "reviewed_by": None,
+            "reviewed_at": None,
+            "expires_at": None,
+        },
         "challenge": {
             "flagged": bool(state.get("challenge_flagged", False))
             or bool(state.get("deterministic_notes")),

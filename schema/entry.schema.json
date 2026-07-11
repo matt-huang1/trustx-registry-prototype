@@ -10,6 +10,8 @@
     "dimensions",
     "risk_tier",
     "tier_derivation",
+    "trust_level",
+    "review",
     "provenance"
   ],
   "properties": {
@@ -223,6 +225,50 @@
         }
       }
     },
+    "trust_level": {
+      "type": "string",
+      "enum": [
+        "community-submitted",
+        "working-group-reviewed",
+        "verified"
+      ],
+      "description": "How much human scrutiny the ENTRY (its scoring and evidence) has earned — a separate axis from risk_tier (which is about the AGENT's risk). Earned, labelled, and revocable. community-submitted: passed the automated checks (schema, evidence, deterministic floors, recomputed tier, challenger) but no identified human has ratified it — the default a fresh contribution enters at. working-group-reviewed: an identified maintainer/working-group member has reviewed the scoring and evidence and ratified it. verified: reviewed AND traceable to authoritative source material (e.g. adopted from a published reference registry). An entry may NOT be 'verified' without a human reviewer recorded in review.reviewed_by (build_registry.py enforces this)."
+    },
+    "review": {
+      "type": "object",
+      "description": "Human-review metadata backing the trust_level, and the freshness horizon after which the entry must be re-ratified. Distinct from provenance (who submitted/approved the underlying classification): this records the working-group review that sets trust_level and when it lapses.",
+      "additionalProperties": false,
+      "required": [
+        "reviewed_by",
+        "reviewed_at",
+        "expires_at"
+      ],
+      "properties": {
+        "reviewed_by": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Identified maintainer / working-group member who reviewed the entry. Null for community-submitted entries (no human reviewer yet). MUST be non-null for trust_level 'verified' or 'working-group-reviewed'."
+        },
+        "reviewed_at": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time",
+          "description": "ISO-8601 timestamp of the review. Null until reviewed."
+        },
+        "expires_at": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time",
+          "description": "Freshness horizon: ISO-8601 timestamp after which the entry must be re-ratified. Null for entries that have never been reviewed."
+        }
+      }
+    },
     "challenge": {
       "type": "object",
       "description": "Record of the challenger (red-team) pass over the proposal.",
@@ -275,6 +321,11 @@
           "type": "string",
           "format": "date-time",
           "description": "ISO-8601 timestamp of ratification."
+        },
+        "note": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Optional free-text provenance note, e.g. that a 'verified' entry is adopted from a published reference registry's reference material."
         }
       }
     }

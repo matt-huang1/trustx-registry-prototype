@@ -98,13 +98,56 @@ def _fail(message: str) -> "NoReturn":  # type: ignore[valid-type]
     raise SystemExit(1)
 
 
+# Trust levels that assert a human has reviewed the entry — these MUST record an
+# identified reviewer in review.reviewed_by. "trust is earned, labelled, revocable;
+# an entry can never CLAIM review it does not have" (ADR-0016).
+_REVIEWED_TRUST_LEVELS = {"working-group-reviewed", "verified"}
+
+
+def enforce_trust_rules(data: dict, label: str) -> None:
+    """A reviewed/verified entry MUST record a human reviewer — else fail the build.
+
+    The trust-scaling guarantee (ADR-0016): the automated pipeline can admit an
+    entry at ``community-submitted`` on its own, but it can NEVER mint a
+    ``working-group-reviewed`` or ``verified`` label without an identified human in
+    ``review.reviewed_by``. A contribution that arrives claiming ``verified`` with a
+    null reviewer is rejected here, deterministically, so the label cannot be forged.
+    """
+    trust_level = data.get("trust_level")
+    reviewer = (data.get("review") or {}).get("reviewed_by")
+    if trust_level in _REVIEWED_TRUST_LEVELS and not reviewer:
+        _fail(
+            f"{label}: trust_level '{trust_level}' requires an identified human reviewer "
+            f"in review.reviewed_by, but none is recorded. A new entry with no human "
+            f"reviewer cannot be marked '{trust_level}' — it may only enter as "
+            f"'community-submitted'. See docs/GOVERNANCE.md and ADR-0016."
+        )
+
+
+def enforce_evidence(data: dict, label: str) -> None:
+    """Every scored dimension of a registry entry MUST carry evidence.
+
+    The schema permits empty evidence for a bare draft, but a committed registry
+    entry is a defensible claim: each of the 12 dimensions must point at the
+    evidence behind its score. Mirrors tests/test_entries_valid.py.
+    """
+    for dim_id, dim in (data.get("dimensions") or {}).items():
+        if not dim.get("evidence"):
+            _fail(
+                f"{label}: dimension '{dim_id}' has no evidence. Every scored dimension "
+                f"of a registry entry must cite the evidence behind its score."
+            )
+
+
 def validate_entry(data: dict, label: str) -> None:
     """Schema-validate an entry and assert its stored tier AND derivation match the rollup.
 
     Shared by registry entries and cached examples so both hold to one source of truth:
     the tier is recomputed over the entry's tier-weighting profile (from its
     system_type), and the stored tier_derivation must equal what the rollup derives —
-    a hand-edited tier or driver list can never drift from the scores.
+    a hand-edited tier or driver list can never drift from the scores. The trust-level
+    rule (reviewed/verified ⇒ a human reviewer is recorded) is enforced on every entry
+    and every cached example alike.
     """
     schema = load_schema()
     if not isinstance(data, dict):
@@ -114,6 +157,7 @@ def validate_entry(data: dict, label: str) -> None:
     except jsonschema.ValidationError as exc:
         location = "/".join(str(p) for p in exc.absolute_path) or "<root>"
         _fail(f"{label}: schema validation failed at '{location}': {exc.message}")
+    enforce_trust_rules(data, label)
     derivation = derive_risk_tier(
         data["dimensions"], data.get("system_type"), data.get("autonomy_level")
     )
@@ -143,6 +187,7 @@ def load_entries() -> list[dict]:
         except yaml.YAMLError as exc:
             _fail(f"{path.name}: could not parse YAML: {exc}")
         validate_entry(data, path.name)
+        enforce_evidence(data, path.name)
         entries.append(data)
     return entries
 

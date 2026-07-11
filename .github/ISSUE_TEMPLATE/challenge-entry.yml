@@ -1,0 +1,78 @@
+name: Challenge an existing entry
+description: Contest a score on an existing registry entry. Evidence is required.
+title: "[Challenge] <entry> — <dimension>"
+labels: ["challenge"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this to contest a score you believe is wrong. **A challenge without evidence is not
+        actionable** — the evidence field below is required, by design (see
+        [docs/GOVERNANCE.md](../blob/main/docs/GOVERNANCE.md)). "This feels too low" is not a
+        challenge; "the linked docs show it initiates payments, so Action Authority should be 3" is.
+
+        A challenge that is upheld produces a **new version** of the entry, not a silent edit.
+  - type: input
+    id: entry
+    attributes:
+      label: Which entry?
+      description: The entry slug or name (e.g. `payments-initiation-agent`).
+    validations:
+      required: true
+  - type: dropdown
+    id: dimension
+    attributes:
+      label: Which dimension?
+      options:
+        - autonomy
+        - decision_scope
+        - temporal_coupling
+        - action_authority
+        - system_reach
+        - blast_radius
+        - persistence
+        - reversibility
+        - control_authority
+        - data_sensitivity
+        - aggregation_risk
+        - data_egress_paths
+        - "risk_tier / derivation (the rollup itself)"
+        - "trust_level / review (the entry's review status)"
+    validations:
+      required: true
+  - type: input
+    id: current
+    attributes:
+      label: Current score
+      description: What the entry says today.
+      placeholder: "2"
+    validations:
+      required: true
+  - type: input
+    id: proposed
+    attributes:
+      label: Proposed score
+      description: What you think it should be.
+      placeholder: "3"
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence that contradicts the current score
+      description: >-
+        The specific evidence — a quote from the agent's description or docs, a link, a
+        reference — that shows the current score is wrong. This is required. A challenge
+        with no evidence will be closed as not actionable.
+      placeholder: >-
+        The agent's documentation at <link> states it "initiates ACH transfers without
+        per-transaction approval", which is Execute-transactions (Action Authority 3), not 2.
+    validations:
+      required: true
+  - type: checkboxes
+    id: acknowledgements
+    attributes:
+      label: Before you submit
+      options:
+        - label: The evidence above is specific and verifiable (not a general opinion about the score).
+          required: true

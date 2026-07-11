@@ -1,0 +1,83 @@
+name: Propose a new registry entry
+description: Propose classifying an AI agent and add it to the registry.
+title: "[Entry] <agent name>"
+labels: ["new-entry"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for proposing an entry! This form gathers the raw material; the actual entry is
+        a YAML file in `entries/`. The fastest path is to draft it with the classifier CLI and
+        open a PR (see [CONTRIBUTING.md](../blob/main/CONTRIBUTING.md)) — but you can start here
+        and a maintainer will help you turn it into an entry.
+
+        Every score needs **evidence**. An entry with an unevidenced dimension will fail the build.
+  - type: input
+    id: name
+    attributes:
+      label: Agent name
+      description: A short, human-readable name.
+      placeholder: Customer-service triage agent
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Plain-text description of the agent
+      description: >-
+        What the agent does, what it can act on, what oversight exists. This is what you'd
+        paste into `python -m classifier.run "..."` to generate a first draft.
+      placeholder: >-
+        Reads inbound support emails, classifies them by intent, and drafts a reply for a human
+        agent to approve. Read-only access to the ticketing system; cannot send anything itself.
+    validations:
+      required: true
+  - type: dropdown
+    id: system_type
+    attributes:
+      label: System type
+      description: Selects the tier-weighting profile. Pick the closest ARC system type.
+      options:
+        - knowledge_assistant
+        - code_content_generator
+        - decision_support_system
+        - tool_using_agent
+        - transaction_commerce_agent
+        - autonomous_agent
+        - embedded_physical_ai
+    validations:
+      required: true
+  - type: textarea
+    id: scores
+    attributes:
+      label: Proposed scores + evidence, per dimension
+      description: >-
+        Score each of the 12 ARC dimensions 1–3 and cite the evidence (a quote from the
+        description, a doc link, a reference). Leave the tier out — it is recomputed from
+        the scores.
+      value: |
+        | Dimension | Score (1–3) | Evidence |
+        |-----------|-------------|----------|
+        | autonomy | | |
+        | decision_scope | | |
+        | temporal_coupling | | |
+        | action_authority | | |
+        | system_reach | | |
+        | blast_radius | | |
+        | persistence | | |
+        | reversibility | | |
+        | control_authority | | |
+        | data_sensitivity | | |
+        | aggregation_risk | | |
+        | data_egress_paths | | |
+    validations:
+      required: true
+  - type: checkboxes
+    id: acknowledgements
+    attributes:
+      label: Before you submit
+      options:
+        - label: I understand this entry will enter at `community-submitted` and needs a maintainer review to be promoted.
+          required: true
+        - label: Every dimension I scored cites evidence (an unevidenced dimension fails the build).
+          required: true

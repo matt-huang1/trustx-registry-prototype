@@ -178,6 +178,39 @@ async function waitFor(cond, ms = 1000) {
     doc.querySelectorAll("#record .rec-chip").length >= 2,
     "record: system type and autonomy level chips rendered"
   );
+  // ---- Trust level: a DIFFERENT axis from risk tier, shown distinctly (task 1) ----
+  check(
+    Array.from(doc.querySelectorAll("#entryList button.entry")).every(
+      (b) => b.querySelector(".trust") !== null && b.querySelector(".tier") !== null
+    ),
+    "registry list: every entry shows BOTH a risk tier and a trust level badge"
+  );
+  check(
+    doc.querySelector("#record .rec-meta .trust") !== null &&
+      doc.querySelector("#record .rec-meta .tier") !== null,
+    "record: trust level badge shown alongside the risk tier"
+  );
+  // The two axes must not be the same mark family: trust badges are bordered pills
+  // with a round .dot; risk tiers are borderless with a square .mark. Never conflated.
+  check(
+    Array.from(doc.querySelectorAll(".trust")).every(
+      (t) => t.querySelector(".dot") !== null && t.querySelector(".mark") === null
+    ) &&
+      Array.from(doc.querySelectorAll(".tier")).every(
+        (t) => t.querySelector(".mark") !== null && t.querySelector(".dot") === null
+      ),
+    "trust vs risk: distinct mark families (trust=dot, risk=square mark)"
+  );
+  check(
+    doc.querySelectorAll("#trustLegend .tl-item").length === 3,
+    "registry: trust-level legend defines all three levels"
+  );
+  check(
+    doc.querySelector("#record") &&
+      /Trust level/.test(doc.querySelector("#record").textContent) &&
+      /Re-ratification due/.test(doc.querySelector("#record").textContent),
+    "record: provenance & review surfaces the trust level and freshness horizon"
+  );
   check(
     Array.from(doc.querySelectorAll("#record .dimension .score .scorebox")).every(
       (b) => /^[123]$/.test(b.textContent)

@@ -21,6 +21,7 @@ here. If you are unsure whether a decision needs an ADR, err toward writing one.
 | [0013](adr/0013-money-movement-floor-action-authority.md) | Money-movement floor re-mapped to Action Authority = 3 ("Execute transactions") | Accepted |
 | [0014](adr/0014-grouped-tier-strip-visualization.md) | Grouped tier-strip visualization: peak-forward summary above the per-dimension detail, driver + scored-not-tier-weighted marked (radar/bars rejected as visually averaging) | Accepted |
 | [0015](adr/0015-record-layout-revamp.md) | Record-layout revamp: derivation callout, number-in-box tier cells, not-weighted as cell state, collapsible standards (reusable seam for future consolidated coverage), gate scenario-first; includes the driving_dimensions above-baseline correctness fix | Accepted |
+| [0016](adr/0016-contribution-model-trust-tiers.md) | Contribution model: automated verification as the trust-scaling mechanism; trust tiers (community-submitted/working-group-reviewed/verified) earned, labelled, revocable; verified/reviewed require an identified reviewer (build-enforced); ratification by maintainers, never a vote | Accepted |
 
 ## Notes
 

@@ -103,6 +103,11 @@
       "submitted_by": "classifier",
       "timestamp": "2026-07-09T18:45:31.969404+00:00"
     },
+    "review": {
+      "expires_at": null,
+      "reviewed_at": null,
+      "reviewed_by": null
+    },
     "risk_tier": "low",
     "system_type": "knowledge_assistant",
     "tier_derivation": {
@@ -116,7 +121,8 @@
         "persistence",
         "reversibility"
       ]
-    }
+    },
+    "trust_level": "community-submitted"
   },
   {
     "agent": {
@@ -222,6 +228,11 @@
       "submitted_by": "classifier",
       "timestamp": "2026-07-09T18:45:49.256266+00:00"
     },
+    "review": {
+      "expires_at": null,
+      "reviewed_at": null,
+      "reviewed_by": null
+    },
     "risk_tier": "medium",
     "system_type": "decision_support_system",
     "tier_derivation": {
@@ -237,7 +248,8 @@
         "persistence",
         "reversibility"
       ]
-    }
+    },
+    "trust_level": "community-submitted"
   },
   {
     "agent": {
@@ -345,6 +357,11 @@
       "submitted_by": "classifier",
       "timestamp": "2026-07-09T18:45:14.673576+00:00"
     },
+    "review": {
+      "expires_at": null,
+      "reviewed_at": null,
+      "reviewed_by": null
+    },
     "risk_tier": "high",
     "system_type": "transaction_commerce_agent",
     "tier_derivation": {
@@ -367,6 +384,7 @@
         "aggregation_risk",
         "data_egress_paths"
       ]
-    }
+    },
+    "trust_level": "community-submitted"
   }
 ]

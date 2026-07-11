@@ -107,6 +107,11 @@ window.__REGISTRY__ = [
       "submitted_by": "curated-reference",
       "timestamp": "2026-07-09T00:00:00+00:00"
     },
+    "review": {
+      "expires_at": "2027-07-09T00:00:00+00:00",
+      "reviewed_at": "2026-07-09T00:00:00+00:00",
+      "reviewed_by": "@matt-huang1"
+    },
     "risk_tier": "low",
     "system_type": "knowledge_assistant",
     "tier_derivation": {
@@ -120,7 +125,8 @@ window.__REGISTRY__ = [
         "persistence",
         "reversibility"
       ]
-    }
+    },
+    "trust_level": "working-group-reviewed"
   },
   {
     "agent": {
@@ -225,8 +231,14 @@ window.__REGISTRY__ = [
     },
     "provenance": {
       "approved_by": "@matt-huang1",
+      "note": "Verified: adopted verbatim from RAI's published ARC reference material (RAI-OPEN-0002); the per-dimension tiers are traceable to that authoritative source, so this entry enters at the 'verified' trust level rather than being independently re-derived.",
       "submitted_by": "RAI-ARC-reference",
       "timestamp": "2026-07-09T00:00:00+00:00"
+    },
+    "review": {
+      "expires_at": "2027-07-09T00:00:00+00:00",
+      "reviewed_at": "2026-07-09T00:00:00+00:00",
+      "reviewed_by": "@matt-huang1"
     },
     "risk_tier": "low",
     "system_type": "knowledge_assistant",
@@ -241,7 +253,8 @@ window.__REGISTRY__ = [
         "persistence",
         "reversibility"
       ]
-    }
+    },
+    "trust_level": "verified"
   },
   {
     "agent": {
@@ -346,8 +359,14 @@ window.__REGISTRY__ = [
     },
     "provenance": {
       "approved_by": "@matt-huang1",
+      "note": "Verified: adopted verbatim from RAI's published ARC reference material (RAI-OPEN-0003); the per-dimension tiers are traceable to that authoritative source, so this entry enters at the 'verified' trust level rather than being independently re-derived.",
       "submitted_by": "RAI-ARC-reference",
       "timestamp": "2026-07-09T00:00:00+00:00"
+    },
+    "review": {
+      "expires_at": "2027-07-09T00:00:00+00:00",
+      "reviewed_at": "2026-07-09T00:00:00+00:00",
+      "reviewed_by": "@matt-huang1"
     },
     "risk_tier": "medium",
     "system_type": "tool_using_agent",
@@ -368,7 +387,8 @@ window.__REGISTRY__ = [
         "persistence",
         "reversibility"
       ]
-    }
+    },
+    "trust_level": "verified"
   },
   {
     "agent": {
@@ -477,6 +497,11 @@ window.__REGISTRY__ = [
       "submitted_by": "curated-reference",
       "timestamp": "2026-07-09T00:00:00+00:00"
     },
+    "review": {
+      "expires_at": "2027-07-09T00:00:00+00:00",
+      "reviewed_at": "2026-07-09T00:00:00+00:00",
+      "reviewed_by": "@matt-huang1"
+    },
     "risk_tier": "medium",
     "system_type": "tool_using_agent",
     "tier_derivation": {
@@ -492,7 +517,8 @@ window.__REGISTRY__ = [
         "persistence",
         "reversibility"
       ]
-    }
+    },
+    "trust_level": "working-group-reviewed"
   },
   {
     "agent": {
@@ -600,6 +626,11 @@ window.__REGISTRY__ = [
       "submitted_by": "curated-reference",
       "timestamp": "2026-07-09T00:00:00+00:00"
     },
+    "review": {
+      "expires_at": "2027-07-09T00:00:00+00:00",
+      "reviewed_at": "2026-07-09T00:00:00+00:00",
+      "reviewed_by": "@matt-huang1"
+    },
     "risk_tier": "high",
     "system_type": "transaction_commerce_agent",
     "tier_derivation": {
@@ -626,7 +657,8 @@ window.__REGISTRY__ = [
         "aggregation_risk",
         "data_egress_paths"
       ]
-    }
+    },
+    "trust_level": "working-group-reviewed"
   },
   {
     "agent": {
@@ -731,8 +763,14 @@ window.__REGISTRY__ = [
     },
     "provenance": {
       "approved_by": "@matt-huang1",
+      "note": "Verified: adopted verbatim from RAI's published ARC reference material (RAI-OPEN-0001); the per-dimension tiers are traceable to that authoritative source, so this entry enters at the 'verified' trust level rather than being independently re-derived.",
       "submitted_by": "RAI-ARC-reference",
       "timestamp": "2026-07-09T00:00:00+00:00"
+    },
+    "review": {
+      "expires_at": "2027-07-09T00:00:00+00:00",
+      "reviewed_at": "2026-07-09T00:00:00+00:00",
+      "reviewed_by": "@matt-huang1"
     },
     "risk_tier": "high",
     "system_type": "transaction_commerce_agent",
@@ -759,6 +797,7 @@ window.__REGISTRY__ = [
         "aggregation_risk",
         "data_egress_paths"
       ]
-    }
+    },
+    "trust_level": "verified"
   }
 ];

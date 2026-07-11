@@ -1,0 +1,13 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Question / discussion
+    url: https://github.com/matt-huang1/trustx-registry-prototype/discussions
+    about: >-
+      Ask how to score a dimension, how the tier rollup works, or anything else. There are no
+      bad questions about classification. For a defect in the tooling, open a regular issue.
+  - name: Contributing guide
+    url: https://github.com/matt-huang1/trustx-registry-prototype/blob/main/CONTRIBUTING.md
+    about: How to draft an entry with the classifier, evidence it, run local checks, and open a PR.
+  - name: Good first issues
+    url: https://github.com/matt-huang1/trustx-registry-prototype/blob/main/docs/GOOD_FIRST_ISSUES.md
+    about: Concrete, well-scoped starter tasks with maintainer support.

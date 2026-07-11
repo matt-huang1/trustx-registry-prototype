@@ -93,6 +93,11 @@ tier_derivation:
   - data_sensitivity
   - data_egress_paths
   autonomy_level_driven: false
+trust_level: working-group-reviewed
+review:
+  reviewed_by: '@matt-huang1'
+  reviewed_at: '2026-07-09T00:00:00+00:00'
+  expires_at: '2027-07-09T00:00:00+00:00'
 challenge:
   flagged: true
   notes:

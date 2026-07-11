@@ -84,6 +84,11 @@ tier_derivation:
   - persistence
   - reversibility
   autonomy_level_driven: false
+trust_level: verified
+review:
+  reviewed_by: '@matt-huang1'
+  reviewed_at: '2026-07-09T00:00:00+00:00'
+  expires_at: '2027-07-09T00:00:00+00:00'
 challenge:
   flagged: false
   notes:
@@ -96,3 +101,7 @@ provenance:
   submitted_by: RAI-ARC-reference
   approved_by: '@matt-huang1'
   timestamp: '2026-07-09T00:00:00+00:00'
+  note: >-
+    Verified: adopted verbatim from RAI's published ARC reference material (RAI-OPEN-0003);
+    the per-dimension tiers are traceable to that authoritative source, so this entry enters
+    at the 'verified' trust level rather than being independently re-derived.
