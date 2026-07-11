@@ -173,19 +173,27 @@ The clearest thing this view demonstrates is what happens when the model gets it
 
 ## 8. Non-goals & limitations
 
-*State what the registry deliberately does not do: it does not decide truth about
-the world and it does not replace the accountable human. (The dimensions were
-placeholders when this plan was written; the ARC 12-dimension model has since
-landed — see ADR-0012.)*
+Being clear about what this does not attempt is part of what makes the rest of it trustworthy, so the boundaries are worth stating rather than leaving it late to be discovered.
 
-TODO
+*It does not decide whether an agent is safe.* The registry classifies risk; it does not certify systems or grant approval to deploy. A high tier is not a prohibition and a low tier is not a blessing. What the registry produces is a defensible characterisation of what an agent can do and what that exposes, and the decision about whether that is acceptable belongs to the organisation deploying it, under its own policy. This is why the policy gate treats the policy as configurable data rather than building a verdict into the registry itself: the same classification should be able to produce different decisions at institutions with different risk appetites.
+
+*It does not replace the accountable human.* Nothing here is designed to remove human judgement from high-risk classifications, and that is a deliberate stance rather than an unfinished feature. In a regulated setting, accountability has to rest with a person who can be asked to justify a decision, and a system that automated that away would be solving the wrong problem. What the design removes is the toil around the judgement, not the judgement.
+
+*It does not verify what it is not shown.* The classification is derived from the agent description it is given. A capability that a submitter conceals, and that no reviewer catches, will be mis-scored. The trust tiers, the challenger, and the deterministic floors are all designed to make that harder and to bound its consequences, but none of them can conjure evidence that was withheld. A registry is a mechanism for making claims defensible, not a mechanism for making them true.
+
+*The prototype's own boundaries.* The demo runs against committed data rather than a live service; the deterministic floors currently cover money movement, which is the clearest case rather than the only one; entry versioning is documented as a governance mechanism rather than implemented as addressable storage; and the standards mappings are displayed but not yet used to generate the line-of-defence reporting that would make them fully useful. Each of these is a scope decision made to keep the prototype defensible rather than broad, and each has a path forward described in the previous section.
 
 ## 9. Open questions for the working group
 
-*List the questions left open for the working group: how tiers weight dimensions,
-how challenges are adjudicated, and who governs the registry itself.*
+These are the questions this work surfaced that a prototype should not answer on its own, because they are governance decisions rather than engineering ones.
 
-TODO
+*How should the tier be weighted, and who decides?* Building against the ARC model surfaced a divergence worth resolving explicitly, the per-type classification tools tier most system types off a subset of the twelve dimensions, while the reference registry describes worst-case-wins across all twelve. This design separates scoring from weighting so that the choice becomes explicit, auditable data rather than an implicit consequence of which tool was used, and it defaults to weighting all twelve so that no dimension can be excluded from consideration by construction. But which weighting is correct for each system type is a judgement about risk, not about code, and it belongs to the working group. The question worth deciding is not only what the weights should be, but who owns them and how a change to them is ratified, since a change to the weighting silently re-tiers every entry in the registry.
+
+*What should a public entry contain?* A classification detailed enough to be verified may also describe an institution's internal architecture, and a public registry of which agents can move money and reach which systems is, to an attacker, a map. The registry needs a deliberate answer to what is published, what is held privately as supporting evidence, and whether an institution can be a good-faith participant while publishing a redacted entry. Secrecy would defeat the purpose; publishing everything would create a targeting guide. The line between them is a policy decision.
+
+*Who governs the governors?* The trust model terminates in identified maintainers who ratify entries and adjudicate challenges. Their integrity and their capacity are load-bearing, which raises questions this prototype implements a mechanism for but cannot settle: how maintainers are appointed and removed, what happens when a maintainer has a conflict of interest in an entry they are asked to ratify, and what recourse a contributor has when a challenge is dismissed. A registry that governs AI systems needs a constitution of its own.
+
+*When does an entry go stale?* Entries carry a period of validity and relevance, but the right horizon is not obvious and probably is not uniform. An agent's classification can be invalidated by a change nobody in the registry ever sees, which means re-review cadence is a bet about how quickly the world changes. Whether that bet should differ by tier, by system type, or by how much the entry is relied upon is worth deciding rather than defaulting.
 
 ## See also
 
