@@ -9,6 +9,8 @@ model *proposes* scores, deterministic checks *decide* wherever a fact can be pi
 and an accountable human *ratifies* the rest — so no label is ever just someone's say-so.
 
 Working name only — this is an independent prototype, **not** an official RAI registry.
+The ARC risk model itself is the Responsible AI Institute's published work, not this
+project's — see the README's "Framework & attribution" section and [CITATION.md](CITATION.md).
 
 ## The two axes an entry carries
 

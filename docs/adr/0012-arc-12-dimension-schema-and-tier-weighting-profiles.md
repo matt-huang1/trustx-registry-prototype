@@ -4,7 +4,10 @@
 
 Replace the four placeholder dimensions with the real ARC 12-dimension model
 (four groups, each dimension tiered 1/2/3), with ids, names, groups, and
-per-tier labels taken **verbatim** from the reference material
+per-tier labels taken **verbatim** from the reference material — RAI's published
+ARC working paper (*TrustX Agent Risk Classification Framework (ARC):
+Risk-Tiering Internally Created Agentic AI Systems*; full citation in
+[CITATION.md](../../CITATION.md)) —
 (`assets/arc_reference.json` → `schema/dimensions.json`). Entries additionally
 carry `system_type` (the seven ARC system types) and `autonomy_level` (1–3).
 
@@ -71,3 +74,33 @@ KYC archetype embodies it on a real entry.
   profiles remain available, but as a deliberate, visible choice.
 * Scoring all 12 regardless of weighting means changing a profile later never
   requires re-scoring: the evidence is already on record.
+
+## Addendum (2026-07-24) — published paper confirms the divergence
+
+The reference material this ADR extracted from is now a published arXiv working
+paper — Hannah M. Liu, Rhea Saxena, and Shiv Asthana, "TrustX Agent Risk
+Classification Framework (ARC): Risk-Tiering Internally Created Agentic AI
+Systems", arXiv:2607.09586 [cs.AI], 2026 (full citation in
+[CITATION.md](../../CITATION.md)) — and is the authoritative published source.
+This addendum is documentation only; no rollup code or profile data changed.
+
+* **The published rule (Section 3.3).** The paper specifies the tier rule with
+  no dimension-subset restriction: any dimension at 3 yields Tier 3. The paper
+  names this the **"critical dimension" approach**. This matches this repo's
+  `recommended_default` (all-12) profile.
+* **The paper's own example confirms the divergence (Section 5.2).** The
+  paper's illustrative Decision Support example scores Data Sensitivity 3 with
+  average 1.42 and places the system at Tier 3 — a result the corresponding
+  per-type tool's 5-dimension weighting would not produce, since
+  `data_sensitivity` is outside that subset. The divergence between the
+  published rule and the per-type tool formulas is therefore confirmed by the
+  paper's own worked example.
+* **Terminology.** Docs adopt the paper's term "critical dimension approach"
+  alongside "worst-case-wins".
+* **OPEN ITEM (not implemented in this pass).** The paper applies autonomy
+  level to tier determination for all system types (L5 → Tier 3; L3/L4 lift
+  borderline Low/Medium), whereas this prototype applies autonomy level only
+  where the per-type tools did (transaction/commerce). Aligning
+  `recommended_default` with the paper is a pending decision for the
+  maintainer; the same open item is recorded in
+  [docs/ROADMAP.md](../ROADMAP.md).

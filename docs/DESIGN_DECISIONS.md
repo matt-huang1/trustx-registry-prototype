@@ -25,6 +25,15 @@ here. If you are unsure whether a decision needs an ADR, err toward writing one.
 
 ## Notes
 
+- Attribution (no ADR — provenance, not a design decision): ahead of the repo going
+  public, the ARC framework's source is now explicitly credited to the Responsible AI
+  Institute's published arXiv working paper — README "Framework & attribution" section,
+  root `CITATION.md`, a top-level `attribution` field in `assets/arc_reference.json`,
+  and a citation pointer in ADR-0012. The full citation (Liu, Saxena, and Asthana,
+  arXiv:2607.09586, 2026) is now filled in at all three locations, and ADR-0012 carries a
+  dated addendum recording that the paper's Section 3.3 rule and Section 5.2 example
+  confirm the tooling-vs-published-rule divergence; the autonomy-level alignment question
+  is an open item in ROADMAP.md.
 - Extension of ADR-0009 (unified marker family): each dimension's score in the shared
   record renderer now carries the tier-toned square marker (same metrics as the `.tier`
   and `.pg-outcome` marks) plus a bolder verbatim tier label, so the tier reads at least

@@ -1,4 +1,14 @@
 {
+  "attribution": {
+  "framework": "Agent Risk Classification (ARC), Responsible AI Institute",
+  "paper_title": "TrustX Agent Risk Classification Framework (ARC): Risk-Tiering Internally Created Agentic AI Systems",
+  "authors": ["Hannah M. Liu", "Rhea Saxena", "Shiv Asthana"],
+  "arxiv": "arXiv:2607.09586",
+  "doi": "10.48550/arXiv.2607.09586",
+  "url": "https://arxiv.org/abs/2607.09586",
+  "version_note": "v1, submitted 10 July 2026; described by the authors as a working paper with iterations underway",
+  "note": "The 12-dimension model, tier definitions, and standards matrix in this file are extracted from RAI's published ARC material. This repository is an independent prototype."
+  },
   "source": "Extracted from RAI ARC/AEGIS assets (registry.html + AEGIS v1.1 classification tools). Verbatim strings; do not paraphrase.",
   "scale": "Each dimension scored 1/2/3 (Tier 1 Low / Tier 2 Medium / Tier 3 High).",
   "groups": [
@@ -390,7 +400,7 @@
   },
   "rollup_rule_stated": "worst-case-wins: any dimension at 3 -> Tier 3; else max 2 or average >= 1.5 -> Tier 2; else Tier 1.",
   "tier_weighting_profiles": {
-    "_note": "tier_dimensions = which dimensions drive the tier for this system_type (worst-case-wins over them). Derived from AEGIS v1.1 tool formulas. 'recommended_default' is the profile Matthew argues for.",
+    "_note": "tier_dimensions = which dimensions drive the tier for this system_type (worst-case-wins over them). Derived from AEGIS v1.1 tool formulas. recommended_default: the all-12 profile recommended by this prototype; see ADR-0012",
     "knowledge_assistant": {
       "tier_dimensions": [
         "autonomy",

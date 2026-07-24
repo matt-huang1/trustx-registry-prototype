@@ -17,3 +17,13 @@ entries.
 - [ ] M6: Expose the runtime policy gate (ADR-0006) as a live **MCP/A2A endpoint** any agent
   queries at the moment it tries to act — the prototype's offline `decide()` and
   `web/data/policy.json` are the display-time projection of this service.
+
+## Open items
+
+- [ ] Autonomy-level alignment with the published ARC paper (arXiv:2607.09586; see the
+  2026-07-24 addendum to ADR-0012): the paper applies autonomy level to tier
+  determination for all system types (L5 → Tier 3; L3/L4 lift borderline Low/Medium),
+  whereas this prototype applies it only where the per-type tools did
+  (transaction/commerce). Whether to align `recommended_default` with the paper is a
+  pending maintainer decision — a weighting-behaviour change that would re-tier
+  entries, so it needs its own ADR when decided.

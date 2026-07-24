@@ -3,9 +3,39 @@
 A prototype **open-source registry that classifies AI agents by risk** — with entries you can
 *check*, not just labels you're asked to trust.
 
-> **Independent working prototype — not an official RAI registry.** "trustx" is a working name
-> only. Entries are scored against the ARC 12-dimension model adopted from RAI's published
-> reference material, but this project is not endorsed by or affiliated with RAI.
+> **Independent working prototype — not an official RAI registry, product, or endorsement.**
+> This repository is the work of a single independent author. "trustx" is a working name only.
+> The risk model it implements is the Responsible AI Institute's published **ARC framework**
+> (see [Framework & attribution](#framework--attribution)), but this project is not endorsed
+> by, affiliated with, or maintained by the Responsible AI Institute.
+
+## Framework & attribution
+
+The risk model this registry scores against is **not this author's work**. The following all
+come from the Responsible AI Institute's (RAI) **ARC framework**, as published in their
+working paper:
+
+- the **12-dimension risk model** (four groups, each dimension tiered 1–3, with the verbatim
+  tier labels in `schema/dimensions.json`),
+- the **risk-tier definitions** and worst-case-wins (the paper's "critical dimension"
+  approach) rollup behaviour,
+- the **per-system-type tier-weighting behaviour** (seeded into
+  `policy/tier_weighting_profiles.yaml`), and
+- the **standards matrix**.
+
+This repository's own contribution is the machinery around that framework: the evidence-backed
+entry format, the maker/checker classification loop, the deterministic checks, the trust-tier
+contribution model, and the web view.
+
+The 12-dimension risk model, tier definitions, per-type weighting behaviour, and
+standards matrix used in this repository are the Responsible AI Institute's Agent
+Risk Classification (ARC) framework. They are not the work of this repository's author.
+
+Hannah M. Liu, Rhea Saxena, and Shiv Asthana. "TrustX Agent Risk Classification
+Framework (ARC): Risk-Tiering Internally Created Agentic AI Systems."
+arXiv:2607.09586 [cs.AI], 2026. https://arxiv.org/abs/2607.09586
+
+See [CITATION.md](CITATION.md) for the citation in one place.
 
 ## What this is
 

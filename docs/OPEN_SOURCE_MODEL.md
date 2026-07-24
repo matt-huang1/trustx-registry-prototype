@@ -22,6 +22,7 @@ The mechanism is now implemented in the repo, not just described:
   ([LICENSE-DATA](../LICENSE-DATA)) so reuse carries attribution and provenance.
 
 ## Still open
-- [ ] Relationship to RAI's forthcoming 12-dimension model and naming/attribution rules.
+- [ ] Relationship to RAI's published ARC paper (now credited in the README's
+      "Framework & attribution" section and `CITATION.md`) and naming/attribution rules.
 - [ ] Community review / sign-off process for schema changes.
 - [ ] CLA or DCO decision (see a future ADR).
