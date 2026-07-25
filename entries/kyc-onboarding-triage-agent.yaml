@@ -86,6 +86,7 @@ tier_derivation:
   driving_dimensions:
   - blast_radius
   autonomy_level_driven: false
+  autonomy_level_lifted: false
 trust_level: working-group-reviewed
 review:
   reviewed_by: '@matt-huang1'

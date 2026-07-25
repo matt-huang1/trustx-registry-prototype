@@ -6,10 +6,13 @@ Two ideas are deliberately kept separate here (see docs/adr/0012-*.md):
   1/2/3, with rationale and evidence. No dimension is ever skipped.
 * TIER WEIGHTING — which of those scores drive the rolled-up ``risk_tier`` is a
   per-system-type profile loaded from ``policy/tier_weighting_profiles.yaml``
-  (data, not code). Worst-case-wins over the profile's ``tier_dimensions``:
-  any = 3 -> Tier 3 (high); else max = 2 or average >= 1.5 -> Tier 2 (medium);
-  else Tier 1 (low). A profile with ``use_autonomy_level`` also forces Tier 3
-  when autonomy_level is 3.
+  (data, not code). Worst-case-wins over the profile's ``tier_dimensions``
+  (the paper's "critical dimension" approach): any = 3 -> Tier 3 (high); else
+  max = 2 or average >= 1.5 -> Tier 2 (medium); else Tier 1 (low). A profile's
+  ``autonomy_rule`` then applies the ARC paper's autonomy-level rule
+  (arXiv:2607.09586 Section 3.3; autonomy_level is L1-L5): under "arc_paper",
+  L5 forces Tier 3 and L3/L4 lift the tier to at least Tier 2 (never lower);
+  under "none", the autonomy level does not affect the tier. See ADR-0017.
 
 Dimension ids, names, groups, and tier labels come verbatim from
 ``schema/dimensions.json`` (extracted from the ARC reference); nothing here
@@ -34,6 +37,9 @@ PROFILES_PATH = (
 
 # risk_tier string <-> ARC tier number (low/medium/high == Tier 1/2/3).
 TIER_NAMES: dict[int, str] = {1: "low", 2: "medium", 3: "high"}
+
+# Valid values for a profile's autonomy_rule (policy/tier_weighting_profiles.yaml).
+AUTONOMY_RULES: tuple[str, ...] = ("arc_paper", "none")
 
 # The profile applied when an entry has no system_type, or a system_type with no
 # profile of its own. Overridable in the profiles YAML via ``default_profile``.
@@ -69,7 +75,7 @@ def load_tier_weighting_profiles() -> dict:
     """Load the committed tier-weighting profiles, resolving the ALL_12 sentinel.
 
     Returns ``{"default_profile": str, "profiles": {name: {"tier_dimensions":
-    tuple, "use_autonomy_level": bool}}}``. Profiles are DATA: adding or editing
+    tuple, "autonomy_rule": str}}}``. Profiles are DATA: adding or editing
     one is a YAML change, never a code change.
     """
     import yaml  # local import keeps module import light for web-of-imports callers
@@ -86,9 +92,15 @@ def load_tier_weighting_profiles() -> dict:
                 f"tier_weighting_profiles.yaml: profile '{name}' names unknown "
                 f"dimensions {sorted(unknown)}"
             )
+        autonomy_rule = prof.get("autonomy_rule", "none")
+        if autonomy_rule not in AUTONOMY_RULES:
+            raise ValueError(
+                f"tier_weighting_profiles.yaml: profile '{name}' has unknown "
+                f"autonomy_rule '{autonomy_rule}' (expected one of {AUTONOMY_RULES})"
+            )
         profiles[name] = {
             "tier_dimensions": tuple(dims),
-            "use_autonomy_level": bool(prof.get("use_autonomy_level", False)),
+            "autonomy_rule": autonomy_rule,
         }
     default = raw.get("default_profile", FALLBACK_DEFAULT_PROFILE)
     if default not in profiles:
@@ -116,8 +128,11 @@ class TierDerivation:
     tier-determining score, and only when that score is ABOVE baseline —
     exactly the ones that set the tier under worst-case-wins. It is empty when
     nothing rose above Tier 1 (a low tier has no driver: the tier is low
-    because nothing rose) and when autonomy_level alone forced Tier 3
-    (``autonomy_level_driven``).
+    because nothing rose), when autonomy level L5 alone forced Tier 3
+    (``autonomy_level_driven``), and when autonomy level L3/L4 alone lifted an
+    otherwise-low tier to Tier 2 (``autonomy_level_lifted``). The two autonomy
+    flags are distinct so a reader can tell a dimension-driven tier from an
+    autonomy-rule one (ADR-0017).
     """
 
     tier: str  # "low" | "medium" | "high"
@@ -125,6 +140,7 @@ class TierDerivation:
     tier_dimensions: tuple[str, ...]
     driving_dimensions: tuple[str, ...]
     autonomy_level_driven: bool
+    autonomy_level_lifted: bool
 
     def as_dict(self) -> dict:
         """The entry-embeddable shape (schema: tier_derivation)."""
@@ -133,6 +149,7 @@ class TierDerivation:
             "tier_dimensions": list(self.tier_dimensions),
             "driving_dimensions": list(self.driving_dimensions),
             "autonomy_level_driven": self.autonomy_level_driven,
+            "autonomy_level_lifted": self.autonomy_level_lifted,
         }
 
 
@@ -145,36 +162,43 @@ def derive_risk_tier(
 
     ALL 12 dimensions are expected in ``dimensions`` (scoring is total); the
     profile only selects which of them the tier is weighted off. Worst-case-wins
-    over the profile's tier_dimensions:
+    (the paper's "critical dimension" approach) over the profile's
+    tier_dimensions:
 
         any score = 3                     -> Tier 3 (high)
         else max = 2 OR average >= 1.5    -> Tier 2 (medium)
         else                              -> Tier 1 (low)
 
-    If the profile has ``use_autonomy_level`` and autonomy_level is 3, the tier
-    is forced to Tier 3 regardless of the dimension scores.
+    A profile with ``autonomy_rule: arc_paper`` then applies the ARC paper's
+    autonomy-level rule (arXiv:2607.09586 Section 3.3; autonomy_level is
+    L1-L5): L5 forces Tier 3 regardless of the dimension scores; L3/L4 lift
+    the tier to at least Tier 2. The rule only ever raises the tier — it never
+    lowers a dimension-derived one (ADR-0017).
     """
     profile_name, profile = resolve_profile(system_type)
     weighted = [d for d in profile["tier_dimensions"] if d in dimensions]
     scores = {d: int(dimensions[d]["score"]) for d in weighted}
 
-    autonomy_forced = bool(
-        profile["use_autonomy_level"]
-        and autonomy_level is not None
-        and autonomy_level == 3
-    )
+    arc_rule = profile["autonomy_rule"] == "arc_paper" and autonomy_level is not None
+    autonomy_forced = bool(arc_rule and autonomy_level == 5)
 
     if not scores:
-        tier_num = 3 if autonomy_forced else 1
+        tier_num = 1
     else:
         peak = max(scores.values())
         average = sum(scores.values()) / len(scores)
-        if peak == 3 or autonomy_forced:
+        if peak == 3:
             tier_num = 3
         elif peak == 2 or average >= 1.5:
             tier_num = 2
         else:
             tier_num = 1
+
+    autonomy_lifted = bool(arc_rule and autonomy_level in (3, 4) and tier_num < 2)
+    if autonomy_forced:
+        tier_num = 3
+    elif autonomy_lifted:
+        tier_num = 2
 
     # A dimension "drives" the tier only if it sits at the tier-determining
     # score AND that score is above baseline. An all-baseline profile has no
@@ -194,6 +218,7 @@ def derive_risk_tier(
         tier_dimensions=tuple(profile["tier_dimensions"]),
         driving_dimensions=driving,
         autonomy_level_driven=autonomy_forced,
+        autonomy_level_lifted=autonomy_lifted,
     )
 
 

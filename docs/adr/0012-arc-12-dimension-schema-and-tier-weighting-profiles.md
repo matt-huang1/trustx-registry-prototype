@@ -35,7 +35,7 @@ the tier is always inspectable and never drifts from the scores.
 The reference material contains a real divergence, surfaced while extracting
 the model:
 
-> The AEGIS classification tools tier off different dimension sets by system
+> The ARC per-type classification tools tier off different dimension sets by system
 > type — five critical dimensions (Autonomy, Action Authority, Blast Radius,
 > Persistence, Reversibility) for most types; all 12 plus the autonomy level
 > for transaction/commerce agents — while the reference registry states
@@ -97,10 +97,10 @@ This addendum is documentation only; no rollup code or profile data changed.
   paper's own worked example.
 * **Terminology.** Docs adopt the paper's term "critical dimension approach"
   alongside "worst-case-wins".
-* **OPEN ITEM (not implemented in this pass).** The paper applies autonomy
-  level to tier determination for all system types (L5 → Tier 3; L3/L4 lift
-  borderline Low/Medium), whereas this prototype applies autonomy level only
-  where the per-type tools did (transaction/commerce). Aligning
-  `recommended_default` with the paper is a pending decision for the
-  maintainer; the same open item is recorded in
-  [docs/ROADMAP.md](../ROADMAP.md).
+* **OPEN ITEM — RESOLVED by [ADR-0017](0017-autonomy-level-rule-arc-paper.md)
+  (2026-07-24).** The paper applies autonomy level to tier determination for
+  all system types (L5 → Tier 3; L3/L4 lift borderline Low/Medium), whereas
+  this prototype applied autonomy level only where the per-type tools did
+  (transaction/commerce). ADR-0017 aligns `recommended_default` with the
+  paper's rule, adopts the L1-L5 scale, and records the conservative reading
+  of the L3/L4 lift; the matching ROADMAP open item is closed.

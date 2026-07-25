@@ -5,7 +5,7 @@ agent:
     payment-rail APIs (ACH and wire) on behalf of the finance team, with only limited human
     oversight of individual transactions.
 system_type: transaction_commerce_agent
-autonomy_level: 2
+autonomy_level: 3
 dimensions:
   autonomy:
     score: 2
@@ -93,6 +93,7 @@ tier_derivation:
   - data_sensitivity
   - data_egress_paths
   autonomy_level_driven: false
+  autonomy_level_lifted: false
 trust_level: working-group-reviewed
 review:
   reviewed_by: '@matt-huang1'

@@ -1,15 +1,19 @@
 {
   "attribution": {
-  "framework": "Agent Risk Classification (ARC), Responsible AI Institute",
-  "paper_title": "TrustX Agent Risk Classification Framework (ARC): Risk-Tiering Internally Created Agentic AI Systems",
-  "authors": ["Hannah M. Liu", "Rhea Saxena", "Shiv Asthana"],
-  "arxiv": "arXiv:2607.09586",
-  "doi": "10.48550/arXiv.2607.09586",
-  "url": "https://arxiv.org/abs/2607.09586",
-  "version_note": "v1, submitted 10 July 2026; described by the authors as a working paper with iterations underway",
-  "note": "The 12-dimension model, tier definitions, and standards matrix in this file are extracted from RAI's published ARC material. This repository is an independent prototype."
+    "framework": "Agent Risk Classification (ARC), Responsible AI Institute",
+    "paper_title": "TrustX Agent Risk Classification Framework (ARC): Risk-Tiering Internally Created Agentic AI Systems",
+    "authors": [
+      "Hannah M. Liu",
+      "Rhea Saxena",
+      "Shiv Asthana"
+    ],
+    "arxiv": "arXiv:2607.09586",
+    "doi": "10.48550/arXiv.2607.09586",
+    "url": "https://arxiv.org/abs/2607.09586",
+    "version_note": "v1, submitted 10 July 2026; described by the authors as a working paper with iterations underway",
+    "note": "The 12-dimension model, tier definitions, and standards matrix in this file are extracted from RAI's published ARC material. This repository is an independent prototype."
   },
-  "source": "Extracted from RAI ARC/AEGIS assets (registry.html + AEGIS v1.1 classification tools). Verbatim strings; do not paraphrase.",
+  "source": "Extracted from RAI ARC assets (registry.html + ARC v1.1 per-type classification tools). Verbatim strings; do not paraphrase. Autonomy levels migrated to the paper's L1-L5 scale (arXiv:2607.09586; old 1/2/3 -> L1/L3/L5, see ADR-0017).",
   "scale": "Each dimension scored 1/2/3 (Tier 1 Low / Tier 2 Medium / Tier 3 High).",
   "groups": [
     [
@@ -158,8 +162,10 @@
   },
   "autonomy_level_defs": {
     "1": "Level 1 \u2014 Human-in-the-loop. A human reviews and approves each consequential action before it executes.",
-    "2": "Level 2 \u2014 Human-on-the-loop. The system acts within set bounds while a human monitors and can intervene or roll back.",
-    "3": "Level 3 \u2014 Fully autonomous. Plans and executes without per-action review; oversight is by monitoring, audit, and shutdown controls."
+    "2": "Level 2 \u2014 Checkpoint approval. A human approves at defined checkpoints; routine steps proceed without per-action review.",
+    "3": "Level 3 \u2014 Human-on-the-loop. The system acts within set bounds while a human monitors and can intervene or roll back.",
+    "4": "Level 4 \u2014 Supervised autonomy. The system plans and acts within set bounds; human oversight is exception-based rather than continuous.",
+    "5": "Level 5 \u2014 Fully autonomous. Plans and executes without per-action review; oversight is by monitoring, audit, and shutdown controls."
   },
   "frameworks": [
     [
@@ -400,7 +406,7 @@
   },
   "rollup_rule_stated": "worst-case-wins: any dimension at 3 -> Tier 3; else max 2 or average >= 1.5 -> Tier 2; else Tier 1.",
   "tier_weighting_profiles": {
-    "_note": "tier_dimensions = which dimensions drive the tier for this system_type (worst-case-wins over them). Derived from AEGIS v1.1 tool formulas. recommended_default: the all-12 profile recommended by this prototype; see ADR-0012",
+    "_note": "tier_dimensions = which dimensions drive the tier for this system_type (worst-case-wins over them). Derived from the ARC v1.1 per-type classification tool formulas. recommended_default: the all-12 profile recommended by this prototype; see ADR-0012",
     "knowledge_assistant": {
       "tier_dimensions": [
         "autonomy",
@@ -409,7 +415,7 @@
         "persistence",
         "reversibility"
       ],
-      "use_autonomy_level": false
+      "autonomy_rule": "none"
     },
     "autonomous_agent": {
       "tier_dimensions": [
@@ -419,7 +425,7 @@
         "persistence",
         "reversibility"
       ],
-      "use_autonomy_level": false
+      "autonomy_rule": "none"
     },
     "tool_using_agent": {
       "tier_dimensions": [
@@ -429,7 +435,7 @@
         "persistence",
         "reversibility"
       ],
-      "use_autonomy_level": false
+      "autonomy_rule": "none"
     },
     "coding_assistant": {
       "tier_dimensions": [
@@ -439,7 +445,7 @@
         "persistence",
         "reversibility"
       ],
-      "use_autonomy_level": false
+      "autonomy_rule": "none"
     },
     "decision_support_system": {
       "tier_dimensions": [
@@ -449,7 +455,7 @@
         "persistence",
         "reversibility"
       ],
-      "use_autonomy_level": false
+      "autonomy_rule": "none"
     },
     "embedded_physical_ai": {
       "tier_dimensions": [
@@ -459,7 +465,7 @@
         "persistence",
         "reversibility"
       ],
-      "use_autonomy_level": false
+      "autonomy_rule": "none"
     },
     "transaction_commerce_agent": {
       "tier_dimensions": [
@@ -476,15 +482,15 @@
         "aggregation_risk",
         "data_egress_paths"
       ],
-      "use_autonomy_level": true
+      "autonomy_rule": "arc_paper"
     },
     "recommended_default": {
       "tier_dimensions": "ALL_12",
-      "use_autonomy_level": false,
-      "why": "worst-case-wins over all 12 so no dangerous dimension (e.g. Data Sensitivity=3) can be ignored; matches what the reference registry states."
+      "why": "worst-case-wins over all 12 so no dangerous dimension (e.g. Data Sensitivity=3) can be ignored; matches what the reference registry states.",
+      "autonomy_rule": "arc_paper"
     }
   },
-  "finding": "AEGIS tools tier off different dimension sets by type (5 critical for most; 12 + autonomy-level for transaction/commerce), while the reference registry states worst-case-wins across 12. Treat tier-weighting as an explicit, per-type, configurable profile; always SCORE all 12.",
+  "finding": "The ARC per-type classification tools tier off different dimension sets by type (5 critical for most; 12 + autonomy-level for transaction/commerce), while the published paper (arXiv:2607.09586 Section 3.3) states worst-case-wins across 12. Treat tier-weighting as an explicit, per-type, configurable profile; always SCORE all 12.",
   "adoptable_seed_entries": [
     {
       "registry_id": "RAI-OPEN-0001",
@@ -496,7 +502,7 @@
       "owner": "Evan Thomas \u00b7 Trustwise AI",
       "status": "published",
       "version": "1.2",
-      "autonomy_level": 2,
+      "autonomy_level": 3,
       "overall_tier": 3,
       "developed": true,
       "last_updated": "2026-06-02",
@@ -761,7 +767,7 @@
       "owner": "Daniel Okafor \u00b7 Finance Operations",
       "status": "published",
       "version": "1.1",
-      "autonomy_level": 2,
+      "autonomy_level": 3,
       "overall_tier": 2,
       "developed": true,
       "last_updated": "2026-05-24",

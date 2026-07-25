@@ -1,5 +1,5 @@
 {
-  "source": "Extracted from RAI ARC/AEGIS assets (registry.html + AEGIS v1.1 classification tools). Verbatim strings; do not paraphrase.",
+  "source": "Extracted from RAI ARC assets (registry.html + ARC v1.1 per-type classification tools). Verbatim strings; do not paraphrase. Autonomy levels migrated to the paper's L1-L5 scale (arXiv:2607.09586; old 1/2/3 -> L1/L3/L5, see ADR-0017).",
   "frameworks": [
     [
       "nist_ai_rmf",

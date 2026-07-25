@@ -103,6 +103,7 @@ def _verified_entry_without_reviewer() -> dict:
             "tier_dimensions": list(DIMENSIONS),
             "driving_dimensions": [],
             "autonomy_level_driven": False,
+            "autonomy_level_lifted": False,
         },
         "trust_level": "verified",
         "review": {"reviewed_by": None, "reviewed_at": None, "expires_at": None},

@@ -112,6 +112,7 @@
     "system_type": "knowledge_assistant",
     "tier_derivation": {
       "autonomy_level_driven": false,
+      "autonomy_level_lifted": false,
       "driving_dimensions": [],
       "profile": "knowledge_assistant",
       "tier_dimensions": [
@@ -237,6 +238,7 @@
     "system_type": "decision_support_system",
     "tier_derivation": {
       "autonomy_level_driven": false,
+      "autonomy_level_lifted": false,
       "driving_dimensions": [
         "persistence"
       ],
@@ -366,6 +368,7 @@
     "system_type": "transaction_commerce_agent",
     "tier_derivation": {
       "autonomy_level_driven": false,
+      "autonomy_level_lifted": false,
       "driving_dimensions": [
         "action_authority"
       ],

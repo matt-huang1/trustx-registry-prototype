@@ -79,6 +79,7 @@ tier_derivation:
   - reversibility
   driving_dimensions: []
   autonomy_level_driven: false
+  autonomy_level_lifted: false
 trust_level: verified
 review:
   reviewed_by: '@matt-huang1'

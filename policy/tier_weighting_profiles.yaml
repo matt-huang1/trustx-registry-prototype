@@ -3,22 +3,29 @@
 # All 12 ARC dimensions are ALWAYS scored (classifier/schema.py DIMENSIONS); a
 # profile only chooses which of those scores the worst-case-wins rollup tiers
 # off. This file is the explicit, committed encoding of a divergence found in
-# the reference material: the AEGIS classification tools tier off 5 critical
-# dimensions for most system types (12 + the autonomy level for transaction /
-# commerce agents), while the reference registry states worst-case-wins across
-# all 12. Rather than silently picking one, tier weighting is DATA — inspectable,
-# reviewable, per-type. See docs/adr/0012-*.md.
+# the reference material: the ARC per-type classification tools tier off 5
+# critical dimensions for most system types (12 + the autonomy level for
+# transaction / commerce agents), while the published paper (arXiv:2607.09586
+# Section 3.3) states worst-case-wins — the "critical dimension" approach —
+# across all 12. Rather than silently picking one, tier weighting is DATA —
+# inspectable, reviewable, per-type. See docs/adr/0012-*.md and docs/adr/0017-*.md.
 #
 # Rule, over a profile's tier_dimensions (worst-case-wins):
 #   any dimension = 3            -> Tier 3 (high)
 #   else max = 2 or avg >= 1.5   -> Tier 2 (medium)
 #   else                         -> Tier 1 (low)
-# If use_autonomy_level is true, autonomy_level 3 also forces Tier 3.
+# autonomy_rule then applies the ARC paper's autonomy-level rule (Section 3.3;
+# autonomy_level is L1-L5):
+#   arc_paper : L5 forces Tier 3; L3/L4 lift the tier to at least Tier 2
+#               (never lowers a dimension-derived tier).
+#   none      : the autonomy level does not affect the tier (faithful to the
+#               per-type tool spreadsheets, which do not use it).
 #
 # `default_profile` applies to any entry with no system_type, or a system_type
 # with no profile here. tier_dimensions: ALL_12 means every scored dimension.
 # Profile names/sets are seeded verbatim from assets/arc_reference.json
-# "tier_weighting_profiles" (derived from the AEGIS v1.1 tool formulas).
+# "tier_weighting_profiles" (derived from the ARC v1.1 per-type classification
+# tool formulas).
 
 default_profile: recommended_default
 
@@ -30,7 +37,7 @@ profiles:
     - blast_radius
     - persistence
     - reversibility
-    use_autonomy_level: false
+    autonomy_rule: none
   coding_assistant:
     tier_dimensions:
     - autonomy
@@ -38,7 +45,7 @@ profiles:
     - blast_radius
     - persistence
     - reversibility
-    use_autonomy_level: false
+    autonomy_rule: none
   decision_support_system:
     tier_dimensions:
     - autonomy
@@ -46,7 +53,7 @@ profiles:
     - blast_radius
     - persistence
     - reversibility
-    use_autonomy_level: false
+    autonomy_rule: none
   embedded_physical_ai:
     tier_dimensions:
     - autonomy
@@ -54,7 +61,7 @@ profiles:
     - blast_radius
     - persistence
     - reversibility
-    use_autonomy_level: false
+    autonomy_rule: none
   knowledge_assistant:
     tier_dimensions:
     - autonomy
@@ -62,12 +69,14 @@ profiles:
     - blast_radius
     - persistence
     - reversibility
-    use_autonomy_level: false
+    autonomy_rule: none
   recommended_default:
     tier_dimensions: ALL_12
-    use_autonomy_level: false
-    why: worst-case-wins over all 12 so no dangerous dimension (e.g. Data Sensitivity=3) can
-      be ignored; matches what the reference registry states.
+    autonomy_rule: arc_paper
+    why: implements the published ARC rule (arXiv:2607.09586 Section 3.3) exactly —
+      worst-case-wins over all 12 so no dangerous dimension (e.g. Data Sensitivity=3)
+      can be ignored, L5 forces Tier 3, and L3/L4 lift the tier to at least Tier 2
+      (ADR-0017).
   tool_using_agent:
     tier_dimensions:
     - autonomy
@@ -75,7 +84,7 @@ profiles:
     - blast_radius
     - persistence
     - reversibility
-    use_autonomy_level: false
+    autonomy_rule: none
   transaction_commerce_agent:
     tier_dimensions:
     - autonomy
@@ -90,4 +99,4 @@ profiles:
     - data_sensitivity
     - aggregation_risk
     - data_egress_paths
-    use_autonomy_level: true
+    autonomy_rule: arc_paper

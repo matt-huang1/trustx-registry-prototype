@@ -22,6 +22,7 @@ here. If you are unsure whether a decision needs an ADR, err toward writing one.
 | [0014](adr/0014-grouped-tier-strip-visualization.md) | Grouped tier-strip visualization: peak-forward summary above the per-dimension detail, driver + scored-not-tier-weighted marked (radar/bars rejected as visually averaging) | Accepted |
 | [0015](adr/0015-record-layout-revamp.md) | Record-layout revamp: derivation callout, number-in-box tier cells, not-weighted as cell state, collapsible standards (reusable seam for future consolidated coverage), gate scenario-first; includes the driving_dimensions above-baseline correctness fix | Accepted |
 | [0016](adr/0016-contribution-model-trust-tiers.md) | Contribution model: automated verification as the trust-scaling mechanism; trust tiers (community-submitted/working-group-reviewed/verified) earned, labelled, revocable; verified/reviewed require an identified reviewer (build-enforced); ratification by maintainers, never a vote | Accepted |
+| [0017](adr/0017-autonomy-level-rule-arc-paper.md) | Autonomy-level rule aligned with ARC paper §3.3 (per-profile `autonomy_rule`: L5 forces high, L3/L4 lift to at least medium under `arc_paper`); conservative reading of the L3/L4 borderline lift; L1-L5 scale adopted (old 1/2/3 → L1/L3/L5); resolves the ADR-0012 open item | Accepted |
 
 ## Notes
 
@@ -32,8 +33,8 @@ here. If you are unsure whether a decision needs an ADR, err toward writing one.
   and a citation pointer in ADR-0012. The full citation (Liu, Saxena, and Asthana,
   arXiv:2607.09586, 2026) is now filled in at all three locations, and ADR-0012 carries a
   dated addendum recording that the paper's Section 3.3 rule and Section 5.2 example
-  confirm the tooling-vs-published-rule divergence; the autonomy-level alignment question
-  is an open item in ROADMAP.md.
+  confirm the tooling-vs-published-rule divergence; the autonomy-level alignment question,
+  initially an open item in ROADMAP.md, was resolved by ADR-0017.
 - Extension of ADR-0009 (unified marker family): each dimension's score in the shared
   record renderer now carries the tier-toned square marker (same metrics as the `.tier`
   and `.pg-outcome` marks) plus a bolder verbatim tier label, so the tier reads at least

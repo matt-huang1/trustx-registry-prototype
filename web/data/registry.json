@@ -116,6 +116,7 @@
     "system_type": "knowledge_assistant",
     "tier_derivation": {
       "autonomy_level_driven": false,
+      "autonomy_level_lifted": false,
       "driving_dimensions": [],
       "profile": "knowledge_assistant",
       "tier_dimensions": [
@@ -244,6 +245,7 @@
     "system_type": "knowledge_assistant",
     "tier_derivation": {
       "autonomy_level_driven": false,
+      "autonomy_level_lifted": false,
       "driving_dimensions": [],
       "profile": "knowledge_assistant",
       "tier_dimensions": [
@@ -263,7 +265,7 @@
       "slug": "invoice-triage-agent",
       "title": "Invoice Triage Agent"
     },
-    "autonomy_level": 2,
+    "autonomy_level": 3,
     "challenge": {
       "flagged": false,
       "iterations": 1,
@@ -372,6 +374,7 @@
     "system_type": "tool_using_agent",
     "tier_derivation": {
       "autonomy_level_driven": false,
+      "autonomy_level_lifted": false,
       "driving_dimensions": [
         "autonomy",
         "action_authority",
@@ -506,6 +509,7 @@
     "system_type": "tool_using_agent",
     "tier_derivation": {
       "autonomy_level_driven": false,
+      "autonomy_level_lifted": false,
       "driving_dimensions": [
         "blast_radius"
       ],
@@ -525,7 +529,7 @@
       "description": "A payments initiation agent that can initiate payments and transfer funds through bank payment-rail APIs (ACH and wire) on behalf of the finance team, with only limited human oversight of individual transactions.",
       "slug": "payments-initiation-agent"
     },
-    "autonomy_level": 2,
+    "autonomy_level": 3,
     "challenge": {
       "flagged": true,
       "iterations": 1,
@@ -635,6 +639,7 @@
     "system_type": "transaction_commerce_agent",
     "tier_derivation": {
       "autonomy_level_driven": false,
+      "autonomy_level_lifted": false,
       "driving_dimensions": [
         "action_authority",
         "system_reach",
@@ -667,7 +672,7 @@
       "slug": "trustwise-commerce-agent",
       "title": "TrustWise Commerce Agent"
     },
-    "autonomy_level": 2,
+    "autonomy_level": 3,
     "challenge": {
       "flagged": false,
       "iterations": 1,
@@ -776,6 +781,7 @@
     "system_type": "transaction_commerce_agent",
     "tier_derivation": {
       "autonomy_level_driven": false,
+      "autonomy_level_lifted": false,
       "driving_dimensions": [
         "action_authority",
         "system_reach",

@@ -96,7 +96,12 @@ def decide(entry: Mapping, policy: Mapping) -> dict:
     if evidence_refs:
         because = "; ".join(evidence_refs)
     elif derivation.get("autonomy_level_driven"):
-        because = "autonomy level 3 alone forces Tier 3 under this weighting profile"
+        because = "autonomy level L5 alone forces Tier 3 under this weighting profile"
+    elif derivation.get("autonomy_level_lifted"):
+        because = (
+            "autonomy level L3/L4 lifts the tier to at least Tier 2 under this "
+            "weighting profile"
+        )
     elif derivation and not derivation.get("driving_dimensions"):
         because = "no weighted dimension rises above baseline (all Tier 1)"
     else:

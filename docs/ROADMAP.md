@@ -20,10 +20,9 @@ entries.
 
 ## Open items
 
-- [ ] Autonomy-level alignment with the published ARC paper (arXiv:2607.09586; see the
-  2026-07-24 addendum to ADR-0012): the paper applies autonomy level to tier
-  determination for all system types (L5 → Tier 3; L3/L4 lift borderline Low/Medium),
-  whereas this prototype applies it only where the per-type tools did
-  (transaction/commerce). Whether to align `recommended_default` with the paper is a
-  pending maintainer decision — a weighting-behaviour change that would re-tier
-  entries, so it needs its own ADR when decided.
+- [x] Autonomy-level alignment with the published ARC paper (arXiv:2607.09586; see the
+  2026-07-24 addendum to ADR-0012) — **resolved by
+  [ADR-0017](adr/0017-autonomy-level-rule-arc-paper.md)**: `recommended_default` now
+  implements the paper's Section 3.3 autonomy rule (L5 forces high; L3/L4 lift to at
+  least medium), the autonomy scale is the paper's L1-L5 end to end, and per-profile
+  behaviour is expressed as `autonomy_rule` data. No committed entry changed tier.

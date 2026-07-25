@@ -1,8 +1,10 @@
 window.__ARC_META__ = {
   "autonomy_level_defs": {
     "1": "Level 1 — Human-in-the-loop. A human reviews and approves each consequential action before it executes.",
-    "2": "Level 2 — Human-on-the-loop. The system acts within set bounds while a human monitors and can intervene or roll back.",
-    "3": "Level 3 — Fully autonomous. Plans and executes without per-action review; oversight is by monitoring, audit, and shutdown controls."
+    "2": "Level 2 — Checkpoint approval. A human approves at defined checkpoints; routine steps proceed without per-action review.",
+    "3": "Level 3 — Human-on-the-loop. The system acts within set bounds while a human monitors and can intervene or roll back.",
+    "4": "Level 4 — Supervised autonomy. The system plans and acts within set bounds; human oversight is exception-based rather than continuous.",
+    "5": "Level 5 — Fully autonomous. Plans and executes without per-action review; oversight is by monitoring, audit, and shutdown controls."
   },
   "dimensions": [
     {

@@ -7,7 +7,7 @@ agent:
   title: TrustWise Commerce Agent
   registry_id: RAI-OPEN-0001
 system_type: transaction_commerce_agent
-autonomy_level: 2
+autonomy_level: 3
 dimensions:
   autonomy:
     score: 2
@@ -91,6 +91,7 @@ tier_derivation:
   - reversibility
   - data_sensitivity
   autonomy_level_driven: false
+  autonomy_level_lifted: false
 trust_level: verified
 review:
   reviewed_by: '@matt-huang1'

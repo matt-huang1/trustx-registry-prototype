@@ -6,7 +6,7 @@ agent:
   title: Invoice Triage Agent
   registry_id: RAI-OPEN-0003
 system_type: tool_using_agent
-autonomy_level: 2
+autonomy_level: 3
 dimensions:
   autonomy:
     score: 2
@@ -84,6 +84,7 @@ tier_derivation:
   - persistence
   - reversibility
   autonomy_level_driven: false
+  autonomy_level_lifted: false
 trust_level: verified
 review:
   reviewed_by: '@matt-huang1'

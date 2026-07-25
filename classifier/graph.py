@@ -64,7 +64,7 @@ class ClassifierState(TypedDict, total=False):
     proposal: dict  # {dimension: {score, rationale, evidence}}
     llm_draft: dict  # first raw LLM draft, kept for the audit trail
     system_type: str | None  # ARC system type proposed by the model (or None)
-    autonomy_level: int | None  # ARC autonomy level 1-3 proposed by the model
+    autonomy_level: int | None  # ARC autonomy level L1-L5 proposed by the model
     deterministic_notes: list[str]
     challenge_flagged: bool
     challenge_notes: list[str]
@@ -113,7 +113,7 @@ def propose(
         "one-line rationale, and an evidence array quoting or pointing to the part of "
         "the description that justifies it. Score ALL 12 dimensions — never skip one. "
         "Also classify the system_type (one of the listed ids, or null if none fits) "
-        "and the autonomy_level (1, 2, or 3 per the definitions given). Only use what "
+        "and the autonomy_level (an integer 1-5 per the L1-L5 definitions given). Only use what "
         "the description supports; do not invent capabilities. Respond with STRICT "
         'JSON: {"dimensions": {"<dimension_id>": {"score": int, "rationale": str, '
         '"evidence": [str]}}, "system_type": str | null, "autonomy_level": int} '
@@ -154,7 +154,7 @@ def propose(
     system_type = str(system_type) if system_type in SYSTEM_TYPES else None
     autonomy_level_raw = llm_draft.get("autonomy_level")
     try:
-        autonomy_level: int | None = max(1, min(3, int(autonomy_level_raw)))
+        autonomy_level: int | None = max(1, min(5, int(autonomy_level_raw)))
     except (TypeError, ValueError):
         autonomy_level = None
 

@@ -61,8 +61,8 @@
     "autonomy_level": {
       "type": "integer",
       "minimum": 1,
-      "maximum": 3,
-      "description": "1: Level 1 — Human-in-the-loop. A human reviews and approves each consequential action before it executes. 2: Level 2 — Human-on-the-loop. The system acts within set bounds while a human monitors and can intervene or roll back. 3: Level 3 — Fully autonomous. Plans and executes without per-action review; oversight is by monitoring, audit, and shutdown controls."
+      "maximum": 5,
+      "description": "ARC autonomy level on the paper's L1-L5 scale (arXiv:2607.09586; migrated from the earlier 1-3 scale — see ADR-0017). 1: Level 1 — Human-in-the-loop. A human reviews and approves each consequential action before it executes. 2: Level 2 — Checkpoint approval. A human approves at defined checkpoints; routine steps proceed without per-action review. 3: Level 3 — Human-on-the-loop. The system acts within set bounds while a human monitors and can intervene or roll back. 4: Level 4 — Supervised autonomy. The system plans and acts within set bounds; human oversight is exception-based rather than continuous. 5: Level 5 — Fully autonomous. Plans and executes without per-action review; oversight is by monitoring, audit, and shutdown controls."
     },
     "dimensions": {
       "type": "object",
@@ -217,11 +217,15 @@
           "items": {
             "type": "string"
           },
-          "description": "The tier_dimensions at the peak score — the ones that actually set the tier. Empty only if autonomy_level alone drove Tier 3."
+          "description": "The tier_dimensions at the peak score — the ones that actually set the tier. Empty if the autonomy rule alone drove or lifted the tier."
         },
         "autonomy_level_driven": {
           "type": "boolean",
-          "description": "True if autonomy_level 3 forced Tier 3 under a profile with use_autonomy_level."
+          "description": "True if autonomy level L5 forced Tier 3 under a profile with autonomy_rule 'arc_paper' (ARC paper Section 3.3; ADR-0017)."
+        },
+        "autonomy_level_lifted": {
+          "type": "boolean",
+          "description": "True if autonomy level L3/L4 lifted an otherwise-low tier to Tier 2 under a profile with autonomy_rule 'arc_paper' (ARC paper Section 3.3; ADR-0017). Distinct from autonomy_level_driven so autonomy-rule tiers stay distinguishable from dimension-driven ones."
         }
       }
     },

@@ -1795,7 +1795,7 @@
       if (entry.autonomy_level) {
         meta.appendChild(el("span", {
           className: "rec-chip",
-          text: "Autonomy level " + entry.autonomy_level,
+          text: "Autonomy L" + entry.autonomy_level,
           // Full verbatim ARC definition on hover.
           attrs: { title: AUTONOMY_LEVEL_DEFS[String(entry.autonomy_level)] || "" },
         }));
@@ -1828,7 +1828,7 @@
           deriv.appendChild(document.createTextNode(" Tier driven by: "));
           deriv.appendChild(el("strong", { text: driving.map(dimensionName).join(", ") }));
           deriv.appendChild(document.createTextNode("."));
-        } else if (!td.autonomy_level_driven) {
+        } else if (!td.autonomy_level_driven && !td.autonomy_level_lifted) {
           // A low tier has no driver: nothing rose above baseline.
           deriv.appendChild(document.createTextNode(
             " No weighted dimension rises above baseline — nothing drives the tier."
@@ -1836,7 +1836,12 @@
         }
         if (td.autonomy_level_driven) {
           deriv.appendChild(document.createTextNode(
-            " Autonomy level 3 independently forces Tier 3 under this profile."
+            " Autonomy level L5 independently forces Tier 3 under this profile."
+          ));
+        } else if (td.autonomy_level_lifted) {
+          deriv.appendChild(document.createTextNode(
+            " Autonomy level L" + entry.autonomy_level
+            + " lifts the tier to Medium under this profile."
           ));
         }
         container.appendChild(deriv);
