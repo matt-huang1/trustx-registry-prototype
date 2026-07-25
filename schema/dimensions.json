@@ -1,5 +1,5 @@
 {
-  "source": "Extracted from RAI ARC assets (registry.html + ARC v1.1 per-type classification tools). Verbatim strings; do not paraphrase. Autonomy levels migrated to the paper's L1-L5 scale (arXiv:2607.09586; old 1/2/3 -> L1/L3/L5, see ADR-0017).",
+  "source": "Extracted from RAI ARC assets (registry.html + ARC v1.1 per-type classification tools). Verbatim strings; do not paraphrase. Autonomy levels use the paper's L1-L5 scale with the Section 2.4 verbatim definitions (Feng et al.'s five-level framework as quoted in arXiv:2607.09586; old 1/2/3 -> L1/L3/L5, see ADR-0017).",
   "scale": "Each dimension scored 1/2/3 (Tier 1 Low / Tier 2 Medium / Tier 3 High).",
   "groups": [
     [
@@ -147,11 +147,11 @@
     "3": "Tier 3 \u2014 High. At least one dimension at its highest level (worst-case-wins). Comprehensive governance: executive approval, real-time monitoring, kill-switch capability, pre-deployment testing."
   },
   "autonomy_level_defs": {
-    "1": "Level 1 \u2014 Human-in-the-loop. A human reviews and approves each consequential action before it executes.",
-    "2": "Level 2 \u2014 Checkpoint approval. A human approves at defined checkpoints; routine steps proceed without per-action review.",
-    "3": "Level 3 \u2014 Human-on-the-loop. The system acts within set bounds while a human monitors and can intervene or roll back.",
-    "4": "Level 4 \u2014 Supervised autonomy. The system plans and acts within set bounds; human oversight is exception-based rather than continuous.",
-    "5": "Level 5 \u2014 Fully autonomous. Plans and executes without per-action review; oversight is by monitoring, audit, and shutdown controls."
+    "1": "Level 1 \u2014 Operator. The user directs all of the agent's actions, while the agent acts on command.",
+    "2": "Level 2 \u2014 Collaborator. The user and the agent collaboratively plan and execute actions.",
+    "3": "Level 3 \u2014 Consultant. The agent leads the actions, but consults the user for expertise and preferences.",
+    "4": "Level 4 \u2014 Approver. The agent engages the user only in situations where they require a green-light in specified risk scenarios.",
+    "5": "Level 5 \u2014 Observer. The agent has full autonomy, whereas the user only has the ability to monitor."
   },
   "system_types": {
     "knowledge_assistant": "Knowledge assistant",

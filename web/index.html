@@ -1793,11 +1793,14 @@
         }));
       }
       if (entry.autonomy_level) {
+        // "Level 3 — Consultant. …" -> chip "Autonomy L3 · Consultant"; the full
+        // verbatim Section 2.4 definition stays on hover.
+        var alDef = AUTONOMY_LEVEL_DEFS[String(entry.autonomy_level)] || "";
+        var alName = (alDef.match(/^Level \d+ — ([^.]+)\./) || [])[1] || "";
         meta.appendChild(el("span", {
           className: "rec-chip",
-          text: "Autonomy L" + entry.autonomy_level,
-          // Full verbatim ARC definition on hover.
-          attrs: { title: AUTONOMY_LEVEL_DEFS[String(entry.autonomy_level)] || "" },
+          text: "Autonomy L" + entry.autonomy_level + (alName ? " · " + alName : ""),
+          attrs: { title: alDef },
         }));
       }
       if (entry.agent.registry_id) {

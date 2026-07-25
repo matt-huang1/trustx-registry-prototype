@@ -31,10 +31,15 @@ tiers: `autonomy_level_driven` (L5 forced Tier 3, as before) and the new
 all committed entries, and the web view now use L1-L5. Mapping applied to
 existing data (old → new): **1 → L1** (human-in-the-loop), **2 → L3**
 (human-on-the-loop), **3 → L5** (fully autonomous) — the three old definitions
-become the L1/L3/L5 anchors of the five-level scale. The L2 ("checkpoint
-approval") and L4 ("supervised autonomy") definition strings are interpolations
-between those published anchors, pending the paper's verbatim wording; replace
-them if/when the exact text is transcribed.
+initially became the L1/L3/L5 anchors of the five-level scale, with the L2 and
+L4 strings interpolated pending the paper's wording. *Update 2026-07-25:* all
+five definition strings now carry the paper's **Section 2.4 verbatim wording**
+(Feng et al.'s five-level framework as quoted there), including the level names
+**Operator / Collaborator / Consultant / Approver / Observer**; the interim
+interpolated L2/L4 strings and the spreadsheet-phrased anchor strings are fully
+replaced. (The Autonomy *dimension's* 1/2/3 tier labels — "Human-in-the-loop" /
+"Human-on-the-loop" / "Fully autonomous" — are a different, verbatim ARC scale
+and are unchanged.)
 
 ## Context
 
