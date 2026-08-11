@@ -36,7 +36,7 @@ window.__GATE_DECISIONS__ = {
     ],
     "overrides": [],
     "policy_rule": "medium → allow_with_logging",
-    "reason": "Policy permits medium-risk delegations but logs them for audit. Medium-risk because: Adopted from the published ARC reference assessment (RAI-OPEN-0003 v1.1, 2026-05-24)..",
+    "reason": "Policy permits medium-risk delegations but logs them for audit. Medium-risk because: driven by Autonomy at \"Human-on-the-loop\", Action Authority at \"Create or modify\", Blast Radius at \"Team / department\", Persistence at \"Session-based\", Reversibility at \"Partially reversible\".",
     "slug": "invoice-triage-agent",
     "tier": "medium"
   },
@@ -47,7 +47,7 @@ window.__GATE_DECISIONS__ = {
     ],
     "overrides": [],
     "policy_rule": "medium → allow_with_logging",
-    "reason": "Policy permits medium-risk delegations but logs them for audit. Medium-risk because: draft an onboarding risk recommendation for a human compliance officer.",
+    "reason": "Policy permits medium-risk delegations but logs them for audit. Medium-risk because: driven by Blast Radius at \"Team / department\".",
     "slug": "kyc-onboarding-triage-agent",
     "tier": "medium"
   },
@@ -67,7 +67,7 @@ window.__GATE_DECISIONS__ = {
       }
     ],
     "policy_rule": "high → escalate_to_human",
-    "reason": "Policy requires human approval for high-risk delegations. High-risk because: can initiate payments and transfer funds through bank payment-rail APIs (ACH and wire); deterministic-rule: money-movement capability detected in description; through bank payment-rail APIs (ACH and wire); bank payment-rail APIs (ACH and wire). Money-movement rule fired: Action Authority pinned to 3 (\"Execute transactions\"); policy additionally requires dual human approval.",
+    "reason": "Policy requires human approval for high-risk delegations. High-risk because: driven by Action Authority at \"Execute transactions\", System Reach at \"Cross-domain / third-party\", Reversibility at \"Irreversible\", Data Sensitivity at \"Regulated / crown-jewel\", Data Egress Paths at \"External egress\". Money-movement rule fired: Action Authority pinned to 3 (\"Execute transactions\"); policy additionally requires dual human approval.",
     "slug": "payments-initiation-agent",
     "tier": "high"
   },
@@ -78,7 +78,7 @@ window.__GATE_DECISIONS__ = {
     ],
     "overrides": [],
     "policy_rule": "high → escalate_to_human",
-    "reason": "Policy requires human approval for high-risk delegations. High-risk because: Adopted from the published ARC reference assessment (RAI-OPEN-0001 v1.2, 2026-06-02)..",
+    "reason": "Policy requires human approval for high-risk delegations. High-risk because: driven by Action Authority at \"Execute transactions\", System Reach at \"Cross-domain / third-party\", Reversibility at \"Irreversible\", Data Sensitivity at \"Regulated / crown-jewel\".",
     "slug": "trustwise-commerce-agent",
     "tier": "high"
   }

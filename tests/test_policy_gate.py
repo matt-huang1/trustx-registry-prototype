@@ -94,8 +94,10 @@ def test_payments_entry_escalates_and_triggers_money_movement_override():
     assert money["action"] == "require_dual_approval"
 
 
-def test_reason_names_the_driving_evidence():
-    """The escalate reason must surface the evidence that drove the tier, not just a label."""
+def test_reason_names_the_driving_fact_and_evidence_refs_carry_the_quotes():
+    """The reason states the rule and the driving fact ONCE — the driving dimensions at
+    their verbatim tier labels — while the quotes live only in evidence_refs, so a
+    display showing both never repeats itself (ADR-0018)."""
     entries = {e["agent"]["slug"]: e for e in build_registry.load_entries()}
     entry = entries["payments-initiation-agent"]
     d = decide(entry, _policy())
@@ -105,9 +107,13 @@ def test_reason_names_the_driving_evidence():
     # display already labels it. It starts from the policy justification instead.
     assert "tier HIGH" not in reason
     assert reason.startswith("Policy requires human approval")
-    # An actual evidence quote from the driving dimension is surfaced in the reason.
-    assert "ACH and wire" in reason
+    # The driving dimensions are named at their verbatim tier labels...
+    assert "driven by" in reason
+    assert 'Action Authority at "Execute transactions"' in reason
+    # ...but the evidence QUOTES are not concatenated into the reason: they live in
+    # evidence_refs, rendered once by the evidence block.
     assert d["evidence_refs"], "evidence_refs must be populated"
+    assert all(ref not in reason for ref in d["evidence_refs"])
     assert all(ref in " ".join(entry_evidence(entry)) for ref in d["evidence_refs"])
     # The money-movement rule and its dual-approval requirement are named.
     assert "money-movement" in reason.lower()

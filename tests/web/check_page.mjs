@@ -128,8 +128,10 @@ async function waitFor(cond, ms = 1000) {
   check(folds.length === 12, "standards: one fold per dimension");
   check(folds.every((f) => !f.open), "standards: folds are collapsed by default");
   check(
-    folds.every((f) => /^Standards \(\d+\)$/.test(f.querySelector("summary").textContent)),
-    "standards: summaries read 'Standards (n)'"
+    folds.every((f) =>
+      /^Maps to \d+ governance standards$/.test(f.querySelector("summary").textContent)
+    ),
+    "standards: summaries say what the fold IS ('Maps to N governance standards')"
   );
   // The whole summary row is the disclosure control, and it carries the state
   // for assistive tech: aria-expanded false while collapsed, true once open.
@@ -143,6 +145,13 @@ async function waitFor(cond, ms = 1000) {
   check(
     folds[0].open && folds[0].querySelectorAll(".std-ref").length >= 1,
     "standards: an expanded fold shows framework→control chips"
+  );
+  check(
+    folds[0].querySelector(".std-context") !== null &&
+      /come from the ARC framework/.test(
+        folds[0].querySelector(".std-context").textContent
+      ),
+    "standards: an expanded fold opens with one line of context"
   );
   check(
     await waitFor(
@@ -271,6 +280,27 @@ async function waitFor(cond, ms = 1000) {
       /\.pg-policy \.pg-policy-desc\s*\{[^}]*max-width:\s*none/.test(css),
     "widths: record description and policy description are full-width"
   );
+  // ---- Freeze-pass defect fixes (ADR-0018) ----
+  // Trust legend: the three levels sit horizontally across the full envelope.
+  check(
+    /\.trust-legend\s*\{[^}]*grid-template-columns:\s*repeat\(3, minmax\(0, 1fr\)\)/.test(css),
+    "trust legend: three levels laid out horizontally across the envelope"
+  );
+  // Master-list badges: contained on their own wrapping row inside the row box.
+  check(
+    /\.index button\.entry \.entry-badges\s*\{[^}]*flex-wrap:\s*wrap/.test(css) &&
+      Array.from(doc.querySelectorAll("#entryList button.entry")).every((b) => {
+        const badges = b.querySelector(".entry-badges");
+        const name = b.querySelector(".entry-name");
+        return badges !== null && name !== null && badges.previousElementSibling === name;
+      }),
+    "registry list: badges sit on a contained wrapping row inside each entry box"
+  );
+  // Bottom footnote spans the full envelope like the other widened lines.
+  check(
+    /footer\.colophon\s*\{[^}]*max-width:\s*none/.test(css),
+    "footnote: colophon spans the full envelope width"
+  );
   // The strip summarises; the full per-dimension detail stays below it.
   check(
     !!(
@@ -278,6 +308,84 @@ async function waitFor(cond, ms = 1000) {
       dom.window.Node.DOCUMENT_POSITION_FOLLOWING
     ),
     "tier strip: sits above the per-dimension detail"
+  );
+
+  // ---- Progressive disclosure (ADR-0018): glance layer, then per-group folds ----
+  const teach = doc.querySelector("#record .ts-teach");
+  check(
+    teach !== null && /only the marked dimensions count/.test(teach.textContent),
+    "record: teaching line bridges the reader to the driver/not-weighted marks"
+  );
+  check(
+    !!(teach.compareDocumentPosition(strip) & dom.window.Node.DOCUMENT_POSITION_FOLLOWING),
+    "record: teaching line sits directly above the strip"
+  );
+  const dimFolds = Array.from(doc.querySelectorAll("#record details.dim-fold"));
+  check(dimFolds.length === 4, "ledger: one fold per ARC group");
+  check(dimFolds.every((f) => !f.open), "ledger: group folds are collapsed by default");
+  check(
+    dimFolds.every((f) =>
+      /Show the full derivation for this group/.test(
+        f.querySelector(".dim-fold-hint").textContent
+      )
+    ),
+    "ledger: collapsed folds carry the show-derivation affordance"
+  );
+  check(
+    dimFolds.every((f) => f.querySelectorAll(".dimension").length === 3),
+    "ledger: each group fold holds its group's three dimensions"
+  );
+  dimFolds[0].open = true;
+  check(
+    await waitFor(
+      () =>
+        dimFolds[0].querySelector("summary").getAttribute("aria-expanded") === "true" &&
+        /Hide the full derivation/.test(
+          dimFolds[0].querySelector(".dim-fold-hint").textContent
+        )
+    ),
+    "ledger: opening a group fold flips aria-expanded and the affordance text"
+  );
+  dimFolds[0].open = false;
+  check(
+    await waitFor(
+      () =>
+        dimFolds[0].querySelector("summary").getAttribute("aria-expanded") === "false"
+    ),
+    "ledger: closing a group fold flips aria-expanded back"
+  );
+  // Strip cells double as anchors into the collapsed detail (keyboard-reachable
+  // buttons); on strip-only renders (gate checker) they stay plain spans.
+  const cellBtn = doc.querySelector("#record button.ts-cell");
+  check(cellBtn !== null, "strip cells on a full record are buttons");
+  const cellDim = cellBtn.getAttribute("data-dim");
+  cellBtn.click();
+  check(
+    await waitFor(() => {
+      const block = doc.querySelector(`#record .dimension[data-dim="${cellDim}"]`);
+      return block !== null && block.closest("details.dim-fold").open;
+    }),
+    "clicking a strip cell expands that dimension's group fold"
+  );
+  check(
+    doc.querySelector("#pgDecision button.ts-cell") === null &&
+      doc.querySelectorAll("#pgDecision .tier-strip .ts-cell").length === 12,
+    "gate checker strip cells stay non-interactive (no detail ledger to open)"
+  );
+
+  // ---- Claim → because → evidence framing in the detail (ADR-0018) ----
+  check(
+    doc.querySelectorAll("#record .dimension .rationale .rat-label").length === 12 &&
+      Array.from(doc.querySelectorAll("#record .dimension .rationale .rat-label")).every(
+        (l) => l.textContent === "Because"
+      ),
+    "detail: every rationale leads with the Because connective"
+  );
+  check(
+    Array.from(doc.querySelectorAll("#record .dimension .evidence .ev-label")).every(
+      (l) => /From the agent's description/.test(l.textContent)
+    ),
+    "detail: quotes are labelled as coming from the agent's description"
   );
 
   // An all-baseline low entry has NO driver: the tier is low because nothing
@@ -421,6 +529,30 @@ async function waitFor(cond, ms = 1000) {
   check(
     reasons.every((p) => !/tier\s+(LOW|MEDIUM|HIGH)/.test(p.textContent)),
     "gate tab: reason does not restate the tier"
+  );
+  // The gate's one-sentence scenario intro (ADR-0018 text-density pass).
+  check(
+    /before each step it\s+checks the registry against the bank's policy/.test(
+      doc.querySelector("#pgScenario .pg-scenario-sub").textContent
+    ),
+    "gate scenario: introduced by one sentence"
+  );
+  // Reason states the driving fact once; the quotes live only in the evidence block.
+  const pgSel = doc.getElementById("pgSelect");
+  pgSel.value = "payments-initiation-agent";
+  pgSel.dispatchEvent(new dom.window.Event("change", { bubbles: true }));
+  const payReason = doc.querySelector("#pgDecision .pg-reason").textContent;
+  check(
+    /driven by/.test(payReason) &&
+      /Action Authority at "Execute transactions"/.test(payReason),
+    "gate reason: names the driving dimensions at their verbatim tier labels"
+  );
+  const payQuotes = Array.from(doc.querySelectorAll("#pgDecision .evidence li")).map(
+    (li) => li.textContent
+  );
+  check(
+    payQuotes.length > 0 && payQuotes.every((q) => !payReason.includes(q)),
+    "gate reason: evidence quotes render once, in the evidence block only"
   );
 
   // ---- Tab switching in one document: click, then programmatic hash change ----

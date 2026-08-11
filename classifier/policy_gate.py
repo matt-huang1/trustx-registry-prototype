@@ -4,7 +4,9 @@ agent tries to act.
 The registry says *what an agent is* (its evidence-backed risk tier). An org policy
 says *what may be delegated at what tier*. This module joins the two: given a committed
 registry ``entry`` and a ``policy``, :func:`decide` returns the gate decision — allow,
-log, or escalate — and names WHY, citing the evidence that drove the tier.
+log, or escalate — and names WHY: the reason states the driving dimensions at their
+verbatim tier labels, and ``evidence_refs`` carries the quotes that back them (stated
+once each, never both in the same sentence).
 
 It is intentionally a **pure function with no network and no LLM**. The maker/checker
 loop may use a model to *propose* an entry, but once an entry is committed the runtime
@@ -26,6 +28,7 @@ from __future__ import annotations
 from typing import Mapping
 
 from classifier.rules import mentions_money_movement
+from classifier.schema import load_dimension_meta
 
 _TIER_ADJECTIVE = {"low": "Low-risk", "medium": "Medium-risk", "high": "High-risk"}
 
@@ -86,15 +89,28 @@ def decide(entry: Mapping, policy: Mapping) -> dict:
     tier_actions = policy["tier_actions"]
     action = tier_actions[tier]
 
-    _driving, evidence_refs = _driving_evidence(entry)
+    driving, evidence_refs = _driving_evidence(entry)
 
     policy_sentence = _TIER_POLICY_SENTENCE.get(
         action, f"Policy maps this tier to '{action}'."
     )
     adjective = _TIER_ADJECTIVE.get(tier, f"{tier.capitalize()}-risk")
     derivation = entry.get("tier_derivation") or {}
-    if evidence_refs:
-        because = "; ".join(evidence_refs)
+    if driving:
+        # The reason states the driving FACT once — the dimensions that set the
+        # tier, at their verbatim tier labels. The evidence quotes live only in
+        # evidence_refs, so a display showing both never says the same thing
+        # twice (ADR-0018).
+        dim_meta = {d["id"]: d for d in load_dimension_meta()["dimensions"]}
+        dims = entry.get("dimensions") or {}
+        parts = []
+        for dim_id in driving:
+            meta = dim_meta.get(dim_id)
+            label = meta["name"] if meta else dim_id
+            score = (dims.get(dim_id) or {}).get("score")
+            tier_text = meta["tiers"].get(str(score)) if meta and score else None
+            parts.append(f'{label} at "{tier_text}"' if tier_text else label)
+        because = "driven by " + ", ".join(parts)
     elif derivation.get("autonomy_level_driven"):
         because = "autonomy level L5 alone forces Tier 3 under this weighting profile"
     elif derivation.get("autonomy_level_lifted"):

@@ -343,24 +343,27 @@
     border-left: 3px solid transparent;
     padding: 0.85rem 0.4rem 0.85rem 0.6rem;
     cursor: pointer;
-    display: grid;
-    grid-template-columns: 1fr auto;
-    align-items: baseline;
-    gap: 0.5rem 0.75rem;
+    display: block;
     color: var(--ink);
   }
   .index button.entry:hover { background: var(--paper-2); }
   .index button.entry .entry-name {
+    display: block;
     font-family: var(--serif);
     font-size: 1.02rem;
     line-height: 1.25;
   }
+  /* Badges sit on their own wrapping row INSIDE the row box — full row width to
+     use, so even the long trust pill stays contained at any list width. */
   .index button.entry .entry-badges {
     display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 0.35rem;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.3rem 0.6rem;
+    margin-top: 0.45rem;
+    max-width: 100%;
   }
+  .index button.entry .entry-badges > * { max-width: 100%; overflow: hidden; }
   .index button.entry[aria-current="true"] {
     background: var(--paper-2);
     border-left-color: var(--accent);
@@ -432,22 +435,32 @@
   .trust--verified  { --trust-color: var(--accent);     --trust-border: var(--accent);     --trust-fill: var(--accent); }
 
   /* Trust-level legend: the one place the three levels are defined, so a reader
-     never has to guess what a badge means. */
+     never has to guess what a badge means. The three levels sit side by side
+     across the full envelope (wrapping to one column only when narrow), the
+     same horizontal treatment as the strip legend. */
   .trust-legend {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem 1.4rem;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.9rem 2rem;
     margin: 0.9rem 0 0;
     font-family: var(--sans);
     font-size: 0.8rem;
     line-height: 1.4;
     color: var(--ink-2);
   }
-  .trust-legend .tl-item { display: flex; align-items: baseline; gap: 0.5em; }
-  .trust-legend .tl-item .trust { align-self: center; }
-  .trust-legend .tl-desc { max-width: 30rem; }
+  @media (max-width: 720px) {
+    .trust-legend { grid-template-columns: 1fr; }
+  }
+  .trust-legend .tl-item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.4em;
+    min-width: 0;
+  }
+  .trust-legend .tl-desc { max-width: none; }
   .trust-legend .tl-note {
-    flex-basis: 100%;
+    grid-column: 1 / -1;
     color: var(--ink-3);
     font-size: 0.76rem;
     margin: 0;
@@ -565,6 +578,14 @@
   @container (max-width: 27rem) {
     .tier-strip { grid-template-columns: minmax(0, 1fr); }
   }
+  /* The first-time reader's bridge to the driver/not-weighted legend: ONE calm
+     sentence directly above the strip. */
+  .ts-teach {
+    font-family: var(--sans);
+    font-size: 0.8rem;
+    color: var(--ink-3);
+    margin: 1.1rem 0 0;
+  }
   .ts-band { min-width: 0; }
   .ts-band-name {
     font-family: var(--sans);
@@ -589,6 +610,18 @@
     color: var(--ink);
     background: var(--paper);
   }
+  /* On full records the cells are buttons — anchors into the collapsed
+     per-dimension detail. Same visual as the plain cells; width comes from the
+     band column, and the interactive affordance stays quiet (hover tint only). */
+  button.ts-cell {
+    appearance: none;
+    width: 100%;
+    cursor: pointer;
+    text-align: left;
+    line-height: inherit;
+  }
+  button.ts-cell:hover { background: var(--paper-2); }
+  button.ts-cell:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   /* THE score mark — one mark carries both encodings: the score figure inside
      a tier-toned box. Identical in the strip cells AND the per-dimension
      detail rows (ADR-0015 refinement), so strip and detail read as one system.
@@ -697,6 +730,67 @@
     font-style: italic;
     color: var(--ink-2);
     margin: 1.9rem 0 0;
+  }
+
+  /* Per-group fold for the full derivation ledger (progressive disclosure,
+     ADR-0018): the glance layer above tells the whole story; each ARC group's
+     per-dimension detail sits one intentional click deeper. Same disclosure
+     language as .standards-fold (whole-row control, rotating caret), sized up
+     to carry the group heading. */
+  .dim-fold { margin: 1.1rem 0 0; }
+  .dim-fold summary {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6em;
+    flex-wrap: wrap;
+    cursor: pointer;
+    list-style: none;
+    padding: 0.65rem 0.8rem;
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+  }
+  .dim-fold summary::-webkit-details-marker { display: none; }
+  .dim-fold summary::before {
+    content: "\25B8";                 /* ▸ — rotates to point down when open */
+    font-size: 0.9em;
+    line-height: 1;
+    color: var(--accent-dim);
+    align-self: center;
+    transition: transform 0.15s ease;
+  }
+  .dim-fold[open] summary::before { transform: rotate(90deg); }
+  @media (prefers-reduced-motion: reduce) {
+    .dim-fold summary::before { transition: none; }
+  }
+  .dim-fold summary:hover { background: var(--paper-2); }
+  .dim-fold summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .dim-fold summary .dim-group { margin: 0; }
+  .dim-fold-hint {
+    margin-left: auto;
+    font-family: var(--sans);
+    font-size: 0.72rem;
+    color: var(--ink-3);
+    white-space: nowrap;
+  }
+  .dim-fold > .dimension:first-of-type { border-top: 1px solid var(--rule); margin-top: 0.9rem; }
+
+  /* Rationale lead-in: the claim→because→evidence connective (ADR-0018). */
+  .rat-label {
+    font-family: var(--sans);
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-right: 0.6em;
+  }
+
+  /* One line of context at the top of an expanded standards fold. */
+  .std-context {
+    font-family: var(--sans);
+    font-size: 0.76rem;
+    color: var(--ink-3);
+    margin: 0.6rem 0 0;
   }
 
   /* dimension rows read like ledger entries, not cards */
@@ -931,7 +1025,7 @@
     font-family: var(--sans);
     font-size: 0.78rem;
     color: var(--ink-3);
-    max-width: 66ch;
+    max-width: none;
   }
   footer.colophon code {
     font-family: var(--mono);
@@ -1305,8 +1399,9 @@
       <div class="panel-head">
         <h2 class="panel-title" id="registryHeading">The registry</h2>
         <p class="panel-note panel-note--wide">
-          Filter by risk tier or name, and select an entry to read its full record: scored
-          dimensions, the quoted evidence behind each score, provenance, and any challenges.
+          These are the entries every other view draws on — filter by risk tier or name, and
+          select one to read its full record: scored dimensions, the quoted evidence behind
+          each score, provenance, and any challenges.
           Each entry carries two independent marks: a <strong>risk tier</strong> (how risky the
           agent is) and a <strong>trust level</strong> (how reviewed the entry is).
         </p>
@@ -1356,7 +1451,7 @@
           Pick an example for an instant, identical classification — cached for reliability — or
           paste your own below to classify it live. Every score is proposed by a model, then
           overridden by deterministic rules wherever a fact can be pinned down, and ratified by
-          an accountable human before it enters the registry.
+          an accountable human — new classifications enter the same registry you can browse.
         </p>
       </div>
 
@@ -1392,23 +1487,20 @@
       <div class="panel-head">
         <h2 class="panel-title" id="pgHeading">Runtime policy gate</h2>
         <p class="panel-note panel-note--wide">
-          The registry is not just a catalogue — it is something an orchestrator consults at the
-          moment an agent tries to act. The gate maps an agent's evidence-backed risk tier to an
-          org policy action: allow, allow&nbsp;with&nbsp;logging, or escalate to a human. The
-          decision is <strong>deterministic</strong> — no model runs at enforcement time — and
-          every decision below was computed offline over the committed registry; this page only
-          looks them up.
+          The gate checks agents against the same registry you can browse — at the moment an
+          agent acts — mapping each tool's evidence-backed risk tier to a policy action
+          (allow, allow&nbsp;with&nbsp;logging, or escalate to a human),
+          <strong>deterministically</strong>, with no model at enforcement time.
         </p>
       </div>
 
       <!-- Scenario first — the tab's highlight — then the stated policy, then the
-           full-width checker (which renders a whole record). See ADR-0015. -->
+           full-width checker (which renders a whole record). See ADR-0015/0018. -->
       <h3 class="section-label">Scenario · an orchestrator paying an invoice</h3>
       <div class="pg-scenario" id="pgScenario">
-        <p class="pg-scenario-task" id="pgScenarioTask"></p>
         <p class="pg-scenario-sub">
-          The orchestrator queries the gate before each delegation. Safe steps pass; the
-          money-movement step halts and escalates.
+          An orchestrating agent works through an invoice-payment task; before each step it
+          checks the registry against the bank's policy.
         </p>
         <ol class="pg-plan" id="pgPlan"></ol>
         <div class="pg-halt-banner" id="pgHalt" role="status" aria-live="polite"></div>
@@ -1425,6 +1517,9 @@
 
       <h3 class="section-label">Check any agent against the policy</h3>
       <div class="pg-check">
+        <p class="pg-scenario-sub">
+          Pick any registry entry to see the decision the gate would return for it.
+        </p>
         <label class="field-label" for="pgSelect">Registry entry</label>
         <select id="pgSelect" aria-label="Choose a registry entry to check"></select>
         <div class="pg-check-result record" id="pgDecision" aria-live="polite"></div>
@@ -1702,8 +1797,9 @@
     // cell state with a dagger, explained once in the legend. Rendered
     // identically on the registry detail, the classify result, and the gate
     // checker.
-    function renderTierStrip(container, entry) {
+    function renderTierStrip(container, entry, opts) {
       if (!entry.dimensions) return;
+      opts = opts || {};
       var td = entry.tier_derivation || {};
       var driving = Array.isArray(td.driving_dimensions) ? td.driving_dimensions : [];
       var weighted = Array.isArray(td.tier_dimensions) ? td.tier_dimensions : null;
@@ -1734,12 +1830,19 @@
           // peak, or above every driver): the cell state worth flagging.
           var isPeakUnweighted = !!weighted && weighted.indexOf(d.id) === -1
             && score > 1 && (score === 3 || score > driverMax);
-          var cell = el("span", {
+          // On full records (opts.linkCells) each cell is a button anchoring
+          // into that dimension's detail in the collapsed ledger below; on
+          // strip-only renders (the gate checker) it stays a plain span.
+          var cell = el(opts.linkCells ? "button" : "span", {
             className: "ts-cell ts-cell--" + score
               + (isDriver ? " ts-cell--driver" : "")
               + (isPeakUnweighted ? " ts-cell--unweighted" : ""),
             attrs: { "data-dim": d.id, "data-score": String(score) },
           });
+          if (opts.linkCells) {
+            cell.setAttribute("type", "button");
+            cell.setAttribute("title", "Show the full derivation for " + d.name);
+          }
           cell.appendChild(scoreBox(score));
           cell.appendChild(el("span", { className: "ts-name", text: d.name }));
           if (isPeakUnweighted) {
@@ -1747,6 +1850,17 @@
           }
           if (isDriver) {
             cell.appendChild(el("span", { className: "ts-tag", text: "drives tier" }));
+          }
+          if (opts.linkCells) {
+            cell.addEventListener("click", function () {
+              var block = container.querySelector('.dimension[data-dim="' + d.id + '"]');
+              if (!block) return;
+              var fold = block.closest("details.dim-fold");
+              if (fold) fold.open = true;
+              if (typeof block.scrollIntoView === "function") {
+                block.scrollIntoView({ block: "start", behavior: "smooth" });
+              }
+            });
           }
           cells.appendChild(cell);
         });
@@ -1850,16 +1964,29 @@
         container.appendChild(deriv);
       }
 
+      // The first-time reader's bridge to the driver/not-weighted marks: one
+      // calm sentence, then the strip itself (ADR-0018).
+      container.appendChild(el("p", {
+        className: "ts-teach",
+        text: "Every dimension is scored, but only the marked dimensions count toward "
+          + "this agent type's tier — the ringed cells are the ones that drove it.",
+      }));
+
       // The grouped tier strip: the record's scannable top layer, directly
       // beneath the derivation sentence so the strip and the sentence agree.
-      renderTierStrip(container, entry);
+      // Cells anchor into the collapsed per-group detail below.
+      renderTierStrip(container, entry, { linkCells: true });
 
-      // Dimensions: all 12, in their four ARC groups.
+      // The glance layer ends here. The full per-dimension ledger (rationale,
+      // evidence, standards per dimension) sits one intentional click deeper:
+      // one fold per ARC group, collapsed by default (ADR-0018). Nothing is
+      // removed — it is sequenced.
       var dimLabel = el("h3", { className: "section-label", text: "Risk dimensions" });
       dimLabel.appendChild(el("span", {
         className: "schema-caveat",
         text: "ARC 12-dimension model — every dimension is scored 1–3; the tier is "
-          + "weighted over the profile named above.",
+          + "weighted over the profile named above. Expand a group (or click a cell "
+          + "above) for each score's rationale, evidence, and standards.",
       }));
       container.appendChild(dimLabel);
 
@@ -1874,11 +2001,25 @@
         });
         if (!present.length) return;
 
-        container.appendChild(el("h4", { className: "dim-group", text: groupName }));
+        var groupFold = el("details", { className: "dim-fold", attrs: { "data-group": groupId } });
+        var groupSummary = el("summary", { attrs: { "aria-expanded": "false" } });
+        groupSummary.appendChild(el("span", { className: "dim-group", text: groupName }));
+        var hint = el("span", {
+          className: "dim-fold-hint",
+          text: "Show the full derivation for this group",
+        });
+        groupSummary.appendChild(hint);
+        groupFold.appendChild(groupSummary);
+        groupFold.addEventListener("toggle", function () {
+          groupSummary.setAttribute("aria-expanded", groupFold.open ? "true" : "false");
+          hint.textContent = groupFold.open
+            ? "Hide the full derivation for this group"
+            : "Show the full derivation for this group";
+        });
 
         present.forEach(function (d) {
           var dim = entry.dimensions[d.id];
-          var block = el("section", { className: "dimension" });
+          var block = el("section", { className: "dimension", attrs: { "data-dim": d.id } });
           var dh = el("div", { className: "dim-head" });
           var nameWrap = el("div", { className: "dim-name-wrap" });
           nameWrap.appendChild(el("h5", { className: "dim-name", text: d.name }));
@@ -1891,10 +2032,16 @@
           dh.appendChild(scoreScale(d.id, dim.score));
           block.appendChild(dh);
 
-          block.appendChild(el("p", { className: "rationale", text: dim.rationale }));
+          // Claim → because → evidence (ADR-0018): the score above is the
+          // claim; the rationale is framed as the because; the quotes below are
+          // labelled as coming from the agent's own description.
+          var rationale = el("p", { className: "rationale" });
+          rationale.appendChild(el("span", { className: "rat-label", text: "Because" }));
+          rationale.appendChild(document.createTextNode(dim.rationale));
+          block.appendChild(rationale);
 
           var ev = el("div", { className: "evidence" });
-          ev.appendChild(el("p", { className: "ev-label", text: "Evidence" }));
+          ev.appendChild(el("p", { className: "ev-label", text: "From the agent's description" }));
           var evidence = Array.isArray(dim.evidence) ? dim.evidence : [];
           if (evidence.length) {
             var ul = el("ul");
@@ -1912,7 +2059,7 @@
           if (stdMappings.length) {
             var fold = el("details", { className: "standards-fold" });
             var foldSummary = el("summary", {
-              text: "Standards (" + stdMappings.length + ")",
+              text: "Maps to " + stdMappings.length + " governance standards",
               attrs: { "aria-expanded": "false" },
             });
             fold.appendChild(foldSummary);
@@ -1921,6 +2068,11 @@
             fold.addEventListener("toggle", function () {
               foldSummary.setAttribute("aria-expanded", fold.open ? "true" : "false");
             });
+            fold.appendChild(el("p", {
+              className: "std-context",
+              text: "Each dimension maps to the established frameworks that govern it — "
+                + "the mappings below come from the ARC framework.",
+            }));
             var std = el("div", { className: "standards" });
             stdMappings.forEach(function (m) {
               var item = el("span", { className: "std-item" });
@@ -1934,8 +2086,10 @@
             block.appendChild(fold);
           }
 
-          container.appendChild(block);
+          groupFold.appendChild(block);
         });
+
+        container.appendChild(groupFold);
       });
 
       // Provenance & review — WHO stands behind the entry and the trust level it
@@ -2352,7 +2506,6 @@
     var STEP_GAP = 500;   // pause between auto-advanced steps
     var pgPlanEl = document.getElementById("pgPlan");
     var pgHaltEl = document.getElementById("pgHalt");
-    var pgTaskEl = document.getElementById("pgScenarioTask");
     var pgRunBtn = document.getElementById("pgRun");
     var pgStepBtn = document.getElementById("pgStep");
     var pgResetBtn = document.getElementById("pgReset");
@@ -2367,7 +2520,6 @@
       if (!pgPlanEl) return;
       pgPlanEl.innerHTML = "";
       planItems = [];
-      if (pgTaskEl && SCENARIO) pgTaskEl.textContent = SCENARIO.task || SCENARIO.name || "";
       STEPS.forEach(function (step, i) {
         var li = el("li", { attrs: { "data-i": String(i) } });
 
