@@ -53,10 +53,12 @@ reviewer, never by an anonymous vote.
 
 ## Live demo
 
-`web/index.html` is a single, zero-build page — open it by double-click (`file://`), from a
-static server, or on GitHub Pages. It renders the registry, an interactive classifier hero,
-and a runtime policy gate with no network call (data is injected as JS globals; see
-[ADR-0004](docs/adr/0004-single-file-web-demo.md)).
+**→ https://matt-huang1.github.io/trustx-registry-prototype/**
+
+`web/index.html` is a single, zero-build page — it also opens offline by double-click
+(`file://`) or from a static server, with no setup. It renders the registry, an interactive
+classifier hero, and a runtime policy gate with no network call (data is injected as JS
+globals; see [ADR-0004](docs/adr/0004-single-file-web-demo.md)).
 
 ```bash
 python scripts/build_registry.py     # compile entries/ → web/data/*.js (offline; no key)
@@ -73,6 +75,7 @@ are shown distinctly.
 pip install -e ".[dev]"           # install (Python 3.11+)
 python -m pytest -q               # offline test suite (no API calls)
 python -m classifier.run "An agent that reads invoices and initiates ACH payments"
+# needs LLM_API_KEY (the test suite above does not)
 ```
 
 Configure LLM access purely via environment variables (see

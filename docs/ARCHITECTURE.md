@@ -7,9 +7,14 @@ fact can be pinned down, and a *human gate* ratifies the result before anything 
 written to `entries/`. All LLM access is funnelled through a single OpenAI-compatible
 provider so the model is swappable via environment variables only.
 
-## TODO
-- [ ] Diagram of the LangGraph state machine (proposer → challenger → human_gate).
-- [ ] Describe the entry lifecycle: draft → challenged → ratified → published.
-- [ ] Document how risk-tier drives the depth of the human gate (auto-approve low, mandatory review high).
-- [ ] Data flow and storage model once the web UI and a backing store exist.
-- [ ] Threat model for the classifier itself (prompt injection via agent descriptions).
+Each entry scores an agent on all 12 ARC dimensions and carries the rationale and quoted
+evidence behind every score, so a classification can be inspected rather than taken on
+faith. The overall risk tier is computed from those scores by a worst-case-wins rule — any
+single dimension at the top of the scale carries the whole system — with *which* dimensions
+drive the tier held as a per-system-type weighting profile in
+`policy/tier_weighting_profiles.yaml` (data, not code) and recorded on every entry as
+`tier_derivation`. The same committed data backs a runtime policy gate, which an
+orchestrating agent consults before it acts: the gate checks an agent's tier against a
+configurable organisational policy and escalates to a human where the policy demands it.
+
+The full architecture is set out in [docs/PLAN.md](PLAN.md) §3.

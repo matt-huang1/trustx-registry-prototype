@@ -63,5 +63,5 @@ with its reasoning recorded, strengthens the entry's evidence trail.
 ---
 
 Not sure which to pick, or want to propose your own? Open a
-[Question / discussion issue](../.github/ISSUE_TEMPLATE/config.yml) and a maintainer will help
-you scope it.
+[Question / discussion issue](https://github.com/matt-huang1/trustx-registry-prototype/issues/new/choose)
+and a maintainer will help you scope it.

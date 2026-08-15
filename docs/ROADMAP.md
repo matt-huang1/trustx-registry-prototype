@@ -1,9 +1,11 @@
 # Roadmap
 
-A staged path from this classification-loop prototype to a usable open registry: first a
-credible, testable maker/checker classifier over a placeholder schema (this milestone),
-then RAI's real 12-dimension model, persistence, and a web UI for browsing and submitting
-entries.
+A staged path from this prototype to a usable open registry. The maker/checker classifier,
+the ARC 12-dimension model with per-type tier-weighting profiles, the web view, and the
+contribution machinery (schema, evidence checks, trust tiers, governance, CI gates) are
+shipped. What remains, tracked below, is the path to production: persistence and entry
+lifecycle, a risk-tier-driven human gate, and exposing the registry as a live service any
+agent can query.
 
 ## TODO
 - [x] M0: Repo skeleton, memory, runnable maker/checker loop, deterministic override, ADRs.
@@ -12,7 +14,9 @@ entries.
   money-movement floor re-mapped to Action Authority = 3 (ADR-0013).
 - [ ] M2: Risk-tier-driven human gate (auto-approve low tier, mandatory review for high).
 - [ ] M3: Persistence + entry lifecycle (draft/challenged/ratified/published).
-- [ ] M4: Web UI in `web/` for browsing, submitting, and challenging entries.
+- [x] M4: Web UI in `web/` for browsing entries — delivered as the single-file view
+  (ADR-0004) with the classifier tab (ADR-0005) and the runtime policy gate (ADR-0006).
+  Remaining scope: in-browser submitting and challenging of entries.
 - [ ] M5: Batch classification + evidence-source ingestion.
 - [ ] M6: Expose the runtime policy gate (ADR-0006) as a live **MCP/A2A endpoint** any agent
   queries at the moment it tries to act — the prototype's offline `decide()` and

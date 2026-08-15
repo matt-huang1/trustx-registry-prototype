@@ -137,5 +137,5 @@ means the task is well-scoped, needs no deep context, and a maintainer is on han
 ## Code of conduct & asking a question
 
 Be respectful, assume good faith, and argue about evidence, not people. To ask a question,
-open a [Question / discussion issue](.github/ISSUE_TEMPLATE/config.yml) or start a GitHub
-Discussion — there are no bad questions about how to score a dimension.
+open a [Question / discussion issue](https://github.com/matt-huang1/trustx-registry-prototype/issues/new/choose)
+or start a GitHub Discussion — there are no bad questions about how to score a dimension.

@@ -12,7 +12,10 @@ alongside the canonical `web/data/registry.json`. The page loads it with a plain
 `<script src="data/registry.js"></script>` and reads `window.__REGISTRY__` — it does
 **not** `fetch()` the JSON. `build_registry.py --check` fails if *either* generated file
 is stale, so both stay in lockstep with `entries/*.yaml`. This is reference mode; the
-interactive classifier is deferred to a later handoff and has a marked, empty slot.
+interactive classifier is deferred to a later iteration.
+
+*Addendum (2026-07-24).* Superseded in part: ADR-0005 delivered the classifier tab into the
+reserved slot.
 
 ## Context
 The prototype needs a live, shareable demo that renders the reference entries anywhere:

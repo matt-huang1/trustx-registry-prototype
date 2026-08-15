@@ -5,8 +5,7 @@ A prototype open-source registry that classifies AI agents by risk with
 defensible, evidence-backed entries (not self-asserted labels). Entries are
 scored against the real ARC 12-dimension model (4 groups, dimensions tiered
 1/2/3; the verbatim strings live in schema/dimensions.json — never paraphrase
-them). Working name only — do NOT use "ROAR" or imply official RAI status
-anywhere.
+them). Working name only — do NOT imply official RAI status anywhere.
 
 ## Core principle (encode this, don't just cite it)
 The model proposes; deterministic checks decide wherever a fact can be pinned

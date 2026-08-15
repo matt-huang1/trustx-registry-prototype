@@ -16,7 +16,7 @@ That is the principle the rest of this document builds on: a registry is only tr
 
 At its core the registry holds one kind of thing: a defensible classification of an agent's risk. Not a label, and not a verdict handed down — a record. Each entry classifies an agent across twelve dimensions, and for every dimension it carries not just a score but the reasoning and the specific evidence behind that score. This is the direct expression of the principle from the previous section. A number on its own can be asserted; a number attached to the evidence that produced it can be inspected, and inspection is what makes it trustworthy. An entry, then, is less like a rating and more like a worked answer: you can see not only what the classification concluded, but why.
 
-The twelve dimensions are not something I devised. They are RAI's Agent Risk Classification model, adopted directly: four families covering an agent's autonomy and decision power, its authority and reach, its persistence and control, and its data authority and confidentiality, each dimension scored on a three-point scale. Building on their model rather than inventing a parallel one is a deliberate choice. A registry meant to become shared infrastructure gains nothing from a bespoke taxonomy; it gains everything from speaking the standard the community is already converging on. The contribution here is not a new way to measure risk, but a way to make measurements against that standard defensible.
+The twelve dimensions are not this project's invention. They are RAI's Agent Risk Classification model, adopted directly: four families covering an agent's autonomy and decision power, its authority and reach, its persistence and control, and its data authority and confidentiality, each dimension scored on a three-point scale. Building on their model rather than inventing a parallel one is a deliberate choice. A registry meant to become shared infrastructure gains nothing from a bespoke taxonomy; it gains everything from speaking the standard the community is already converging on. The contribution here is not a new way to measure risk, but a way to make measurements against that standard defensible.
 
 The most important property follows from this: the overall risk tier is computed, never declared. A submitter does not get to write "low risk" at the top of an entry. The tier is derived from the twelve dimension scores by an explicit, published rule, and the entry records which dimensions actually drove it. This closes the gap that self-attestation leaves open. You cannot claim a comfortable tier while the underlying scores tell a different story, because the tier is a consequence of the scores, not a separate assertion laid beside them. Even the headline number, the thing a busy reader glances at first, is evidence-backed by construction.
 
@@ -124,10 +124,8 @@ floors sit outside the model entirely: an injected instruction can talk the prop
 low score, and the money-movement rule will still pin the entry above the threshold, because
 that rule reads the description for capabilities rather than asking the model's opinion. The
 layer an attacker can reach through injection is the layer that was already treated as
-untrusted, and the layer that decides the floor is the one they cannot reach. This is the
-same reason the pipeline it grew out of confirmed its exploits by running them rather than by
-reasoning about them: a boundary you have not actually tested against a live attempt is a
-boundary you are only assuming holds.
+untrusted, and the layer that decides the floor is the one they cannot reach. A boundary you
+have not actually tested against a live attempt is a boundary you are only assuming holds.
 
 The residual exposure is honest to state. Injection defence is an arms race, deterministic
 floors only cover the dimensions a rule can decide, and a judgment-based dimension with no
