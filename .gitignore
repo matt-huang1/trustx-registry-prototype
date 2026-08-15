@@ -222,3 +222,6 @@ __marimo__/
 # Node (jsdom harness for the web view checks)
 node_modules/
 tests/web/node_modules/
+
+# macOS
+.DS_Store
