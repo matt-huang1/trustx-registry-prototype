@@ -12,13 +12,16 @@ window.__POLICY__ = {
 };
 window.__GATE_DECISIONS__ = {
   "internal-document-summarisation-assistant": {
-    "action": "allow",
-    "evidence_refs": [],
+    "action": "allow_with_logging",
+    "evidence_refs": [
+      "read-only access to the company's internal document store",
+      "draft summaries of internal documents"
+    ],
     "overrides": [],
-    "policy_rule": "low → allow",
-    "reason": "Policy permits low-risk delegations to proceed automatically. Low-risk because: no weighted dimension rises above baseline (all Tier 1).",
+    "policy_rule": "medium → allow_with_logging",
+    "reason": "Policy permits medium-risk delegations but logs them for audit. Medium-risk because: driven by Data Sensitivity at \"Internal / confidential\".",
     "slug": "internal-document-summarisation-assistant",
-    "tier": "low"
+    "tier": "medium"
   },
   "internal-knowledge-assistant": {
     "action": "allow",
@@ -36,20 +39,21 @@ window.__GATE_DECISIONS__ = {
     ],
     "overrides": [],
     "policy_rule": "medium → allow_with_logging",
-    "reason": "Policy permits medium-risk delegations but logs them for audit. Medium-risk because: driven by Autonomy at \"Human-on-the-loop\", Action Authority at \"Create or modify\", Blast Radius at \"Team / department\", Persistence at \"Session-based\", Reversibility at \"Partially reversible\".",
+    "reason": "Policy permits medium-risk delegations but logs them for audit. Medium-risk because: driven by Autonomy at \"Human-on-the-loop\", Decision Scope at \"Domain-level\", Temporal Coupling at \"Chained workflows\", Action Authority at \"Create or modify\", System Reach at \"Multiple internal\", Blast Radius at \"Team / department\", Persistence at \"Session-based\", Reversibility at \"Partially reversible\", Data Sensitivity at \"Internal / confidential\", Aggregation Risk at \"Limited\", Data Egress Paths at \"Multiple controlled\".",
     "slug": "invoice-triage-agent",
     "tier": "medium"
   },
   "kyc-onboarding-triage-agent": {
-    "action": "allow_with_logging",
+    "action": "escalate_to_human",
     "evidence_refs": [
-      "draft an onboarding risk recommendation for a human compliance officer"
+      "reads sensitive customer personal data (PII)",
+      "identity documents, addresses, and dates of birth"
     ],
     "overrides": [],
-    "policy_rule": "medium → allow_with_logging",
-    "reason": "Policy permits medium-risk delegations but logs them for audit. Medium-risk because: driven by Blast Radius at \"Team / department\".",
+    "policy_rule": "high → escalate_to_human",
+    "reason": "Policy requires human approval for high-risk delegations. High-risk because: driven by Data Sensitivity at \"Regulated / crown-jewel\".",
     "slug": "kyc-onboarding-triage-agent",
-    "tier": "medium"
+    "tier": "high"
   },
   "payments-initiation-agent": {
     "action": "escalate_to_human",
@@ -88,13 +92,13 @@ window.__SCENARIO__ = {
   "steps": [
     {
       "n": 1,
-      "slug": "internal-document-summarisation-assistant",
-      "task": "Read the vendor invoice and extract the amount, payee, and line items."
+      "slug": "internal-knowledge-assistant",
+      "task": "Look up the vendor's standard payment terms in the internal reference material."
     },
     {
       "n": 2,
-      "slug": "kyc-onboarding-triage-agent",
-      "task": "Look up the vendor's records to confirm identity and banking details."
+      "slug": "invoice-triage-agent",
+      "task": "Triage the vendor invoice: extract the amount and payee, and confirm the vendor's banking details."
     },
     {
       "n": 3,

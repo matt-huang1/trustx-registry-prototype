@@ -1,132 +1,6 @@
 [
   {
     "agent": {
-      "description": "A documentation assistant that reads the company's already-public help articles\nand drafts a plain-language FAQ answer for a writer to review. It has read-only\naccess to published content only, holds no customer or personal data, and cannot\nsend messages, call any external tool, or change any record; a person edits and\npublishes the answer before it is used.",
-      "slug": "low-public-docs-assistant"
-    },
-    "autonomy_level": 1,
-    "challenge": {
-      "flagged": true,
-      "iterations": 2,
-      "notes": [
-        "control_authority score of 2 is not supported. The system does not supervise agents; it requires human intervention for all actions."
-      ]
-    },
-    "dimensions": {
-      "action_authority": {
-        "evidence": [
-          "has read-only access to published content only"
-        ],
-        "rationale": "The system has read-only access and cannot modify content.",
-        "score": 1
-      },
-      "aggregation_risk": {
-        "evidence": [
-          "reads the company's already-public help articles"
-        ],
-        "rationale": "There is no aggregation of data as it only uses public articles.",
-        "score": 1
-      },
-      "autonomy": {
-        "evidence": [
-          "A person edits and publishes the answer before it is used."
-        ],
-        "rationale": "The system requires human approval for publishing each answer.",
-        "score": 1
-      },
-      "blast_radius": {
-        "evidence": [
-          "A person edits and publishes the answer before it is used."
-        ],
-        "rationale": "The system impacts a single user (the writer) who reviews the output.",
-        "score": 1
-      },
-      "control_authority": {
-        "evidence": [
-          "A person edits and publishes the answer before it is used."
-        ],
-        "rationale": "The system supervises the content creation process but requires human intervention.",
-        "score": 2
-      },
-      "data_egress_paths": {
-        "evidence": [
-          "cannot send messages, call any external tool"
-        ],
-        "rationale": "The system does not have any external egress paths.",
-        "score": 1
-      },
-      "data_sensitivity": {
-        "evidence": [
-          "has read-only access to published content only"
-        ],
-        "rationale": "The system only accesses public content, which is non-sensitive.",
-        "score": 1
-      },
-      "decision_scope": {
-        "evidence": [
-          "reads the company's already-public help articles"
-        ],
-        "rationale": "The system makes local decisions based on existing content.",
-        "score": 1
-      },
-      "persistence": {
-        "evidence": [
-          "holds no customer or personal data"
-        ],
-        "rationale": "The system does not retain any state or memory.",
-        "score": 1
-      },
-      "reversibility": {
-        "evidence": [
-          "A person edits and publishes the answer before it is used."
-        ],
-        "rationale": "The actions taken by the system can be fully reversed by the human editor.",
-        "score": 1
-      },
-      "system_reach": {
-        "evidence": [
-          "reads the company's already-public help articles"
-        ],
-        "rationale": "The system operates within a single system of published content.",
-        "score": 1
-      },
-      "temporal_coupling": {
-        "evidence": [
-          "drafts a plain-language FAQ answer for a writer to review."
-        ],
-        "rationale": "The actions are isolated and do not depend on previous actions.",
-        "score": 1
-      }
-    },
-    "provenance": {
-      "approved_by": "example-build",
-      "submitted_by": "classifier",
-      "timestamp": "2026-07-09T18:45:31.969404+00:00"
-    },
-    "review": {
-      "expires_at": null,
-      "reviewed_at": null,
-      "reviewed_by": null
-    },
-    "risk_tier": "low",
-    "system_type": "knowledge_assistant",
-    "tier_derivation": {
-      "autonomy_level_driven": false,
-      "autonomy_level_lifted": false,
-      "driving_dimensions": [],
-      "profile": "knowledge_assistant",
-      "tier_dimensions": [
-        "autonomy",
-        "action_authority",
-        "blast_radius",
-        "persistence",
-        "reversibility"
-      ]
-    },
-    "trust_level": "community-submitted"
-  },
-  {
-    "agent": {
       "description": "A support-triage agent that reads customer support tickets containing the\ncustomer's name, order number, and message, then drafts a suggested reply and a\npriority label for a human support agent to review. Its priority labels order the\nsupport team's shared ticket queue, and it keeps session context while a ticket\nconversation is open. It sees no payment details, identity documents, or account\ncredentials, and cannot send replies, issue refunds, or change any account; a\nhuman makes every final decision.",
       "slug": "medium-support-triage-agent"
     },
@@ -240,15 +114,158 @@
       "autonomy_level_driven": false,
       "autonomy_level_lifted": false,
       "driving_dimensions": [
+        "temporal_coupling",
         "persistence"
       ],
       "profile": "decision_support_system",
       "tier_dimensions": [
         "autonomy",
+        "decision_scope",
+        "temporal_coupling",
         "action_authority",
+        "system_reach",
         "blast_radius",
         "persistence",
-        "reversibility"
+        "reversibility",
+        "control_authority",
+        "data_sensitivity",
+        "aggregation_risk",
+        "data_egress_paths"
+      ]
+    },
+    "trust_level": "community-submitted"
+  },
+  {
+    "agent": {
+      "description": "A documentation assistant that reads the company's already-public help articles\nand drafts a plain-language FAQ answer for a writer to review. It has read-only\naccess to published content only, holds no customer or personal data, and cannot\nsend messages, call any external tool, or change any record; a person edits and\npublishes the answer before it is used.",
+      "slug": "public-docs-assistant"
+    },
+    "autonomy_level": 1,
+    "challenge": {
+      "flagged": true,
+      "iterations": 2,
+      "notes": [
+        "control_authority score of 2 is not supported. The system does not supervise agents; it requires human intervention for all actions."
+      ]
+    },
+    "dimensions": {
+      "action_authority": {
+        "evidence": [
+          "has read-only access to published content only"
+        ],
+        "rationale": "The system has read-only access and cannot modify content.",
+        "score": 1
+      },
+      "aggregation_risk": {
+        "evidence": [
+          "reads the company's already-public help articles"
+        ],
+        "rationale": "There is no aggregation of data as it only uses public articles.",
+        "score": 1
+      },
+      "autonomy": {
+        "evidence": [
+          "A person edits and publishes the answer before it is used."
+        ],
+        "rationale": "The system requires human approval for publishing each answer.",
+        "score": 1
+      },
+      "blast_radius": {
+        "evidence": [
+          "A person edits and publishes the answer before it is used."
+        ],
+        "rationale": "The system impacts a single user (the writer) who reviews the output.",
+        "score": 1
+      },
+      "control_authority": {
+        "evidence": [
+          "A person edits and publishes the answer before it is used."
+        ],
+        "rationale": "The system supervises the content creation process but requires human intervention.",
+        "score": 2
+      },
+      "data_egress_paths": {
+        "evidence": [
+          "cannot send messages, call any external tool"
+        ],
+        "rationale": "The system does not have any external egress paths.",
+        "score": 1
+      },
+      "data_sensitivity": {
+        "evidence": [
+          "has read-only access to published content only"
+        ],
+        "rationale": "The system only accesses public content, which is non-sensitive.",
+        "score": 1
+      },
+      "decision_scope": {
+        "evidence": [
+          "reads the company's already-public help articles"
+        ],
+        "rationale": "The system makes local decisions based on existing content.",
+        "score": 1
+      },
+      "persistence": {
+        "evidence": [
+          "holds no customer or personal data"
+        ],
+        "rationale": "The system does not retain any state or memory.",
+        "score": 1
+      },
+      "reversibility": {
+        "evidence": [
+          "A person edits and publishes the answer before it is used."
+        ],
+        "rationale": "The actions taken by the system can be fully reversed by the human editor.",
+        "score": 1
+      },
+      "system_reach": {
+        "evidence": [
+          "reads the company's already-public help articles"
+        ],
+        "rationale": "The system operates within a single system of published content.",
+        "score": 1
+      },
+      "temporal_coupling": {
+        "evidence": [
+          "drafts a plain-language FAQ answer for a writer to review."
+        ],
+        "rationale": "The actions are isolated and do not depend on previous actions.",
+        "score": 1
+      }
+    },
+    "provenance": {
+      "approved_by": "example-build",
+      "submitted_by": "classifier",
+      "timestamp": "2026-07-09T18:45:31.969404+00:00"
+    },
+    "review": {
+      "expires_at": null,
+      "reviewed_at": null,
+      "reviewed_by": null
+    },
+    "risk_tier": "medium",
+    "system_type": "knowledge_assistant",
+    "tier_derivation": {
+      "autonomy_level_driven": false,
+      "autonomy_level_lifted": false,
+      "driving_dimensions": [
+        "control_authority"
+      ],
+      "profile": "knowledge_assistant",
+      "tier_dimensions": [
+        "autonomy",
+        "decision_scope",
+        "temporal_coupling",
+        "action_authority",
+        "system_reach",
+        "blast_radius",
+        "persistence",
+        "reversibility",
+        "control_authority",
+        "data_sensitivity",
+        "aggregation_risk",
+        "data_egress_paths"
       ]
     },
     "trust_level": "community-submitted"

@@ -2,13 +2,22 @@
 #
 # All 12 ARC dimensions are ALWAYS scored (classifier/schema.py DIMENSIONS); a
 # profile only chooses which of those scores the worst-case-wins rollup tiers
-# off. This file is the explicit, committed encoding of a divergence found in
-# the reference material: the ARC per-type classification tools tier off 5
-# critical dimensions for most system types (12 + the autonomy level for
-# transaction / commerce agents), while the published paper (arXiv:2607.09586
-# Section 3.3) states worst-case-wins — the "critical dimension" approach —
-# across all 12. Rather than silently picking one, tier weighting is DATA —
-# inspectable, reviewable, per-type. See docs/adr/0012-*.md and docs/adr/0017-*.md.
+# off.
+#
+# CURRENT RULE (RAI confirmation, 2026-08-16). Every per-type profile now
+# implements the published ARC rule (arXiv:2607.09586 Section 3.3): worst-case-
+# wins across ALL 12 dimensions, plus the autonomy-level provisions. RAI has
+# confirmed verbally, from the framework's author, that the per-type
+# five-dimension tier formulas carried by the v1.1 classification spreadsheets
+# are an OUTDATED version of the model and that Section 3.3 is the current rule.
+# The divergence recorded in docs/adr/0012-*.md is therefore resolved — as an
+# implementation artefact of the tools, not an alternative reading of the
+# framework. See docs/adr/0019-*.md.
+#
+# The superseded subsets are preserved below under `legacy_<type>_v1_1` keys so
+# the historical behaviour stays inspectable and testable. They are inert: no
+# system_type resolves to them (resolve_profile matches a profile whose key IS
+# the system type), so they never tier a live entry.
 #
 # Rule, over a profile's tier_dimensions (worst-case-wins):
 #   any dimension = 3            -> Tier 3 (high)
@@ -19,57 +28,34 @@
 #   arc_paper : L5 forces Tier 3; L3/L4 lift the tier to at least Tier 2
 #               (never lowers a dimension-derived tier).
 #   none      : the autonomy level does not affect the tier (faithful to the
-#               per-type tool spreadsheets, which do not use it).
+#               superseded per-type tool spreadsheets, which do not use it).
 #
 # `default_profile` applies to any entry with no system_type, or a system_type
 # with no profile here. tier_dimensions: ALL_12 means every scored dimension.
-# Profile names/sets are seeded verbatim from assets/arc_reference.json
-# "tier_weighting_profiles" (derived from the ARC v1.1 per-type classification
-# tool formulas).
+# Tier weighting stays DATA rather than code precisely so a correction like this
+# one is a reviewable diff with a recorded rationale (ADR-0012, ADR-0019).
 
 default_profile: recommended_default
 
 profiles:
+  # ----------------------------------------------------------------------- #
+  # Current rule — the paper's Section 3.3, applied to every system type.
+  # ----------------------------------------------------------------------- #
   autonomous_agent:
-    tier_dimensions:
-    - autonomy
-    - action_authority
-    - blast_radius
-    - persistence
-    - reversibility
-    autonomy_rule: none
+    tier_dimensions: ALL_12
+    autonomy_rule: arc_paper
   coding_assistant:
-    tier_dimensions:
-    - autonomy
-    - action_authority
-    - blast_radius
-    - persistence
-    - reversibility
-    autonomy_rule: none
+    tier_dimensions: ALL_12
+    autonomy_rule: arc_paper
   decision_support_system:
-    tier_dimensions:
-    - autonomy
-    - action_authority
-    - blast_radius
-    - persistence
-    - reversibility
-    autonomy_rule: none
+    tier_dimensions: ALL_12
+    autonomy_rule: arc_paper
   embedded_physical_ai:
-    tier_dimensions:
-    - autonomy
-    - action_authority
-    - blast_radius
-    - persistence
-    - reversibility
-    autonomy_rule: none
+    tier_dimensions: ALL_12
+    autonomy_rule: arc_paper
   knowledge_assistant:
-    tier_dimensions:
-    - autonomy
-    - action_authority
-    - blast_radius
-    - persistence
-    - reversibility
-    autonomy_rule: none
+    tier_dimensions: ALL_12
+    autonomy_rule: arc_paper
   recommended_default:
     tier_dimensions: ALL_12
     autonomy_rule: arc_paper
@@ -78,6 +64,17 @@ profiles:
       can be ignored, L5 forces Tier 3, and L3/L4 lift the tier to at least Tier 2
       (ADR-0017).
   tool_using_agent:
+    tier_dimensions: ALL_12
+    autonomy_rule: arc_paper
+  transaction_commerce_agent:
+    tier_dimensions: ALL_12
+    autonomy_rule: arc_paper
+
+  # ----------------------------------------------------------------------- #
+  # historical behaviour of the v1.1 classification tools; confirmed superseded
+  # by RAI 2026-08-16; retained for auditability.
+  # ----------------------------------------------------------------------- #
+  legacy_autonomous_agent_v1_1:
     tier_dimensions:
     - autonomy
     - action_authority
@@ -85,7 +82,47 @@ profiles:
     - persistence
     - reversibility
     autonomy_rule: none
-  transaction_commerce_agent:
+  legacy_coding_assistant_v1_1:
+    tier_dimensions:
+    - autonomy
+    - action_authority
+    - blast_radius
+    - persistence
+    - reversibility
+    autonomy_rule: none
+  legacy_decision_support_system_v1_1:
+    tier_dimensions:
+    - autonomy
+    - action_authority
+    - blast_radius
+    - persistence
+    - reversibility
+    autonomy_rule: none
+  legacy_embedded_physical_ai_v1_1:
+    tier_dimensions:
+    - autonomy
+    - action_authority
+    - blast_radius
+    - persistence
+    - reversibility
+    autonomy_rule: none
+  legacy_knowledge_assistant_v1_1:
+    tier_dimensions:
+    - autonomy
+    - action_authority
+    - blast_radius
+    - persistence
+    - reversibility
+    autonomy_rule: none
+  legacy_tool_using_agent_v1_1:
+    tier_dimensions:
+    - autonomy
+    - action_authority
+    - blast_radius
+    - persistence
+    - reversibility
+    autonomy_rule: none
+  legacy_transaction_commerce_agent_v1_1:
     tier_dimensions:
     - autonomy
     - decision_scope

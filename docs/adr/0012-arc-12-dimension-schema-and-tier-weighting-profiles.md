@@ -104,3 +104,30 @@ This addendum is documentation only; no rollup code or profile data changed.
   (transaction/commerce). ADR-0017 aligns `recommended_default` with the
   paper's rule, adopts the L1-L5 scale, and records the conservative reading
   of the L3/L4 lift; the matching ROADMAP open item is closed.
+
+## Addendum (2026-08-17) — the divergence is RESOLVED; the subsets were outdated
+
+**THE FINDING RECORDED IN THIS ADR IS NOW CLOSED.** On 2026-08-16 RAI confirmed,
+verbally and from the framework's author, that the per-type five-dimension tier
+formulas carried by the v1.1 classification spreadsheets are an **outdated
+version** of the model, and that the paper's Section 3.3 rule — all twelve
+dimensions, worst-case-wins, with the autonomy-level provisions — is the current
+one. The divergence this ADR surfaced was an implementation artefact of the
+tooling, not a second defensible reading of the framework.
+
+[ADR-0019](0019-per-type-profiles-aligned-to-current-all-12-rule.md) acts on
+that: every per-type profile now implements the current rule, and the superseded
+subsets are retained under `legacy_<type>_v1_1` keys for auditability. Two
+committed entries and one cached example re-tiered (KYC medium → high;
+summarisation assistant low → medium; the public-docs example low → medium); all
+three adopted RAI seed entries reproduce their published tiers unchanged. No
+scores were re-scored and no rollup code changed — see ADR-0019 for the full
+before/after.
+
+What this ADR decided still stands, and is what made the correction cheap:
+scoring stays total, weighting stays inspectable per-type data, and every entry
+still records the derivation that produced its tier. The specific per-type
+*values* seeded from the v1.1 tools are what became history. The remaining open
+question is no longer *which* weighting is correct, but who owns weighting
+changes and how one is ratified, since a change like this re-tiers entries across
+the registry (PLAN §9).

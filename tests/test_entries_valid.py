@@ -68,9 +68,9 @@ def test_payments_entry_enforces_money_movement_invariant():
         (
             "internal-document-summarisation-assistant.yaml",
             "knowledge_assistant",
-            "low",
+            "medium",
         ),
-        ("kyc-onboarding-triage-agent.yaml", "tool_using_agent", "medium"),
+        ("kyc-onboarding-triage-agent.yaml", "tool_using_agent", "high"),
         (
             "payments-initiation-agent.yaml",
             "transaction_commerce_agent",
@@ -84,15 +84,31 @@ def test_archetypes_carry_their_system_type_and_tier(name, system_type, expected
     assert data["risk_tier"] == expected_tier
 
 
-def test_kyc_archetype_embodies_the_weighting_finding():
-    """The KYC agent scores data_sensitivity=3 (regulated PII) but tiers medium under
-    the tool_using_agent profile — the same scores would tier high under the all-12
-    default. The divergence is data, recorded on the entry (docs/adr/0012-*.md)."""
+def test_kyc_archetype_embodies_the_weighting_finding_as_resolved_history():
+    """The KYC agent scores data_sensitivity=3 (regulated PII) and now tiers HIGH.
+
+    It tiered medium until 2026-08-17, when the per-type profiles were aligned to the
+    paper's Section 3.3 all-12 rule after RAI confirmed the v1.1 subset formulas are
+    outdated (ADR-0019). Both halves are asserted on the one entry: the live tier under
+    the current rule, and — on the same unchanged scores — the medium the superseded
+    weighting produced. The finding survives its own resolution as a regression test.
+    """
     data = _load("kyc-onboarding-triage-agent.yaml")
     assert data["dimensions"]["data_sensitivity"]["score"] == 3
-    assert data["risk_tier"] == "medium"
-    assert "data_sensitivity" not in data["tier_derivation"]["tier_dimensions"]
+
+    # Current rule: data_sensitivity is weighted, and it alone forces Tier 3.
+    assert data["risk_tier"] == "high"
+    assert "data_sensitivity" in data["tier_derivation"]["tier_dimensions"]
+    assert data["tier_derivation"]["driving_dimensions"] == ["data_sensitivity"]
     assert derive_risk_tier(data["dimensions"], system_type=None).tier == "high"
+
+    # Superseded v1.1 weighting, same numbers: medium, driven by blast_radius.
+    legacy = derive_risk_tier(
+        data["dimensions"], system_type="legacy_tool_using_agent_v1_1"
+    )
+    assert legacy.tier == "medium"
+    assert "data_sensitivity" not in legacy.tier_dimensions
+    assert legacy.driving_dimensions == ("blast_radius",)
 
 
 @pytest.mark.parametrize(

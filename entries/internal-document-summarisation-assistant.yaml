@@ -71,16 +71,24 @@ dimensions:
     evidence:
     - draft summaries ... always reviewed by a human before use
     - cannot ... call external tools
-risk_tier: low
+risk_tier: medium
 tier_derivation:
   profile: knowledge_assistant
   tier_dimensions:
   - autonomy
+  - decision_scope
+  - temporal_coupling
   - action_authority
+  - system_reach
   - blast_radius
   - persistence
   - reversibility
-  driving_dimensions: []
+  - control_authority
+  - data_sensitivity
+  - aggregation_risk
+  - data_egress_paths
+  driving_dimensions:
+  - data_sensitivity
   autonomy_level_driven: false
   autonomy_level_lifted: false
 trust_level: working-group-reviewed
@@ -95,10 +103,11 @@ challenge:
     Curated, human-authored reference entry; scores reasoned by hand against the ARC 12-dimension
     model. No automated challenger pass was run.
   - >-
-    Tier-weighting note: under the knowledge_assistant profile the tier is weighted off autonomy,
-    action_authority, blast_radius, persistence and reversibility (all Tier 1 here). Under
-    the recommended_default all-12 profile, data_sensitivity=2 (internal documents) would
-    lift this entry to medium — see docs/adr/0012-*.md on the tier-weighting divergence.
+    Tier-weighting note: the knowledge_assistant profile now implements the paper's Section 3.3
+    rule over all 12 dimensions, so data_sensitivity=2 (internal documents) drives this entry
+    to medium. It tiered low until 2026-08-17 under the superseded v1.1 five-dimension subset
+    (autonomy, action_authority, blast_radius, persistence, reversibility — all Tier 1 here),
+    which is retained as legacy_knowledge_assistant_v1_1. See docs/adr/0019-*.md.
   iterations: 1
 provenance:
   submitted_by: curated-reference

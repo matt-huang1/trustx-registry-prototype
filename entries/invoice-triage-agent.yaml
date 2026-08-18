@@ -73,16 +73,29 @@ tier_derivation:
   profile: tool_using_agent
   tier_dimensions:
   - autonomy
+  - decision_scope
+  - temporal_coupling
   - action_authority
+  - system_reach
   - blast_radius
   - persistence
   - reversibility
+  - control_authority
+  - data_sensitivity
+  - aggregation_risk
+  - data_egress_paths
   driving_dimensions:
   - autonomy
+  - decision_scope
+  - temporal_coupling
   - action_authority
+  - system_reach
   - blast_radius
   - persistence
   - reversibility
+  - data_sensitivity
+  - aggregation_risk
+  - data_egress_paths
   autonomy_level_driven: false
   autonomy_level_lifted: false
 trust_level: verified
@@ -97,6 +110,11 @@ challenge:
     Adopted seed entry from the RAI ARC reference registry; the published per-dimension tiers
     are kept verbatim and the published overall tier (Tier 2) reproduces under the tool_using_agent
     tier-weighting profile. No automated challenger pass was run.
+  - >-
+    Unchanged by the 2026-08-17 alignment of the per-type profiles to the paper's Section 3.3
+    all-12 rule (docs/adr/0019-*.md): the tier stays Tier 2, and the published value is now
+    reproduced by the current rule rather than by the superseded v1.1 five-dimension subset.
+    The recorded driver set widened to every dimension scored at 2.
   iterations: 1
 provenance:
   submitted_by: RAI-ARC-reference

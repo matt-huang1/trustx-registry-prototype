@@ -24,12 +24,12 @@ it. Good for learning the whole pipeline on a low-risk, easy-to-reason-about age
 ### 2. Add a reference entry for a code-generation / PR-authoring agent
 
 We have no `code_content_generator` archetype. Classify an agent that opens pull requests
-against a repository (writes code, but a human merges). This exercises a different
-tier-weighting profile and the `reversibility` / `system_reach` dimensions in an interesting
-way.
+against a repository (writes code, but a human merges). This exercises the
+`reversibility` / `system_reach` dimensions in an interesting way, and a system type with
+no committed profile of its own (so it falls back to `recommended_default`).
 
 - **Files:** new `entries/code-authoring-agent.yaml`
-- **Why it's useful:** covers a system type with no example, and stress-tests a non-payments profile.
+- **Why it's useful:** covers a system type with no example, and exercises the default-profile fallback.
 
 ### 3. Add a standards mapping for an under-covered framework
 

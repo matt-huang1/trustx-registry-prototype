@@ -73,15 +73,23 @@ OUTPUT_META_JS = ROOT / "web" / "data" / "meta.js"
 # The scripted "cinematic" demo path: an invoice-payment workflow whose steps reference
 # real registry slugs across the tiers, so safe steps pass and the money-movement step
 # halts. Represented as data; the gate decision for each slug is looked up, never computed
-# in the browser. If the registry's low/medium archetypes change slug, update these.
+# in the browser. If the registry's low/medium archetypes change slug OR tier, update these
+# — the point of the scenario is the allow → allow_with_logging → escalate arc, which only
+# holds while step 1 is a low entry and step 2 a medium one.
+#
+# Repointed 2026-08-17 (ADR-0019): aligning the per-type profiles to the paper's all-12 rule
+# re-tiered both of the first two steps' entries. The summarisation assistant went low →
+# medium (data_sensitivity=2) and the KYC agent went medium → high (data_sensitivity=3), so
+# step 1 now uses the still-low knowledge-assistant seed and step 2 the still-medium
+# invoice-triage seed. The workflow, and the arc it demonstrates, are unchanged.
 SCENARIO_STEPS: tuple[dict, ...] = (
     {
-        "slug": "internal-document-summarisation-assistant",
-        "task": "Read the vendor invoice and extract the amount, payee, and line items.",
+        "slug": "internal-knowledge-assistant",
+        "task": "Look up the vendor's standard payment terms in the internal reference material.",
     },
     {
-        "slug": "kyc-onboarding-triage-agent",
-        "task": "Look up the vendor's records to confirm identity and banking details.",
+        "slug": "invoice-triage-agent",
+        "task": "Triage the vendor invoice: extract the amount and payee, and confirm the vendor's banking details.",
     },
     {
         "slug": "payments-initiation-agent",

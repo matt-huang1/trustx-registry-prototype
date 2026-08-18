@@ -10,7 +10,7 @@
       "iterations": 1,
       "notes": [
         "Curated, human-authored reference entry; scores reasoned by hand against the ARC 12-dimension model. No automated challenger pass was run.",
-        "Tier-weighting note: under the knowledge_assistant profile the tier is weighted off autonomy, action_authority, blast_radius, persistence and reversibility (all Tier 1 here). Under the recommended_default all-12 profile, data_sensitivity=2 (internal documents) would lift this entry to medium — see docs/adr/0012-*.md on the tier-weighting divergence."
+        "Tier-weighting note: the knowledge_assistant profile now implements the paper's Section 3.3 rule over all 12 dimensions, so data_sensitivity=2 (internal documents) drives this entry to medium. It tiered low until 2026-08-17 under the superseded v1.1 five-dimension subset (autonomy, action_authority, blast_radius, persistence, reversibility — all Tier 1 here), which is retained as legacy_knowledge_assistant_v1_1. See docs/adr/0019-*.md."
       ]
     },
     "dimensions": {
@@ -112,19 +112,28 @@
       "reviewed_at": "2026-07-09T00:00:00+00:00",
       "reviewed_by": "@matt-huang1"
     },
-    "risk_tier": "low",
+    "risk_tier": "medium",
     "system_type": "knowledge_assistant",
     "tier_derivation": {
       "autonomy_level_driven": false,
       "autonomy_level_lifted": false,
-      "driving_dimensions": [],
+      "driving_dimensions": [
+        "data_sensitivity"
+      ],
       "profile": "knowledge_assistant",
       "tier_dimensions": [
         "autonomy",
+        "decision_scope",
+        "temporal_coupling",
         "action_authority",
+        "system_reach",
         "blast_radius",
         "persistence",
-        "reversibility"
+        "reversibility",
+        "control_authority",
+        "data_sensitivity",
+        "aggregation_risk",
+        "data_egress_paths"
       ]
     },
     "trust_level": "working-group-reviewed"
@@ -250,10 +259,17 @@
       "profile": "knowledge_assistant",
       "tier_dimensions": [
         "autonomy",
+        "decision_scope",
+        "temporal_coupling",
         "action_authority",
+        "system_reach",
         "blast_radius",
         "persistence",
-        "reversibility"
+        "reversibility",
+        "control_authority",
+        "data_sensitivity",
+        "aggregation_risk",
+        "data_egress_paths"
       ]
     },
     "trust_level": "verified"
@@ -270,7 +286,8 @@
       "flagged": false,
       "iterations": 1,
       "notes": [
-        "Adopted seed entry from the RAI ARC reference registry; the published per-dimension tiers are kept verbatim and the published overall tier (Tier 2) reproduces under the tool_using_agent tier-weighting profile. No automated challenger pass was run."
+        "Adopted seed entry from the RAI ARC reference registry; the published per-dimension tiers are kept verbatim and the published overall tier (Tier 2) reproduces under the tool_using_agent tier-weighting profile. No automated challenger pass was run.",
+        "Unchanged by the 2026-08-17 alignment of the per-type profiles to the paper's Section 3.3 all-12 rule (docs/adr/0019-*.md): the tier stays Tier 2, and the published value is now reproduced by the current rule rather than by the superseded v1.1 five-dimension subset. The recorded driver set widened to every dimension scored at 2."
       ]
     },
     "dimensions": {
@@ -377,18 +394,31 @@
       "autonomy_level_lifted": false,
       "driving_dimensions": [
         "autonomy",
+        "decision_scope",
+        "temporal_coupling",
         "action_authority",
+        "system_reach",
         "blast_radius",
         "persistence",
-        "reversibility"
+        "reversibility",
+        "data_sensitivity",
+        "aggregation_risk",
+        "data_egress_paths"
       ],
       "profile": "tool_using_agent",
       "tier_dimensions": [
         "autonomy",
+        "decision_scope",
+        "temporal_coupling",
         "action_authority",
+        "system_reach",
         "blast_radius",
         "persistence",
-        "reversibility"
+        "reversibility",
+        "control_authority",
+        "data_sensitivity",
+        "aggregation_risk",
+        "data_egress_paths"
       ]
     },
     "trust_level": "verified"
@@ -404,7 +434,7 @@
       "iterations": 1,
       "notes": [
         "Curated, human-authored reference entry; scores reasoned by hand against the ARC 12-dimension model. No automated challenger pass was run.",
-        "Tier-weighting note: under the tool_using_agent profile the tier is weighted off autonomy, action_authority, blast_radius, persistence and reversibility; blast_radius=2 drives Tier 2 (medium). data_sensitivity=3 (regulated identity PII) is scored but does NOT drive the tier under this profile — under the recommended_default all-12 profile it would force Tier 3 (high). This entry is the concrete case for the divergence recorded in docs/adr/0012-*.md."
+        "Tier-weighting note: the tool_using_agent profile now implements the paper's Section 3.3 rule over all 12 dimensions, so data_sensitivity=3 (regulated identity PII) forces Tier 3 (high) under worst-case-wins. This entry tiered medium until 2026-08-17, driven by blast_radius=2, under the superseded v1.1 five-dimension subset that excluded data_sensitivity — the concrete case that made the divergence in docs/adr/0012-*.md visible. RAI confirmed on 2026-08-16 that the subset formulas are outdated; the superseded weighting is retained as legacy_tool_using_agent_v1_1. See docs/adr/0019-*.md."
       ]
     },
     "dimensions": {
@@ -505,21 +535,28 @@
       "reviewed_at": "2026-07-09T00:00:00+00:00",
       "reviewed_by": "@matt-huang1"
     },
-    "risk_tier": "medium",
+    "risk_tier": "high",
     "system_type": "tool_using_agent",
     "tier_derivation": {
       "autonomy_level_driven": false,
       "autonomy_level_lifted": false,
       "driving_dimensions": [
-        "blast_radius"
+        "data_sensitivity"
       ],
       "profile": "tool_using_agent",
       "tier_dimensions": [
         "autonomy",
+        "decision_scope",
+        "temporal_coupling",
         "action_authority",
+        "system_reach",
         "blast_radius",
         "persistence",
-        "reversibility"
+        "reversibility",
+        "control_authority",
+        "data_sensitivity",
+        "aggregation_risk",
+        "data_egress_paths"
       ]
     },
     "trust_level": "working-group-reviewed"

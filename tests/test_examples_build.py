@@ -41,10 +41,32 @@ def test_examples_exist_and_are_schema_valid():
         assert ex["tier_derivation"] == derivation.as_dict()
 
 
-def test_examples_cover_low_medium_high():
+def test_cached_example_tier_coverage_is_exactly_what_is_committed():
+    """Pins the hero's tier coverage so it can never drift unnoticed.
+
+    This asserted {low, medium, high} until 2026-08-17. Aligning the per-type profiles
+    to the paper's all-12 rule (ADR-0019) re-tiered the public-docs example low →
+    medium: its control_authority=2 — a score the challenger pass explicitly flagged as
+    unsupported, and which the cached run kept — is weighted under the current rule and
+    was not under the superseded knowledge_assistant subset. The cached set therefore no
+    longer contains a low-tier run.
+
+    The expectation is pinned to the truth rather than relaxed to a subset check, so
+    restoring low coverage (an author-run ``--rebuild-examples``, or a new example
+    description) fails here and forces this to be updated deliberately.
+    """
     examples = build_registry.load_examples()
     tiers = {ex["risk_tier"] for ex in examples}
-    assert tiers == {"low", "medium", "high"}, f"expected all three tiers, got {tiers}"
+    assert tiers == {"medium", "high"}, f"cached example tiers changed: {tiers}"
+
+
+def test_the_hero_still_spans_tiers_and_includes_the_money_movement_case():
+    """What the coverage above exists FOR: the hero must show more than one outcome,
+    and must include the high-tier case that demonstrates the deterministic floor."""
+    examples = build_registry.load_examples()
+    tiers = {ex["risk_tier"] for ex in examples}
+    assert "high" in tiers
+    assert len(tiers) >= 2, f"the hero would show a single outcome: {tiers}"
 
 
 def test_examples_js_is_the_committed_json_twin():

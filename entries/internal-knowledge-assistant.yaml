@@ -73,10 +73,17 @@ tier_derivation:
   profile: knowledge_assistant
   tier_dimensions:
   - autonomy
+  - decision_scope
+  - temporal_coupling
   - action_authority
+  - system_reach
   - blast_radius
   - persistence
   - reversibility
+  - control_authority
+  - data_sensitivity
+  - aggregation_risk
+  - data_egress_paths
   driving_dimensions: []
   autonomy_level_driven: false
   autonomy_level_lifted: false

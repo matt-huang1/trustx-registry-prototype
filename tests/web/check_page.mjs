@@ -403,42 +403,44 @@ async function waitFor(cond, ms = 1000) {
     "all-baseline entry: derivation callout says nothing rose above baseline"
   );
 
-  // KYC is the canonical peak-not-weighted case: Data Sensitivity is scored 3
-  // but the tool_using_agent profile does not tier off it; Blast Radius (2) drives.
+  // KYC is the canonical single-peak case: Data Sensitivity is scored 3 and, under
+  // the current all-12 rule (ADR-0019), it alone drives the entry to Tier 3. Until
+  // 2026-08-17 the tool_using_agent profile excluded it and this was the page's
+  // scored-but-not-tier-weighted example instead; no committed entry exhibits that
+  // state now, so the marker's underlying data is covered in tests/test_rollup.py
+  // (test_derivation_under_the_legacy_profile_records_the_narrower_weighting).
   doc
     .querySelector('#entryList button.entry[data-slug="kyc-onboarding-triage-agent"]')
     .click();
-  const kycDriver = doc.querySelector('#record .ts-cell[data-dim="blast_radius"]');
+  const kycDriver = doc.querySelector('#record .ts-cell[data-dim="data_sensitivity"]');
   check(
     kycDriver !== null &&
       kycDriver.classList.contains("ts-cell--driver") &&
       /drives tier/i.test(kycDriver.textContent),
-    "KYC strip: driver cell (Blast Radius) carries the drives-tier mark"
+    "KYC strip: driver cell (Data Sensitivity) carries the drives-tier mark"
   );
   check(
     doc.querySelectorAll("#record .ts-cell--driver").length === 1,
-    "KYC strip: Blast Radius is the sole driver"
-  );
-  // Not-tier-weighted is a CELL STATE (dashed/muted + dagger), explained once
-  // in the legend — never an inline chip crammed into the cell (ADR-0015).
-  const kycDS = doc.querySelector('#record .ts-cell[data-dim="data_sensitivity"]');
-  check(
-    kycDS !== null &&
-      kycDS.classList.contains("ts-cell--unweighted") &&
-      kycDS.querySelector("sup.ts-uw") !== null,
-    "KYC strip: Data Sensitivity 3 renders as the daggered not-weighted cell state"
+    "KYC strip: Data Sensitivity is the sole driver"
   );
   check(
-    kycDS !== null &&
-      !/not tier-weighted/i.test(kycDS.textContent) &&
+    kycDriver !== null && kycDriver.closest(".ts-cells").firstElementChild === kycDriver,
+    "KYC strip: the peak dimension leads its band"
+  );
+  // Every dimension is weighted under the current rule, so no cell may carry the
+  // not-weighted state — while the legend keeps teaching both marks, because a
+  // deliberately narrower profile remains expressible (ADR-0012).
+  check(
+    doc.querySelectorAll("#record .ts-cell--unweighted").length === 0 &&
+      doc.querySelectorAll("#record .dim-flag:not(.drives)").length === 0,
+    "KYC record: nothing renders as scored-but-not-tier-weighted under the all-12 rule"
+  );
+  check(
+    /drives tier/.test(doc.querySelector("#record .ts-legend").textContent) &&
       /† scored · not tier-weighted/.test(
         doc.querySelector("#record .ts-legend").textContent
       ),
-    "KYC strip: the not-weighted state is explained once in the legend, not in the cell"
-  );
-  check(
-    kycDS !== null && kycDS.closest(".ts-cells").firstElementChild === kycDS,
-    "KYC strip: the peak dimension leads its band"
+    "strip legend: both cell states stay explained in one place, not in the cells"
   );
 
   // Adopted seed entries appear alongside the archetypes (6 committed entries).
